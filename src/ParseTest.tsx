@@ -1,28 +1,39 @@
+import * as React from 'react';
 import 'isomorphic-fetch';
 
-export class RamaData {
-    private pdbID: string;
+export interface Props {
+    pdbID: string;
+}
 
-    constructor(private pdb: string) {
-        this.pdbID = this.pdb.toString();
-        fetch('http://www.ebi.ac.uk/pdbe/api/validation/rama_sidechain_listing/entry/' + this.pdb)
+export class RamaData extends React.Component<Props> {
+    render() {
+        const {pdbID} = this.props;
+        let molecules: Array<object> = [];
+        fetch('http://www.ebi.ac.uk/pdbe/api/validation/rama_sidechain_listing/entry/' + pdbID)
             .then(response =>
                 response.json().then(data => ({
                         data: data,
                         status: response.status
                     })
                 ).then(res => {
-                    for (let mol of res.data[this.pdbID].molecules) {
-                        new Molecule(mol.chains);
+                    for (let mol of res.data[pdbID].molecules) {
+                        let newMolecule = new Molecule(mol.chains);
+                        molecules.push(newMolecule);
                     }
                 }));
+        return (;
+        for (let mol of molecules) {
+                console.log();
+            }
+        )
     }
 }
+export class Molecule {
+    public chain: object[];
 
-class Molecule {
-
-    constructor(private chain: object[]) {
-        for (let chan of this.chain) {
+    constructor(private chainArg: object[]) {
+        this.chain = chainArg;
+        for (let chan of this.chainArg) {
             new ChainClass(chan['models']);
         }
     }
@@ -46,21 +57,27 @@ class ModelClass {
     }
 }
 
-class ResidueClass {
+class ResidueClass extends React.Component {
     private psi: number;
     private residueNumber: number;
     private rama: string;
     private phi: number;
     private residueName: string;
     private rota: string;
+
     constructor(private residue: object) {
+        super(residue);
         this.psi = this.residue['psi'];
         this.phi = this.residue['phi'];
         this.residueName = this.residue['residue_name'];
         this.residueNumber = this.residue['residue_number'];
         this.rama = this.residue['rama'];
         this.rota = this.residue['rota'];
-        console.log(this.psi);
+    }
+    render() {
+        return(
+            <div id="phi"> try {this.phi.toString()}</div>
+        );
     }
 }
 
