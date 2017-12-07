@@ -23,7 +23,7 @@ export class RamaData extends React.Component<Props> {
                 }));
         return (;
         for (let mol of molecules) {
-                console.log();
+                console.log();;
             }
         )
     }
