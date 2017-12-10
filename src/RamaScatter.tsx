@@ -7,10 +7,6 @@ interface RamaProps {
     pdbID: string;
     width: number;
     height: number;
-    data: {
-        nodes: { name: string; group: number }[];
-        links: { source: number; target: number; value: number }[];
-    };
 }
 
 // class RamaData extends React.Component<RamaProps, object> {
@@ -59,7 +55,7 @@ class RamaData extends Component<RamaProps, {}> {
     ctrls: Refs = {};
 
     componentDidMount() {
-        const { width, height, data, pdbID} = this.props;
+        const { width, height, pdbID} = this.props;
         let down = new ParsePDB(pdbID);
         let parsed: object[] = down.downloadAndParse();
         console.log(parsed);
@@ -109,23 +105,32 @@ class RamaData extends Component<RamaProps, {}> {
             .attr('transform', function () { return 'translate(' + (width.valueOf()) + ', 0)'; })
             .call(yRightAxis);
 
-        // svgContainer.append('path')
-        //     .attr('d', pathVar(parsed))
-        //     .attr('fill', 'none')
-        //     .attr('stroke', '#000')
-        //     .attr('stroke-width', 2);
+        function color(d: object) {
+            switch (d['rama']) {
+                case 'Favored':
+                    return '#19667f';
+                case 'OUTLIER':
+                    return '#ff0000';
+                case 'Allowed':
+                    return '#0c7f3a';
+                default:
+                    return '#ffe342';
+            }
+        }
 
-        let div = d3.select('body').append('div')
+        // tooltip
+        let toolTip = d3.select('body').append('div')
             .attr('class', 'tooltip')
             .style('opacity', 0);
 
-        svgContainer.selectAll('dot')
+        svgContainer.selectAll('.shapes')
             .data(parsed)
-            .enter().append('circle')
+            .enter()
+            .append('circle')
             .attr('r', 3.5)
             .attr('cx', xMap)
             .attr('cy', yMap)
-            .style('fill', function (d: object) {
+            .style('fill', function color(d: object) {
                 switch (d['rama']) {
                     case 'Favored':
                         return '#19667f';
@@ -134,14 +139,15 @@ class RamaData extends Component<RamaProps, {}> {
                     case 'Allowed':
                         return '#0c7f3a';
                     default:
-                        return '#FFF';
+                        return '#ffe342';
                 }
             })
             .on('mouseover', function(d: object) {
-                div.transition()
-                    .duration(200)
+                toolTip.transition()
+                    .duration(50)
                     .style('opacity', .9);
-                div.html(d['aa'] + '<br/>' + 'phi: ' + d['phi'] + '<br/>psi: ' + d['psi'])
+                toolTip.html(d['aa'] + ' ' + d['num'] + ' ' + d['chain'] + '<br/>'
+                    + 'phi: ' + d['phi'] + '<br/>psi: ' + d['psi'])
                     .style('left', (d3.event.pageX) + 'px')
                     .style('top', (d3.event.pageY - 28) + 'px');
                 d3.select(this)
@@ -151,39 +157,11 @@ class RamaData extends Component<RamaProps, {}> {
                 d3.select(this)
                     .transition()
                     .duration(200)
-                    .style('fill', function (d: object) {
-                        switch (d['rama']) {
-                            case 'Favored':
-                                return '#19667f';
-                            case 'OUTLIER':
-                                return '#ff0000';
-                            case 'Allowed':
-                                return '#0c7f3a';
-                            default:
-                                return '#FFF';
-                        }
-                    });
-                div.transition()
+                    .style('fill', color(d));
+                toolTip.transition()
                     .duration(200)
                     .style('opacity', 0);
             });
-
-        const tooltip = svgContainer.append('g')
-            .attr('class', 'tooltip')
-            .style('display', 'none');
-
-        tooltip.append('rect')
-            .attr('width', 60)
-            .attr('height', 20)
-            .attr('fill', 'white')
-            .style('opacity', 0.5);
-
-        tooltip.append('text')
-            .attr('x', 30)
-            .attr('dy', '1.2em')
-            .style('text-anchor', 'middle')
-            .attr('font-size', '12px')
-            .attr('font-weight', 'bold');
     }
     render () {
         const {width, height} = this.props;
