@@ -1,3 +1,21 @@
+class Res {
+    aa: string;
+    phi: number;
+    psi: number;
+    rama: string;
+    chain: string;
+    num: number;
+
+    constructor(aa: string, phi: number, psi: number, rama: string, chain: string, num: number) {
+        this.aa = aa;
+        this.phi = phi;
+        this.psi = psi;
+        this.rama = rama;
+        this.chain = chain;
+        this.num = num;
+    }
+}
+
 export class ParsePDB {
     private pdbID: string;
 
@@ -5,15 +23,93 @@ export class ParsePDB {
         this.pdbID = pdb;
     }
 
-    public downloadAndParse() {
+    public downloadAndParse(): object[] {
+        // function down() {
+        //     $.ajax({
+        //         url: 'http://www.ebi.ac.uk/pdbe/api/validation/rama_sidechain_listing/entry/' + ,
+        //         type: 'GET',
+        //         dataType: 'json',
+        //         data: data,
+        //         success: succes
+        //
+        //     })
+        // }
+        // let request = require('request');
+        //
+        // let options = {
+        //     url: 'http://www.ebi.ac.uk/pdbe/api/validation/rama_sidechain_listing/entry/' + this.pdbID
+        // };
+        // function callback(error: any, response: any, body: any) {
+        //     if (!error && response.statusCode === 200) {
+        //         let info = JSON.parse(body);
+        //         console.log(info);
+        //     }
+        // }
+        // return request(options, callback).response;
+        //
+        // let url = 'http://www.ebi.ac.uk/pdbe/api/validation/rama_sidechain_listing/entry/' + this.pdbID;
+        // xmlHttp.onreadystatechange = function () {
+        //     if (this.readyState === 4 && this.status === 200) {
+        //         let myArr = JSON.parse(this.responseText);
+        //         return ParsePDB.myFunction(myArr);
+        //     }
+        // };
+        // xmlHttp.open('GET', url, true);
+        // xmlHttp.send();
         let xmlHttp = new XMLHttpRequest();
         xmlHttp.open('GET',
-                     'http://www.ebi.ac.uk/pdbe/api/validation/rama_sidechain_listing/entry/' + this.pdbID,
-                     false);
-        xmlHttp.send(null);
-        return JSON.parse(xmlHttp.responseText);
+                     'http://www.ebi.ac.uk/pdbe/api/validation/rama_sidechain_listing/entry/' + this.pdbID, false);
+        xmlHttp.send();
+        let outl: object[] = [];
+        let fav: object[] = [];
+        let allow: object[] = [];
+        let list: object[] = [];
+        for (let mol of JSON.parse(xmlHttp.responseText)[this.pdbID].molecules) {
+            for (let chain of mol.chains) {
+                for (let mod of chain.models) {
+                    for (let resid of mod.residues) {
+                        list.push(new Res(resid.residue_name,
+                                          resid.phi,
+                                          resid.psi,
+                                          resid.rama,
+                                          chain.chain_id,
+                                          resid.residue_number));
+                        // switch (resid.rama) {
+                        //     case 'Favored':
+                        //         fav.push(new Res(resid.residue_name,
+                        //                          resid.phi,
+                        //                          resid.psi,
+                        //                          resid.rama,
+                        //                          chain.chain_id,
+                        //                          resid.residue_number));
+                        //         break;
+                        //     case 'Allowed':
+                        //         allow.push(new Res(resid.residue_name,
+                        //                            resid.phi,
+                        //                            resid.psi,
+                        //                            resid.rama,
+                        //                            chain.chain_id,
+                        //                            resid.residue_number));
+                        //         break;
+                        //     case 'OUTLIER':
+                        //         outl.push(new Res(resid.residue_name,
+                        //                           resid.phi,
+                        //                           resid.psi,
+                        //                           resid.rama,
+                        //                           chain.chain_id,
+                        //                           resid.residue_number));
+                        //         break;
+                        //     default:
+                        //         continue;
+                        // }
+                    }
+                }
+            }
+        }
+        return list;
+    }
 }
-}
+// }
         // let response = await fetch('http://www.ebi.ac.uk/pdbe/api/validation/rama_sidechain_listing/entry/'
         //     + this.pdbID);
         // if (response.status >= 400) {
