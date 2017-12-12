@@ -10,6 +10,7 @@
     "@types/node": "^8.0.55",
     "@types/prop-types": "^15.5.2",
     "@types/react": "^16.0.27",
+    "@types/react-bootstrap": "^0.31.8",
     "@types/react-dom": "^16.0.3",
     "@types/react-select": "^1.0.59",
     "bootstrap": "^3.3.7",
@@ -17,13 +18,16 @@
     "d3-scale": "1.0.7",
     "es6-promise": "^4.1.1",
     "isomorphic-fetch": "^2.2.1",
+    "jquery": "^3.2.1",
     "react": "^16.2.0",
+    "react-bootstrap": "^0.31.5",
     "react-d3-components": "^0.7.1",
     "react-dom": "^16.2.0",
     "react-scripts-ts": "2.8.0",
     "react-select-popover": "^0.1.1",
     "react-simple-dropdown": "^3.2.0",
-    "request": "^2.83.0"
+    "request": "^2.83.0",
+    "tslint": "^5.8.0"
   },
   "scripts": {
     "start": "react-scripts-ts start",

@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Component } from 'react';
 import ParsePDB from './parsePDB';
 import * as d3 from 'd3';
+import { DropdownButton } from 'react-bootstrap';
 
 interface RamaProps {
     pdbID: string;
@@ -316,35 +317,36 @@ class RamaData extends Component<RamaProps, {}> {
     //         );
     }
     render () {
-        const {width, height} = this.props;
+        // const {width, height} = this.props;
         return (
-            <div id="pdbinput">
-                <form>
-                    <input
-                        type="text"
-                        name="PDBId"
-                        id="pdbidinput"
-                        onChange={(e) => this.handleChange(e.target.value)}
-                    />
-                    <input
-                        type="button"
-                        value="GO!"
-                        id="subButton"
-                        onClick={(e) => this.getPDB()}
-                    />
-                    <div id="dropdown">
-                        <button id="dropbtn">Type of plot</button>
-                        <div id="dropdown-content">
-                            <a href="#">General case</a>
-                            <a href="#">Isoleucine and valine</a>
-                            <a href="#">Pre-proline</a>
-                            <a href="#">Glycine</a>
-                            <a href="#">Trans proline</a>
-                            <a href="#">Pre-proline</a>
-                        </div>
-                    </div>
-                </form>
-            </div>
+            <div/>
+        //     <div id="pdbinput">
+        //         <form>
+        //             <input
+        //                 type="text"
+        //                 name="PDBId"
+        //                 id="pdbidinput"
+        //                 onChange={(e) => this.handleChange(e.target.value)}
+        //             />
+        //             <input
+        //                 type="button"
+        //                 value="GO!"
+        //                 id="subButton"
+        //                 onClick={(e) => this.getPDB()}
+        //             />
+        //             <div id="dropdown">
+        //                 <button id="dropbtn">Type of plot</button>
+        //                 <div id="dropdown-content">
+        //                     <a href="#">General case</a>
+        //                     <a href="#">Isoleucine and valine</a>
+        //                     <a href="#">Pre-proline</a>
+        //                     <a href="#">Glycine</a>
+        //                     <a href="#">Trans proline</a>
+        //                     <a href="#">Pre-proline</a>
+        //                 </div>
+        //             </div>
+        //         </form>
+        //     </div>
         );
     }
         // const {pdbID} = this.props;
