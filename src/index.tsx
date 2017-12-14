@@ -3,6 +3,8 @@ import * as ReactDOM from 'react-dom';
 import registerServiceWorker from './registerServiceWorker';
 import './index.css';
 import RamaData  from './RamaScatter';
+import Menu from './Menu';
+import 'bootstrap/dist/css/bootstrap.css';
 
 // class Index extends React.Component {
 //     render() {
@@ -26,9 +28,14 @@ import RamaData  from './RamaScatter';
 //
 // ReactDOM.render(<Index/>, document.getElementById('menu') as HTMLElement);
 // registerServiceWorker();
-
 ReactDOM.render(
-  <RamaData pdbID={'4d10'} width={500} height={500}/>,
-  document.getElementById('root') as HTMLElement
+    <Menu/>,
+    document.getElementById('header') as HTMLElement
 );
 registerServiceWorker();
+
+// ReactDOM.render(
+//   <RamaData pdbID={'4d10'} width={500} height={500}/>,
+//   document.getElementById('root') as HTMLElement
+// );
+// registerServiceWorker();
