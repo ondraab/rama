@@ -15,7 +15,8 @@
     "suppressImplicitAnyIndexErrors": true,
     "outDir": "build",
     "skipLibCheck": true,
-    "allowJs": true
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true
   },
   "exclude": ["node_modules"],
   "compileOnSave": true,

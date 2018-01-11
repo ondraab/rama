@@ -1,10 +1,11 @@
 class Res {
-    aa: string;
-    phi: number;
-    psi: number;
-    rama: string;
-    chain: string;
-    num: number;
+    private aa: string;
+    private phi: number;
+    private psi: number;
+    private rama: string;
+    private chain: string;
+    private num: number;
+    private _value: number;
 
     constructor(aa: string, phi: number, psi: number, rama: string, chain: string, num: number) {
         this.aa = aa;
@@ -13,14 +14,21 @@ class Res {
         this.rama = rama;
         this.chain = chain;
         this.num = num;
+        this._value = 0;
+    }
+
+    set value(value: number) {
+        this._value = value;
     }
 }
 
 export class ParsePDB {
     private pdbID: string;
+    private _chainsArray: string[];
 
     constructor(pdb: string) {
         this.pdbID = pdb;
+        this._chainsArray = [];
     }
 
     public downloadAndParse(): object[] {
@@ -60,13 +68,13 @@ export class ParsePDB {
         xmlHttp.open('GET',
                      'http://www.ebi.ac.uk/pdbe/api/validation/rama_sidechain_listing/entry/' + this.pdbID, false);
         xmlHttp.send();
-        let outl: object[] = [];
-        let fav: object[] = [];
-        let allow: object[] = [];
         let list: object[] = [];
         for (let mol of JSON.parse(xmlHttp.responseText)[this.pdbID].molecules) {
+            // console.log(mol);
             for (let chain of mol.chains) {
+                this._chainsArray.push(chain.chain_id);
                 for (let mod of chain.models) {
+                    // this._chainsArray.push(chain.chain_id);
                     for (let resid of mod.residues) {
                         list.push(new Res(resid.residue_name,
                                           resid.phi,
@@ -108,6 +116,10 @@ export class ParsePDB {
         }
         return list;
     }
+    get chainsArray(): string[] {
+        return this._chainsArray;
+    }
+
 }
 // }
         // let response = await fetch('http://www.ebi.ac.uk/pdbe/api/validation/rama_sidechain_listing/entry/'

@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { Component } from 'react';
-import ParsePDB from './parsePDB';
 import * as d3 from 'd3';
-import { DropdownButton } from 'react-bootstrap';
 
 interface RamaProps {
     pdbID: string;
     width: number;
     height: number;
+    jsonObject?: object[];
+    typeOfPlot?: string;
 }
 
 interface Refs {
@@ -52,10 +52,39 @@ class RamaData extends Component<RamaProps, States> {
     }
 
     updateChard() {
-        this.svgContainer.selectAll('circle').remove();
-        let down = new ParsePDB(this.state.pdb);
-        let parsed: object[] = down.downloadAndParse();
+        let coloursYGB = [
+            '#FFFFDD',
+            '#AAF191',
+            '#80D385',
+            '#61B385',
+            '#3E9583',
+            '#217681',
+            '#285285',
+            '#1F2D86',
+            '#000086'];
 
+        let max = 9.993981004842512E-4;
+        let min = 0.0010012819800327606;
+
+        let colorScale = d3.scaleLinear<string>()
+            .domain(d3.ticks(min, max, 11))
+            .range(['#5E4FA2', '#3288BD', '#66C2A5', '#ABDDA4', '#E6F598',
+                '#FFFFBF', '#FEE08B', '#FDAE61', '#F46D43', '#D53E4F', '#9E0142']);
+        // let colourRangeYGB = d3.range(0, 1, 1.0 / (coloursYGB.length - 1));
+        // let colorScaleYGB = d3.scaleLinear()
+        //     .domain(colourRangeYGB)
+        //     .range(colourRangeYGB)
+        //     .interpolate(d3.interpolateHcl);
+        //
+        // var colorInterpolateYGB = d3.scaleLinear()
+        //     .domain(d3.extent(somData))
+        //     .range([0,1]);
+
+        this.svgContainer.selectAll('circle').remove();
+        // let down = new ParsePDB(this.state.pdb);
+        // let parsed: object[] = down.downloadAndParse();
+        let { jsonObject, typeOfPlot } = this.props;
+        console.log(typeOfPlot);
         function color(d: object) {
             switch (d['rama']) {
                 case 'Favored':
@@ -68,6 +97,16 @@ class RamaData extends Component<RamaProps, States> {
                     return '#ffe342';
             }
         }
+        d3.json('/data/rama8000basic.json', function (dat: any) {
+            jsonObject.forEach(function (d: any) {
+                let phi = (2 * Math.floor(d['phi'] / 2) + 1).toFixed(1);
+                dat[phi].forEach(function (i: any) {
+                      if (i.psi === (2 * Math.floor(d['psi'] / 2) + 1)) {
+                           d._value = i.value;
+                       }
+                  });
+            });
+        });
 
         // tooltip
         let toolTip = d3.select('body').append('div')
@@ -75,24 +114,62 @@ class RamaData extends Component<RamaProps, States> {
             .style('opacity', 0);
 
         this.svgContainer.selectAll('.shapes')
-            .data(parsed)
+            .data(jsonObject.filter(function (d: any) {
+                switch (typeOfPlot) {
+                    case '1':
+                        console.log(d.aa);
+                        return d;
+                    case '2':
+                        return (d['aa'] === 'ILE' || d['aa'] === 'VAL');
+                    case '3':
+                        return d;
+                    case '4':
+                        return d['aa'] === 'GLY';
+                    case '5':
+                        return d;
+                    default:
+                        return d;
+                }
+            }))
             .enter()
             .append('circle')
             .attr('r', 3.5)
             .attr('cx', this.xMap)
             .attr('cy', this.yMap)
-            .style('fill', function color(d: object) {
-                switch (d['rama']) {
-                    case 'Favored':
-                        return '#19667f';
-                    case 'OUTLIER':
-                        return '#ff0000';
-                    case 'Allowed':
-                        return '#0c7f3a';
-                    default:
-                        return '#ffe342';
-                }
+            .merge(this.svgContainer)
+            .style('fill', function (d: any) {
+                console.log(d._value);
+                // console.log(d._value);
+                // return colorScale(d.value);
+                // let phi = (2 * Math.floor(d['phi'] / 2) + 1).toFixed(1);
+                // d3.json('/data/rama8000basic.json', function (dat: any) {
+                //     for (let i = 0; i < dat[phi].length; i++) {
+                //          if (i['psi'] === (2 * Math.floor(d['psi'] / 2) + 1).toFixed(1)) {
+                //              return i['value'];
+                //          }
+                //         }
+                // }
+                // );
             })
+                // d3.csv('/data/rama8000-general-noGPIVpreP.csv', function (dat: any) {
+                //     console.log(dat);
+                // return colorScale(dat.filter(e => {
+                //     if (e.phi === (2 * Math.floor(d['phi'] / 2) + 1) &&
+                //         e.psi === (2 * Math.floor(d['psi'] / 2) + 1)) {
+                //         console.log(e.phi);
+                //     }
+                // }));
+                // });
+                // switch (d['rama']) {
+                //     case 'Favored':
+                //         return '#19667f';
+                //     case 'OUTLIER':
+                //         return '#ff0000';
+                //     case 'Allowed':
+                //         return '#0c7f3a';
+                //     default:
+                //         return '#ffe342';
+                // }
             .on('mouseover', function (d: object) {
                 toolTip.transition()
                     .duration(50)
