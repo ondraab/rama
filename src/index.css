@@ -10,7 +10,7 @@ div.tooltip {
   height: 45px;
   padding: 2px;
   font: 12px sans-serif;
-  background: lightgoldenrodyellow;
+  background: rgb(128, 129, 130);
   border: 0;
   border-radius: 8px;
   pointer-events: none;
@@ -104,6 +104,10 @@ div.tooltip {
 }
 .formGroup {
   margin: 5px;
+  padding: 5px;
+}
+#formDiv {
+  padding: 2px;
 }
 .react-select-box-container {
   position: relative;
@@ -323,3 +327,17 @@ div.tooltip {
   position: absolute;
   left: -99999em;
 }
+
+ #dropdown-bas {
+   float: left;
+ }
+
+ #multiselect {
+   float: left;
+   display: inline-block;
+ }
+
+ #block-container {
+   display: inline-block;
+   float: left;
+ }

@@ -16,15 +16,6 @@ interface MultiSelectProps {
     options: string[][];
 }
 
-const FLAVOURS = [
-    { label: 'Chocolate', value: 'chocolate' },
-    { label: 'Vanilla', value: 'vanilla' },
-    { label: 'Strawberry', value: 'strawberry' },
-    { label: 'Caramel', value: 'caramel' },
-    { label: 'Cookies and Cream', value: 'cookiescream' },
-    { label: 'Peppermint', value: 'peppermint' },
-];
-
 export default class MultiSelect extends React.Component<MultiSelectProps, States> {
     displayName: 'MultiSelectField';
     constructor(props: any) {
@@ -80,7 +71,7 @@ export default class MultiSelect extends React.Component<MultiSelectProps, State
                     multi={true}
                     onChange={this.handleSelectChange}
                     options={options}
-                    placeholder="Select your favourite(s)"
+                    placeholder="Select chain(s) to show"
                     simpleValue={true}
                     value={value}
                 />

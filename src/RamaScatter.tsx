@@ -16,6 +16,7 @@ interface Refs {
 
 interface States {
     pdb: string;
+    contours: string;
 }
 
 class RamaData extends Component<RamaProps, States> {
@@ -23,12 +24,16 @@ class RamaData extends Component<RamaProps, States> {
     svgContainer;
     xMap;
     yMap;
-
+    xTopAxis;
+    xBottomAxis;
+    yLeftAxis;
+    yRightAxis;
     constructor(props: any) {
         super(props);
         this.createChart = this.createChart.bind(this);
         this.state = {
             pdb: this.props.pdbID,
+            contours: this.props.typeOfPlot,
         };
     }
 
@@ -36,89 +41,44 @@ class RamaData extends Component<RamaProps, States> {
         this.createChart();
     }
 
-    componentDidUpdate() {
-        if (this.state.pdb.length === 4) {
+    componentDidUpdate(newProps: any) {
+        console.log(newProps.typeOfPlot);
+        if (this.state.pdb.length === 4 && newProps.pdbID !== this.state.pdb) {
+            this.basicContures(this.props.typeOfPlot);
             this.updateChard();
+            return;
         }
+        // if (this.state.contours !== newProps.typeOfPlot) {
+        //     this.basicContures(newProps.typeOfPlot);
+        // }
         return;
     }
 
     componentWillReceiveProps(nextProps: any) {
-        if (nextProps.pdbID !== this.state.pdb) {
+        if (nextProps.pdbID !== this.state.pdb && nextProps.pdbID.length === 4) {
             this.setState({
                 pdb: nextProps.pdbID,
             });
         }
+        return;
     }
 
     updateChard() {
-        let coloursYGB = [
-            '#FFFFDD',
-            '#AAF191',
-            '#80D385',
-            '#61B385',
-            '#3E9583',
-            '#217681',
-            '#285285',
-            '#1F2D86',
-            '#000086'];
-
-        let max = 9.993981004842512E-4;
-        let min = 0.0010012819800327606;
-
-        let colorScale = d3.scaleLinear<string>()
-            .domain(d3.ticks(min, max, 11))
-            .range(['#5E4FA2', '#3288BD', '#66C2A5', '#ABDDA4', '#E6F598',
-                '#FFFFBF', '#FEE08B', '#FDAE61', '#F46D43', '#D53E4F', '#9E0142']);
-        // let colourRangeYGB = d3.range(0, 1, 1.0 / (coloursYGB.length - 1));
-        // let colorScaleYGB = d3.scaleLinear()
-        //     .domain(colourRangeYGB)
-        //     .range(colourRangeYGB)
-        //     .interpolate(d3.interpolateHcl);
-        //
-        // var colorInterpolateYGB = d3.scaleLinear()
-        //     .domain(d3.extent(somData))
-        //     .range([0,1]);
 
         this.svgContainer.selectAll('circle').remove();
-        // let down = new ParsePDB(this.state.pdb);
-        // let parsed: object[] = down.downloadAndParse();
         let { jsonObject, typeOfPlot } = this.props;
-        console.log(typeOfPlot);
-        function color(d: object) {
-            switch (d['rama']) {
-                case 'Favored':
-                    return '#19667f';
-                case 'OUTLIER':
-                    return '#ff0000';
-                case 'Allowed':
-                    return '#0c7f3a';
-                default:
-                    return '#ffe342';
-            }
-        }
-        d3.json('/data/rama8000basic.json', function (dat: any) {
-            jsonObject.forEach(function (d: any) {
-                let phi = (2 * Math.floor(d['phi'] / 2) + 1).toFixed(1);
-                dat[phi].forEach(function (i: any) {
-                      if (i.psi === (2 * Math.floor(d['psi'] / 2) + 1)) {
-                           d._value = i.value;
-                       }
-                  });
-            });
-        });
+        // console.log(jsonObject);
 
         // tooltip
         let toolTip = d3.select('body').append('div')
             .attr('class', 'tooltip')
             .style('opacity', 0);
-
+        //
         this.svgContainer.selectAll('.shapes')
             .data(jsonObject.filter(function (d: any) {
                 switch (typeOfPlot) {
                     case '1':
-                        console.log(d.aa);
-                        return d;
+                            return d;
                     case '2':
                         return (d['aa'] === 'ILE' || d['aa'] === 'VAL');
                     case '3':
@@ -133,59 +93,33 @@ class RamaData extends Component<RamaProps, States> {
             }))
             .enter()
             .append('circle')
-            .attr('r', 3.5)
+            .attr('r', 2.5)
             .attr('cx', this.xMap)
             .attr('cy', this.yMap)
             .merge(this.svgContainer)
-            .style('fill', function (d: any) {
-                console.log(d._value);
-                // console.log(d._value);
-                // return colorScale(d.value);
-                // let phi = (2 * Math.floor(d['phi'] / 2) + 1).toFixed(1);
-                // d3.json('/data/rama8000basic.json', function (dat: any) {
-                //     for (let i = 0; i < dat[phi].length; i++) {
-                //          if (i['psi'] === (2 * Math.floor(d['psi'] / 2) + 1).toFixed(1)) {
-                //              return i['value'];
-                //          }
-                //         }
-                // }
-                // );
-            })
-                // d3.csv('/data/rama8000-general-noGPIVpreP.csv', function (dat: any) {
-                //     console.log(dat);
-                // return colorScale(dat.filter(e => {
-                //     if (e.phi === (2 * Math.floor(d['phi'] / 2) + 1) &&
-                //         e.psi === (2 * Math.floor(d['psi'] / 2) + 1)) {
-                //         console.log(e.phi);
-                //     }
-                // }));
-                // });
-                // switch (d['rama']) {
-                //     case 'Favored':
-                //         return '#19667f';
-                //     case 'OUTLIER':
-                //         return '#ff0000';
-                //     case 'Allowed':
-                //         return '#0c7f3a';
-                //     default:
-                //         return '#ffe342';
-                // }
+            .style('fill', 'none')
+            .style('stroke', 'black')
+            .style('stroke-width', '1')
             .on('mouseover', function (d: object) {
                 toolTip.transition()
                     .duration(50)
-                    .style('opacity', .9);
+                    .style('opacity', .95);
                 toolTip.html(d['aa'] + ' ' + d['num'] + ' ' + d['chain'] + '<br/>'
                     + 'phi: ' + d['phi'] + '<br/>psi: ' + d['psi'])
                     .style('left', (d3.event.pageX) + 'px')
                     .style('top', (d3.event.pageY - 28) + 'px');
                 d3.select(this)
-                    .style('fill', 'yellow');
+                    .attr('r', 8)
+                    .style('fill', '#015b86');
             })
             .on('mouseout', function (d: object) {
                     d3.select(this)
                         .transition()
                         .duration(200)
-                        .style('fill', color(d));
+                        .attr('r', 2.5)
+                        .style('fill', 'none')
+                        .style('stroke', 'black')
+                        .style('stroke-width', '1');
                     toolTip.transition()
                         .duration(200)
                         .style('opacity', 0);
@@ -201,9 +135,9 @@ class RamaData extends Component<RamaProps, States> {
                 .domain([-180, 180])
                 .range([0, 0.85 * (width)]);
 
-        const xBottomAxis = d3.axisBottom(xScale),
-            xTopAxis = d3.axisTop(xScale),
-            xValue = function (d: object) {
+        this.xBottomAxis = d3.axisBottom(xScale);
+        this.xTopAxis = d3.axisTop(xScale);
+        const xValue = function (d: object) {
                 return d['phi'];
             };
 
@@ -213,11 +147,10 @@ class RamaData extends Component<RamaProps, States> {
 
         const yScale = d3.scaleLinear()
                 .domain([180, -180])
-                .range([0, 0.85 * (height)]),
-
-            yLeftAxis = d3.axisLeft(yScale),
-            yRightAxis = d3.axisRight(yScale),
-            yValue = function (d: object) {
+                .range([0, 0.85 * (height)]);
+        this.yLeftAxis = d3.axisLeft(yScale);
+        this.yRightAxis = d3.axisRight(yScale);
+        const yValue = function (d: object) {
                 return d['psi'];
             };
         this.yMap = function (d: any) {
@@ -234,21 +167,109 @@ class RamaData extends Component<RamaProps, States> {
         // add axes
 
         this.svgContainer.append('g')
-            .call(xTopAxis);
+            .call(this.xTopAxis);
 
         this.svgContainer.append('g')
             .attr('transform', 'translate(0,' + (0.85 * height) + ')')
-            .call(xBottomAxis);
+            .call(this.xBottomAxis);
 
         this.svgContainer.append('g')
-            .call(yLeftAxis);
+            .call(this.yLeftAxis);
 
         this.svgContainer.append('g')
             .attr('transform', function () {
                 return 'translate(' + (0.85 * width) + ', 0)';
             })
-            .call(yRightAxis);
+            .call(this.yRightAxis);
     }
+
+    basicContures(contureType: string) {
+
+        let min = 9.419397742547137e-7;
+        let svg = this.svgContainer;
+
+        let xMap = this.xMap;
+        let yMap = this.yMap;
+
+        let url = 'https://raw.githubusercontent.com/ondraab/rama/master/build/data/';
+        switch (contureType) {
+            case '1':
+                url += 'rama8000-general-noGPIVpreP.csv';
+                break;
+            case '2':
+                url += 'rama8000-general-noGPIVpreP.csv';
+                break;
+            case '3':
+                url += 'rama8000-general-noGPIVpreP.csv';
+                break;
+            case '4':
+                url += 'rama8000-general-noGPIVpreP.csv';
+                break;
+            case '5':
+                url += 'rama8000-general-noGPIVpreP.csv';
+                break;
+            default:
+                return;
+        }
+
+        console.log(url);
+        d3.csv(url, function (error: any, data: any) {
+            if (error) { throw error; }
+            data.forEach(function (d: any) {
+                d.psi = +d.psi;
+                d.phi = +d.phi;
+                d.value = +d.value;
+                return d;
+            });
+            let heatColorScale = d3.scaleLinear<string>()
+                .domain([min, 0.045])
+                .interpolate(d3.interpolateRgb)
+                .range([
+                    '#fff28d',
+                    '#fac524',
+                    '#660a00']);
+
+            let median = d3.median(data, function (d: any) {
+                return d.value;
+            });
+            svg.selectAll('.shapes')
+                .data(data)
+                .enter()
+                .append('circle')
+                .attr('r', 3)
+                .attr('cx', xMap)
+                .attr('cy', yMap)
+                .merge(svg)
+                .style('opacity', function (d: any) {
+                    if (d.value < median) {
+                        return 0;
+                    }
+                    return 0.2;
+                })
+                .style('fill', function (d: any) {
+                    if (d.value > median) {
+                        return heatColorScale(d.value);
+                    }
+                    return 'white';
+                })
+                .attr('pointer-events', 'none');
+        });
+        // this.svgContainer.append('g')
+        //     .call(this.xTopAxis);
+        //
+        // this.svgContainer.append('g')
+        //     .attr('transform', 'translate(0,' + (0.85 * height) + ')')
+        //     .call(this.xBottomAxis);
+        //
+        // this.svgContainer.append('g')
+        //     .call(this.yLeftAxis);
+        //
+        // this.svgContainer.append('g')
+        //     .attr('transform', function () {
+        //         return 'translate(' + (0.85 * width) + ', 0)';
+        //     })
+        //     .call(this.yRightAxis);
+}
 
     render () {
         return (

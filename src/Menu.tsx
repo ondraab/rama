@@ -1,7 +1,8 @@
 import * as React from 'react';
 import 'bootstrap/less/bootstrap.less';
-import { Button, ButtonGroup, FormGroup, FormControl, InputGroup, DropdownButton, MenuItem } from 'react-bootstrap';
-import * as ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+import {
+    Button, FormGroup, FormControl, InputGroup, DropdownButton, MenuItem,
+} from 'react-bootstrap';
 import RamaData from './RamaScatter';
 import ParsePDB from './parsePDB';
 import MultiSelect from './MultiSelect';
@@ -36,18 +37,6 @@ export default class FilterComponent extends React.Component<{}, States> {
     public onFilter(obj: any) {
         const setFilter = this.props;
         const dogData = this.props;
-    }
-
-    public changeState(obj: any) {
-        return this.setState({
-            showFilter: !obj,
-        });
-    }
-
-    public changeButtonState() {
-        this.setState({
-            buttonClicked: true,
-        });
     }
 
     public updateInputValue(evt: any) {
@@ -97,21 +86,6 @@ export default class FilterComponent extends React.Component<{}, States> {
         this.chains = tempChains;
     }
 
-    public chainButtons() {
-        const chainsToShowButtons = [];
-        this.chains.map(n => {
-            chainsToShowButtons.push(
-                <Button
-                    bsStyle="primary"
-                    bsSize="small"
-                    key={n}
-                >
-                    {n}
-                </Button>);
-        });
-        return chainsToShowButtons;
-    }
-
     public handleDropdownClick(key: any) {
         this.setState({
             filter: key,
@@ -143,17 +117,11 @@ export default class FilterComponent extends React.Component<{}, States> {
 
         const filterControls = (
             <div>
-                <ReactCSSTransitionGroup
-                    transitionName="example"
-                    transitionEnterTimeout={200}
-                    transitionLeaveTimeout={200}
-                >
-                    <MultiSelect label={'Chains to show'} options={this.chains}/>
-                    <h4/>
+                <div id={'dropdown-bas'}>
                     <DropdownButton
                         bsStyle={'primary'}
                         title="Type of plot"
-                        id={'dropdown-basic-$1'}
+                        id={'dropdown-basic'}
                         bsSize={'small'}
                         onSelect={this.handleDropdownClick}
                     >
@@ -164,7 +132,10 @@ export default class FilterComponent extends React.Component<{}, States> {
                         <MenuItem eventKey={'5'} active={'5' === this.state.filter}>Trans proline</MenuItem>
                         <MenuItem eventKey={'6'} active={'6' === this.state.filter}>Cis proline</MenuItem>
                     </DropdownButton>
-                </ReactCSSTransitionGroup>
+                </div>
+                <div id={'multiselect'}>
+                    <MultiSelect label={'Chains to show'} options={this.chains}/>
+                </div>
         </div>
         );
 
@@ -184,7 +155,7 @@ export default class FilterComponent extends React.Component<{}, States> {
             />
         );
         return (
-            <div>
+            <div id={'formDiv'}>
                 <FormGroup
                     controlId={'controlText'}
                     validationState={this.getValidationState()}
@@ -193,7 +164,9 @@ export default class FilterComponent extends React.Component<{}, States> {
                         <FormControl type="text" placeholder={'PDBid'} onChange={evt => this.updateInputValue(evt)}/>
                         <InputGroup.Button>
                         <Button
-                            onClick={() => this.changeButtonState()}
+                            onClick={() => this.setState({
+                                buttonClicked: true
+                            })}
                             bsStyle={'primary'}
                             disabled={this.state.inputValue.length !== 4}
                         >
@@ -202,73 +175,24 @@ export default class FilterComponent extends React.Component<{}, States> {
                     </InputGroup.Button>
                     </InputGroup>
                 </FormGroup>
-                <h3>Settings and info{' '}
-                    <Button
-                        bsSize={'small'}
-                        onClick={() => {this.changeState(this.state.showFilter); }}
-                    >
-                        {this.state['showFilter'] ? 'Hide' : 'Show'}
-                    </Button>
-                </h3>
-                {this.state['showFilter'] ? filterControls : null}
+                <DropdownButton
+                    bsStyle={'primary'}
+                    title="Type of plot"
+                    id={'dropdown-basic-$1'}
+                    bsSize={'small'}
+                    onSelect={this.handleDropdownClick}
+                >
+                    <MenuItem eventKey={'1'} active={'1' === this.state.filter}>General case</MenuItem>
+                    <MenuItem eventKey={'2'} active={'2' === this.state.filter}>Isoleucine and valine</MenuItem>
+                    <MenuItem eventKey={'3'} active={'3' === this.state.filter}>Pre-proline</MenuItem>
+                    <MenuItem eventKey={'4'} active={'4' === this.state.filter}>Glycine</MenuItem>
+                    <MenuItem eventKey={'5'} active={'5' === this.state.filter}>Trans proline</MenuItem>
+                    <MenuItem eventKey={'6'} active={'6' === this.state.filter}>Cis proline</MenuItem>
+                </DropdownButton>
+                <MultiSelect  label={''} options={this.chains}/>
+                {this.state.showFilter ? filterControls : null}
                 {ramanPlot}
             </div>
         );
     }
 }
-
-// export default class Menu extends Component {
-//     constructor(props: any) {
-//         super(props);
-//         this.state = {
-//             showFilter: true,
-//         };
-//     }
-//     onFilter(obj: object) {
-//         const setFilter = this.props;
-//         setFilter(obj);
-//     }
-//
-//     render() {
-//         const showFilter = this.state;
-//         const pdbData = this.state;
-//         const {chain, typeOfGraph } = pdbData;
-//
-//
-//         const chainName.map(n => {
-//
-//         })
-//
-//         return (
-//             <div>
-//                 <h3>Filter{' '}
-//                     <Button
-//                         bsSize={'small'}
-//                         onClick={() => {this.setState({showFilter: !showFilter});}}>
-//                         Toggle Filter
-//                     </Button>
-//                 </h3>
-//                 {showFilter ? filterControls : ''}
-//             </div>);
-//     }
-//         // return(
-//             {/*<Form inline={true}>*/}
-//                 {/*<ControlLabel>PDBid</ControlLabel>*/}
-//                 {/*<FormControl type="text" placeholder="4 letter PDB code"/>*/}
-//                 {/*<Button type="submit">Plot</Button>*/}
-//             {/*</Form>*/}
-//             {/*<DropdownButton bsStyle="primary" title="Type of plot" id={`dropdown-basic-$1`}>*/}
-//                 {/*<MenuItem eventKey={'1'}>General case</MenuItem>*/}
-//                 {/*<MenuItem eventKey={'2'}> Isoleucine and valine</MenuItem>*/}
-//                 {/*<MenuItem eventKey={'3'}>Pre-proline</MenuItem>*/}
-//                 {/*<MenuItem eventKey={'4'}>Glycine</MenuItem>*/}
-//                 {/*<MenuItem eventKey={'5'}>Trans proline</MenuItem>*/}
-//                 {/*<MenuItem eventKey={'6'}>Pre-proline</MenuItem>*/}
-//             {/*</DropdownButton>*/}
-//         // );
-//     }
-// }
-//
-// Menu.prototype = {
-//     setFilter: ReactPropTypes.func.isRequired,
-// };

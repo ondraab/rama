@@ -5,7 +5,6 @@ class Res {
     private rama: string;
     private chain: string;
     private num: number;
-    private _value: number;
 
     constructor(aa: string, phi: number, psi: number, rama: string, chain: string, num: number) {
         this.aa = aa;
@@ -14,11 +13,6 @@ class Res {
         this.rama = rama;
         this.chain = chain;
         this.num = num;
-        this._value = 0;
-    }
-
-    set value(value: number) {
-        this._value = value;
     }
 }
 
