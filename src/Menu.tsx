@@ -148,14 +148,15 @@ export default class FilterComponent extends React.Component<{}, States> {
         const ramanPlot = (
             <RamaData
                 pdbID={this.returnState()}
-                width={500}
-                height={500}
+                width={0.85 * window.innerHeight}
+                height={0.85 * window.innerHeight}
                 jsonObject={this.parsedPDB}
                 typeOfPlot={this.state.filter}
             />
         );
         return (
-            <div id={'formDiv'}>
+            <div>
+                <div id={'formDiv'}>
                 <FormGroup
                     controlId={'controlText'}
                     validationState={this.getValidationState()}
@@ -179,8 +180,8 @@ export default class FilterComponent extends React.Component<{}, States> {
                     bsStyle={'primary'}
                     title="Type of plot"
                     id={'dropdown-basic-$1'}
-                    bsSize={'small'}
                     onSelect={this.handleDropdownClick}
+                    pullRight={true}
                 >
                     <MenuItem eventKey={'1'} active={'1' === this.state.filter}>General case</MenuItem>
                     <MenuItem eventKey={'2'} active={'2' === this.state.filter}>Isoleucine and valine</MenuItem>
@@ -189,6 +190,7 @@ export default class FilterComponent extends React.Component<{}, States> {
                     <MenuItem eventKey={'5'} active={'5' === this.state.filter}>Trans proline</MenuItem>
                     <MenuItem eventKey={'6'} active={'6' === this.state.filter}>Cis proline</MenuItem>
                 </DropdownButton>
+            </div>
                 <MultiSelect  label={''} options={this.chains}/>
                 {this.state.showFilter ? filterControls : null}
                 {ramanPlot}

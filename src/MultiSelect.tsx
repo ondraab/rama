@@ -61,10 +61,10 @@ export default class MultiSelect extends React.Component<MultiSelectProps, State
         // console.log(options);
         return (
             <div className="section">
-                <h4
-                    className="section-heading"
-                >{this.props.label}
-                </h4>
+                {/*<h4*/}
+                    {/*className="section-heading"*/}
+                {/*>{this.props.label}*/}
+                {/*</h4>*/}
                 <Select
                     closeOnSelect={!stayOpen}
                     disabled={disabled}
