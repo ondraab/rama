@@ -162,6 +162,9 @@ th {
 .grid path {
   stroke-width: 0;
 }
+#typeahead {
+  padding: 0 2px 0 2px;
+}
 .react-select-box-container {
   position: relative;
   width: 240px;

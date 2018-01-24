@@ -5,7 +5,8 @@ import {
 } from 'react-bootstrap';
 import RamaData from './RamaScatter';
 import ParsePDB from './parsePDB';
-import MultiSelect from './MultiSelect';
+import { Typeahead } from 'react-bootstrap-typeahead';
+import 'react-bootstrap-typeahead/css/Typeahead.css';
 
 interface States {
     showFilter?: boolean;
@@ -13,7 +14,8 @@ interface States {
     buttonClicked: boolean;
     buttonState: string;
     jsonObject: object[];
-    filter: string;
+    contoursType: string;
+    chainsToShow: string[];
 }
 
 export default class FilterComponent extends React.Component<{}, States> {
@@ -28,15 +30,11 @@ export default class FilterComponent extends React.Component<{}, States> {
             buttonClicked: false,
             buttonState: 'disabled',
             jsonObject: [],
-            filter: '1',
+            contoursType: '1',
+            chainsToShow: [],
         };
         this.chains = [];
         this.handleDropdownClick = this.handleDropdownClick.bind(this);
-    }
-
-    public onFilter(obj: any) {
-        const setFilter = this.props;
-        const dogData = this.props;
     }
 
     public updateInputValue(evt: any) {
@@ -71,79 +69,36 @@ export default class FilterComponent extends React.Component<{}, States> {
         let pdb = new ParsePDB(this.state.inputValue);
         this.parsedPDB = pdb.downloadAndParse();
         this.chains = pdb.chainsArray;
-        this.chainOptions();
+        // this.chainOptions();
     }
 
-    public chainOptions() {
-        let tempChains = [];
-        for (let chain of this.chains) {
-            let ch = {
-                label: chain,
-                value: chain,
-            };
-            tempChains.push(ch);
-        }
-        this.chains = tempChains;
+    public chainFilter(selected: any) {
+        this.setState({
+            chainsToShow: selected
+        });
+        // console.log(this.state.chainsToShow);
     }
+
+    // public chainOptions() {
+    //     let tempChains = [];
+    //     for (let chain of this.chains) {
+    //         // let ch = {
+    //         //     label: chain,
+    //         //     value: chain,
+    //         // };
+    //         // console.log(c)
+    //         tempChains.push(chain);
+    //     }
+    //     this.chains = tempChains;
+    // }
 
     public handleDropdownClick(key: any) {
         this.setState({
-            filter: key,
+            contoursType: key,
         });
     }
 
     public render() {
-        const dogData = this.props;
-        const showFilter = this.state;
-        const sex = dogData;
-        const nameLengthMax = dogData;
-        const nameLengthMin = dogData;
-        const filter = this.state;
-
-        const nameLengthMinButtons = [];
-        const nameLengthsMin = [0, 3, 5, 10, 20];
-        nameLengthsMin.map(n => {
-            nameLengthMinButtons.push(
-                <Button
-                    bsStyle="primary"
-                    bsSize="small"
-                    disabled={n >= nameLengthMax}
-                    key={'nameLengthMaxBtn' + n}
-                    onClick={() => {this.onFilter({nameLengthMin: n}); }}
-                >
-                    {n}
-                </Button>);
-        });
-
-        const filterControls = (
-            <div>
-                <div id={'dropdown-bas'}>
-                    <DropdownButton
-                        bsStyle={'primary'}
-                        title="Type of plot"
-                        id={'dropdown-basic'}
-                        bsSize={'small'}
-                        onSelect={this.handleDropdownClick}
-                    >
-                        <MenuItem eventKey={'1'} active={'1' === this.state.filter}>General case</MenuItem>
-                        <MenuItem eventKey={'2'} active={'2' === this.state.filter}>Isoleucine and valine</MenuItem>
-                        <MenuItem eventKey={'3'} active={'3' === this.state.filter}>Pre-proline</MenuItem>
-                        <MenuItem eventKey={'4'} active={'4' === this.state.filter}>Glycine</MenuItem>
-                        <MenuItem eventKey={'5'} active={'5' === this.state.filter}>Trans proline</MenuItem>
-                        <MenuItem eventKey={'6'} active={'6' === this.state.filter}>Cis proline</MenuItem>
-                    </DropdownButton>
-                </div>
-                <div id={'multiselect'}>
-                    <MultiSelect label={'Chains to show'} options={this.chains}/>
-                </div>
-        </div>
-        );
-
-        function setActive(key: any) {
-            this.setState({
-                isActive: key,
-            });
-        }
 
         const ramanPlot = (
             <RamaData
@@ -151,9 +106,15 @@ export default class FilterComponent extends React.Component<{}, States> {
                 width={0.85 * window.innerHeight}
                 height={0.85 * window.innerHeight}
                 jsonObject={this.parsedPDB}
-                typeOfPlot={this.state.filter}
+                typeOfPlot={this.state.contoursType}
+                chainsToShow={this.state.chainsToShow}
             />
         );
+
+        // function chainFilter (d: any) {
+        //
+        // }
+
         return (
             <div>
                 <div id={'formDiv'}>
@@ -183,16 +144,24 @@ export default class FilterComponent extends React.Component<{}, States> {
                     onSelect={this.handleDropdownClick}
                     pullRight={true}
                 >
-                    <MenuItem eventKey={'1'} active={'1' === this.state.filter}>General case</MenuItem>
-                    <MenuItem eventKey={'2'} active={'2' === this.state.filter}>Isoleucine and valine</MenuItem>
-                    <MenuItem eventKey={'3'} active={'3' === this.state.filter}>Pre-proline</MenuItem>
-                    <MenuItem eventKey={'4'} active={'4' === this.state.filter}>Glycine</MenuItem>
-                    <MenuItem eventKey={'5'} active={'5' === this.state.filter}>Trans proline</MenuItem>
-                    <MenuItem eventKey={'6'} active={'6' === this.state.filter}>Cis proline</MenuItem>
+                    <MenuItem eventKey={'1'} active={'1' === this.state.contoursType}>General case</MenuItem>
+                    <MenuItem eventKey={'2'} active={'2' === this.state.contoursType}>Isoleucine and valine</MenuItem>
+                    <MenuItem eventKey={'3'} active={'3' === this.state.contoursType}>Pre-proline</MenuItem>
+                    <MenuItem eventKey={'4'} active={'4' === this.state.contoursType}>Glycine</MenuItem>
+                    <MenuItem eventKey={'5'} active={'5' === this.state.contoursType}>Trans proline</MenuItem>
+                    <MenuItem eventKey={'6'} active={'6' === this.state.contoursType}>Cis proline</MenuItem>
                 </DropdownButton>
             </div>
-                <MultiSelect  label={''} options={this.chains}/>
-                {this.state.showFilter ? filterControls : null}
+                <div id={'typeahead'}>
+                    <Typeahead
+                        clearButton={true}
+                        options={this.chains}
+                        selected={this.chains}
+                        labelKey="name"
+                        multiple={true}
+                        onChange={(selected) => this.chainFilter(selected)}
+                    />
+                </div>
                 {ramanPlot}
             </div>
         );
