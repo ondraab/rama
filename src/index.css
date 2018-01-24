@@ -132,7 +132,7 @@ td {
   text-align: right;
 }
 svg {
-  overflow: visible;
+  border: 25px;
 }
 
 div.outliers {
@@ -152,6 +152,15 @@ table{
 }
 th {
   text-align: left;
+}
+.grid line {
+  stroke: lightgrey;
+  stroke-opacity: 0.7;
+  shape-rendering: crispEdges;
+}
+
+.grid path {
+  stroke-width: 0;
 }
 .react-select-box-container {
   position: relative;

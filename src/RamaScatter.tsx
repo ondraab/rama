@@ -89,10 +89,10 @@ class RamaData extends Component<RamaProps, States> {
 
         this.xTopAxis = d3.axisTop(xScale);
 
-        this.xTopAxis = d3.axisTop(xScale)
-            .tickSizeInner(-0.85 * width)
-            .tickSizeOuter(0)
-            .tickPadding(10);
+        this.xTopAxis = d3.axisTop(xScale);
+            // .tickSizeInner(-0.85 * width)
+            // .tickSizeOuter(0)
+            // .tickPadding(10);
 
         const xValue = function (d: object) {
             return d['phi'];
@@ -105,10 +105,10 @@ class RamaData extends Component<RamaProps, States> {
         const yScale = d3.scaleLinear()
             .domain([180, -180])
             .range([0, 0.85 * (height)]);
-        this.yLeftAxis = d3.axisLeft(yScale)
-            .tickSizeInner(-0.85 * height)
-            .tickSizeOuter(0)
-            .tickPadding(10);
+        this.yLeftAxis = d3.axisLeft(yScale);
+            // .tickSizeInner(-0.85 * height)
+            // .tickSizeOuter(0)
+            // .tickPadding(10);
 
         this.yRightAxis = d3.axisRight(yScale);
         const yValue = function (d: object) {
@@ -128,34 +128,54 @@ class RamaData extends Component<RamaProps, States> {
 
         // setup container
 
-        // function make_y_gridlines() {
-        //     return d3.axisLeft(yScale);
-        // }
+        function make_y_gridlines() {
+            return d3.axisLeft(yScale);
+                // .ticks(8);
+        }
 
-        this.svgContainer = d3.select('#root').append('svg')
+        function make_x_gridlines() {
+            return d3.axisBottom(xScale)
+                .ticks(8);
+                // .tickValues([]);
+        }
+
+        this.svgContainer = d3.select('#root').append('div').append('svg')
             .attr('width', width)
             .attr('height', height)
-            .style('padding', '30px');
-
+            .style('padding', '30px')
+            .style('overflow', 'visible');
+        //
         // add axes
 
         this.svgContainer.append('g')
-            .call(this.xTopAxis)
-            .attr('class', 'grid');
+            .call(this.xTopAxis);
+            // .attr('class', 'grid');
 
         this.svgContainer.append('g')
             .attr('transform', 'translate(0,' + (0.85 * height) + ')')
             .call(this.xBottomAxis);
 
         this.svgContainer.append('g')
-            .call(this.yLeftAxis)
-            .attr('class', 'grid');
+            .call(this.yLeftAxis);
+            // .attr('class', 'grid');
 
         this.svgContainer.append('g')
             .attr('transform', function () {
                 return 'translate(' + (0.85 * width) + ', 0)';
             })
             .call(this.yRightAxis);
+
+        this.svgContainer.append('g')
+            .attr('class', 'grid')
+            .attr('transform', 'translate(0,' + 0.85*height + ')')
+            .call(make_x_gridlines()
+                .tickSize(-0.85 * height));
+
+        this.svgContainer.append('g')
+            .attr('class', 'grid')
+            // .attr("transform", "translate(0," + height + ")")
+            .call(make_y_gridlines()
+                .tickSize(-0.85 * height));
 
         // this.svgContainer.append('g')
         //     .attr('class', 'grid')
@@ -203,7 +223,8 @@ class RamaData extends Component<RamaProps, States> {
 
         d3.select('.outl').append('div')
             .attr('class', 'outliers-container');
-
+        //
+        d3.selectAll('g.grid g.tick text').remove();
     }
 
     updateChart() {
