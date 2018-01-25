@@ -66,6 +66,7 @@ export default class FilterComponent extends React.Component<{}, States> {
     }
 
     public down() {
+        this.chains = [];
         let pdb = new ParsePDB(this.state.inputValue);
         this.parsedPDB = pdb.downloadAndParse();
         this.chains = pdb.chainsArray;
@@ -76,21 +77,7 @@ export default class FilterComponent extends React.Component<{}, States> {
         this.setState({
             chainsToShow: selected
         });
-        // console.log(this.state.chainsToShow);
     }
-
-    // public chainOptions() {
-    //     let tempChains = [];
-    //     for (let chain of this.chains) {
-    //         // let ch = {
-    //         //     label: chain,
-    //         //     value: chain,
-    //         // };
-    //         // console.log(c)
-    //         tempChains.push(chain);
-    //     }
-    //     this.chains = tempChains;
-    // }
 
     public handleDropdownClick(key: any) {
         this.setState({
@@ -110,10 +97,6 @@ export default class FilterComponent extends React.Component<{}, States> {
                 chainsToShow={this.state.chainsToShow}
             />
         );
-
-        // function chainFilter (d: any) {
-        //
-        // }
 
         return (
             <div>
@@ -156,7 +139,7 @@ export default class FilterComponent extends React.Component<{}, States> {
                     <Typeahead
                         clearButton={true}
                         options={this.chains}
-                        selected={this.chains}
+                        selected={this.chains.sort()}
                         labelKey="name"
                         multiple={true}
                         onChange={(selected) => this.chainFilter(selected)}

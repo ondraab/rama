@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Component } from 'react';
 import * as d3 from 'd3';
-import { func } from 'prop-types';
 
 interface RamaProps {
     pdbID: string;
@@ -81,10 +80,8 @@ class RamaData extends Component<RamaProps, States> {
         if (nextProps.typeOfPlot !== this.state.contours) {
             return true;
         }
-        if (nextProps.chainsToShow.length !== this.state.chainsToShow.length) {
-            return true;
-        }
-        return false;
+        return nextProps.chainsToShow.length !== this.state.chainsToShow.length;
+
     }
 
     componentWillReceiveProps(nextProps: any) {
@@ -150,28 +147,18 @@ class RamaData extends Component<RamaProps, States> {
             return yScale(yValue(d));
         };
 
-        // let yGrid = this.xBottomAxis.ticks(8)
-        //     .tickSize(-height, 0)
-        //     .tickFormat('');
-        //
-        // let xGrid = this.yLeftAxis.ticks(8)
-        //     .tickSize(-height, 0)
-        //     .tickFormat('');
-
-        // setup container
-
-        function make_y_gridlines() {
+        function makeYGridlines() {
             return d3.axisLeft(yScale);
-                // .ticks(8);
         }
 
-        function make_x_gridlines() {
+        function makeXGridlines() {
             return d3.axisBottom(xScale)
                 .ticks(8);
-                // .tickValues([]);
         }
 
-        this.svgContainer = d3.select('#root').append('div').append('svg')
+        this.svgContainer = d3.select('#root').append('div')
+            .attr('id', 'svg-container')
+            .append('svg')
             .attr('width', width)
             .attr('height', height)
             .style('padding', '30px')
@@ -200,50 +187,14 @@ class RamaData extends Component<RamaProps, States> {
         this.svgContainer.append('g')
             .attr('class', 'grid')
             .attr('transform', 'translate(0,' + 0.85 * height + ')')
-            .call(make_x_gridlines()
+            .call(makeXGridlines()
                 .tickSize(-0.85 * height));
 
         this.svgContainer.append('g')
             .attr('class', 'grid')
             // .attr("transform", "translate(0," + height + ")")
-            .call(make_y_gridlines()
+            .call(makeYGridlines()
                 .tickSize(-0.85 * height));
-
-        // this.svgContainer.append('g')
-        //     .attr('class', 'grid')
-        //     .call(xGrid);
-        //
-        // this.svgContainer.append('g')
-        //     .attr('class', 'grid')
-        //     .attr('transform', 'translate(0,' + height + ')')
-        //     .call(yGrid);
-
-        // this.svgContainer.selectAll('line.x')
-        //     .data(xScale.ticks(8))
-        //     .enter().append('line')
-        //     .attr('class', 'x')
-        //     .attr('x1', xScale)
-        //     .attr('x2', xScale)
-        //     .attr('y1', -180)
-        //     .attr('y2', 180)
-        //     .style('stroke', '#ccc');
-        //
-        // this.svgContainer.selectAll('line.y')
-        //     .data(xScale.ticks(8))
-        //     .enter().append('line')
-        //     .attr('class', 'y')
-        //     .attr('x1', -180)
-        //     .attr('x2', 180)
-        //     .attr('y1', yScale)
-        //     .attr('y2', yScale)
-        //     .style('stroke', '#ccc');
-
-        // this.svgContainer.append("g")
-        //     .attr("class", "grid")
-        //     .call(make_y_gridlines()
-        //         .tickSize(-width)
-        //         .tickFormat()
-        //     );
 
         // outliers headline
         d3.select('#root').append('div')
@@ -264,7 +215,7 @@ class RamaData extends Component<RamaProps, States> {
         this.svgContainer.selectAll('.dataGroup').remove();
         let { width, height } = this.props;
         let { contours } = this.state;
-        console.log(jsonObject);
+
         // scales
         const xScale = d3.scaleLinear()
             .domain([-180, 180])
@@ -338,14 +289,14 @@ class RamaData extends Component<RamaProps, States> {
             .attr('class', 'table table-hover table-responsive');
 
         let outliersList = [];
-        console.log(chainsToShow);
+
         this.svgContainer.selectAll('.shapes')
             .data(jsonObject.filter(function (d: any, i: number) {
 
-                if (d.rama === 'OUTLIER') {
-                    outliersList.push(d);
-                }
                 if (chainsToShow.indexOf(d.chain) !== -1) {
+                    if (d.rama === 'OUTLIER') {
+                        outliersList.push(d);
+                    }
                     return switchPlotType(d, i);
                 }
 
@@ -406,7 +357,6 @@ class RamaData extends Component<RamaProps, States> {
                         return stroke(dat);
                     });
 
-            //
             })
             .on('mouseout', function () {
                     d3.select(this)
@@ -446,7 +396,7 @@ class RamaData extends Component<RamaProps, States> {
         let xMap = this.xMap;
         let yMap = this.yMap;
 
-        let url = 'https://raw.githubusercontent.com/ondraab/rama/master/build/data/';
+        let url = 'https://raw.githubusercontent.com/ondraab/rama/master/public/data/';
         switch (contours) {
             case '1':
                 url += 'rama8000-general-noGPIVpreP.csv';
@@ -494,13 +444,13 @@ class RamaData extends Component<RamaProps, States> {
             let median = d3.median(data, function (d: any) {
                 return d.value;
             });
-            let line = d3.line()
-                .x(function (d: any) {
-                    return d.phi;
-                })
-                .y(function (d: any) {
-                    return d.psi;
-                });
+            // let line = d3.line()
+            //     .x(function (d: any) {
+            //         return d.phi;
+            //     })
+            //     .y(function (d: any) {
+            //         return d.psi;
+            //     });
 
             svg.selectAll('.shapes')
                 .data(data)
@@ -552,7 +502,7 @@ class RamaData extends Component<RamaProps, States> {
 
         rows.enter()
             .append('tr')
-            .on('mouseover', function (d: any, i: any) {
+            .on('mouseover', function (d: any) {
                 d3.select(this)
                     .style('background-color', '#b4bed6')
                     .style('cursor', 'pointer');
@@ -569,7 +519,7 @@ class RamaData extends Component<RamaProps, States> {
                         return stroke(dat);
                     });
             })
-            .on('mouseout', function (d: any, i: any) {
+            .on('mouseout', function (d: any) {
                 d3.select(this)
                     .style('background-color', 'transparent')
                     .style('cursor', 'default');
