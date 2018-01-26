@@ -66,7 +66,7 @@ class RamaData extends Component<RamaProps, States> {
 
     componentWillUpdate(nextProps: any, nextState: any) {
         if (nextProps.typeOfPlot !== this.state.contours || this.state.initial ) {
-            this.basicContours(nextProps.typeOfPlot);
+            // this.basicContours(nextProps.typeOfPlot);
         }
         if (nextProps.pdbID !== this.state.pdb || nextProps.chainsToShow.length !== this.state.chainsToShow.length) {
             this.updateChart(nextProps.jsonObject, nextProps.chainsToShow);
@@ -107,12 +107,19 @@ class RamaData extends Component<RamaProps, States> {
     }
 
     createChart() {
-        const {width, height} = this.props;
+        let {width, height} = this.props;
+
+        if (width > 736) {
+            width = 736;
+        }
+        if (height > 736) {
+            height = 736;
+        }
 
         // setup x
         const xScale = d3.scaleLinear()
             .domain([-180, 180])
-            .range([0, 0.85 * (width)]);
+            .range([0, (width)]);
 
         this.xBottomAxis = d3.axisBottom(xScale);
 
@@ -133,7 +140,7 @@ class RamaData extends Component<RamaProps, States> {
 
         const yScale = d3.scaleLinear()
             .domain([180, -180])
-            .range([0, 0.85 * (height)]);
+            .range([0, (height)]);
         this.yLeftAxis = d3.axisLeft(yScale);
             // .tickSizeInner(-0.85 * height)
             // .tickSizeOuter(0)
@@ -156,11 +163,15 @@ class RamaData extends Component<RamaProps, States> {
                 .ticks(8);
         }
 
-        this.svgContainer = d3.select('#root').append('div')
-            .attr('id', 'svg-container')
+        this.svgContainer = d3.select('.rama-root').append('div')
+            .attr('id', 'rama-svg-container')
             .append('svg')
-            .attr('width', width)
-            .attr('height', height)
+            .classed('svg-container', true)
+            // .attr('width', 0.85 * width)
+            // .attr('height', '80%')
+            .attr('preserveAspectRatio', 'xMinYMin meet')
+            .attr('viewBox', '0 0 ' + width + ' ' + height)
+            .classed('svg-content-responsive', true)
             .style('padding', '30px')
             .style('overflow', 'visible');
         //
@@ -168,46 +179,44 @@ class RamaData extends Component<RamaProps, States> {
 
         this.svgContainer.append('g')
             .call(this.xTopAxis);
-            // .attr('class', 'grid');
 
         this.svgContainer.append('g')
-            .attr('transform', 'translate(0,' + (0.85 * height) + ')')
+            .attr('transform', 'translate(0,' + (height) + ')')
             .call(this.xBottomAxis);
 
         this.svgContainer.append('g')
             .call(this.yLeftAxis);
-            // .attr('class', 'grid');
 
         this.svgContainer.append('g')
             .attr('transform', function () {
-                return 'translate(' + (0.85 * width) + ', 0)';
+                return 'translate(' + ( width) + ', 0)';
             })
             .call(this.yRightAxis);
 
         this.svgContainer.append('g')
-            .attr('class', 'grid')
-            .attr('transform', 'translate(0,' + 0.85 * height + ')')
+            .attr('class', 'rama-grid')
+            .attr('transform', 'translate(0,' + height + ')')
             .call(makeXGridlines()
-                .tickSize(-0.85 * height));
+                .tickSize(-height));
 
         this.svgContainer.append('g')
-            .attr('class', 'grid')
+            .attr('class', 'rama-grid')
             // .attr("transform", "translate(0," + height + ")")
             .call(makeYGridlines()
-                .tickSize(-0.85 * height));
+                .tickSize(-height));
 
         // outliers headline
-        d3.select('#root').append('div')
-            .attr('class', 'outl')
+        d3.select('.rama-root').append('div')
+            .attr('class', 'rama-outliers-div')
             .append('div')
-            .attr('class', 'outliers-headline')
+            .attr('class', 'rama-outliers-headline')
             .append('h4')
             .text('OUTLIERS');
 
-        d3.select('.outl').append('div')
+        d3.select('.rama-outliers-div').append('div')
             .attr('class', 'outliers-container');
         //
-        d3.selectAll('g.grid g.tick text').remove();
+        d3.selectAll('g.rama-grid g.tick text').remove();
     }
 
     updateChart(jsonObject: any[], chainsToShow: any[]) {
@@ -219,11 +228,11 @@ class RamaData extends Component<RamaProps, States> {
         // scales
         const xScale = d3.scaleLinear()
             .domain([-180, 180])
-            .range([0, 0.85 * (width)]);
+            .range([0, (width)]);
 
         const yScale = d3.scaleLinear()
             .domain([180, -180])
-            .range([0, 0.85 * (height)]);
+            .range([0, (height)]);
 
         // function stroke
         function stroke(d: any) {
@@ -238,7 +247,7 @@ class RamaData extends Component<RamaProps, States> {
 
         // tooltip
         let toolTip = d3.select('body').append('div')
-            .attr('class', 'tooltip')
+            .attr('class', 'rama-tooltip')
             .attr('height', 0)
             .style('opacity', 0);
 
@@ -279,10 +288,10 @@ class RamaData extends Component<RamaProps, States> {
         d3.selectAll('table').remove();
         //
         d3.select('.outliers-container').append('table')
-        .attr('class', 'table').append('thead').append('tr').attr('id', 'tab-headline');
-        d3.select('#tab-headline').append('th').text('Chain');
-        d3.select('#tab-headline').append('th').text('ID');
-        d3.select('#tab-headline').append('th').text('AA');
+        .attr('class', 'rama-outliers-table').append('thead').append('tr').attr('id', 'tab-headline');
+        d3.select('#tab-headline').append('th').attr('class', 'rama-table-headline').text('Chain');
+        d3.select('#tab-headline').append('th').attr('class', 'rama-table-headline').text('ID');
+        d3.select('#tab-headline').append('th').attr('class', 'rama-table-headline').text('AA');
 
         this.outliersTable = d3.select('.outliers-container').append('div')
             .attr('class', 'outliers').append('table')
@@ -297,7 +306,9 @@ class RamaData extends Component<RamaProps, States> {
                     if (d.rama === 'OUTLIER') {
                         outliersList.push(d);
                     }
-                    return switchPlotType(d, i);
+                    if (d.phi !== null || d.psi !== null) {
+                        return switchPlotType(d, i);
+                    }
                 }
 
             //
@@ -361,7 +372,7 @@ class RamaData extends Component<RamaProps, States> {
             .on('mouseout', function () {
                     d3.select(this)
                         .transition()
-                        .duration(200)
+                        .duration(50)
                         .attr('d', function (dat: any) {
                             if (dat.aa === 'GLY') {
                                 symbolTypes.triangle.size(50);
@@ -376,7 +387,7 @@ class RamaData extends Component<RamaProps, States> {
                         })
                         .style('stroke-width', '1');
                     toolTip.transition()
-                        .duration(200)
+                        .duration(50)
                         .style('opacity', 0);
                 }
             );
@@ -525,7 +536,7 @@ class RamaData extends Component<RamaProps, States> {
                     .style('cursor', 'default');
                 d3.select('#' + d.aa + d.num)
                     .transition()
-                    .duration(200)
+                    .duration(50)
                     .attr('d', function (dat: any) {
                         if (dat.aa === 'GLY') {
                             symbolTypes.triangle.size(50);
@@ -544,6 +555,7 @@ class RamaData extends Component<RamaProps, States> {
             .data(function (d: any) {return [d.chain, d.num, d.aa]; })
             .enter()
             .append('td')
+            .attr('id', 'rama-td')
             .text(function(d: any) { return d; });
 
         rows.exit().remove();

@@ -90,8 +90,8 @@ export default class FilterComponent extends React.Component<{}, States> {
         const ramanPlot = (
             <RamaData
                 pdbID={this.returnState()}
-                width={0.85 * window.innerHeight}
-                height={0.85 * window.innerHeight}
+                width={window.innerHeight}
+                height={window.innerHeight}
                 jsonObject={this.parsedPDB}
                 typeOfPlot={this.state.contoursType}
                 chainsToShow={this.state.chainsToShow}
@@ -100,7 +100,7 @@ export default class FilterComponent extends React.Component<{}, States> {
 
         return (
             <div>
-                <div id={'formDiv'}>
+                <div id={'rama-form-div'}>
                 <FormGroup
                     controlId={'controlText'}
                     validationState={this.getValidationState()}
@@ -123,7 +123,7 @@ export default class FilterComponent extends React.Component<{}, States> {
                 <DropdownButton
                     bsStyle={'primary'}
                     title="Type of plot"
-                    id={'dropdown-basic-$1'}
+                    id={'dropdown-basic-$1 rama-type-dropdown'}
                     onSelect={this.handleDropdownClick}
                     pullRight={true}
                 >
@@ -135,7 +135,7 @@ export default class FilterComponent extends React.Component<{}, States> {
                     <MenuItem eventKey={'6'} active={'6' === this.state.contoursType}>Cis proline</MenuItem>
                 </DropdownButton>
             </div>
-                <div id={'typeahead'}>
+                <div id={'rama-chain-select'}>
                     <Typeahead
                         clearButton={true}
                         options={this.chains}
