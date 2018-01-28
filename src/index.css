@@ -17,6 +17,7 @@ div.rama-tooltip {
   border: 0;
   border-radius: 8px;
   pointer-events: none;
+  z-index: 1;
 }
 
 #rama-form-div {
@@ -67,15 +68,19 @@ div.outliers-container {
 }
 #rama-svg-container {
   width: 100%;
+  max-width: inherit;
 }
 .svg-container {
   /*display: inline-block;*/
-  position: relative;
+  position: absolute;
   width: 100%;
   padding-bottom: 50%; /* aspect ratio */
   vertical-align: top;
   overflow: visible;
 }
+/*#rama-canvas-container{*/
+  /*width: 100%;*/
+/*}*/
 
 @media only screen and (min-width: 768px) {
   /* For desktop: */
@@ -87,12 +92,18 @@ div.outliers-container {
   }
   .svg-container {
     display: inline-block;
-    position: relative;
+    position: absolute;
     /*width: 85%;*/
     padding-bottom: 100%; /* aspect ratio */
     vertical-align: top;
     overflow: visible;
     max-height: 650px;
+    z-index: 1;
+    max-width: 650px;
+  }
+  #rama-svg-container {
+    width: 100%;
+    max-width: 650px;
   }
   .svg-content-responsive {
     display: inline-block;
@@ -118,5 +129,8 @@ div.outliers-container {
   }
   .rama-table-headline {
     text-align: left;
+  }
+  #rama-canvas-container {
+    position: absolute;
   }
 }

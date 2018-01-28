@@ -35,6 +35,7 @@ class RamaData extends Component<RamaProps, States> {
     dataGroup;
     contoursGroup;
     outliersTable;
+    canvasContainer;
     constructor(props: any) {
         super(props);
         this.createChart = this.createChart.bind(this);
@@ -51,29 +52,18 @@ class RamaData extends Component<RamaProps, States> {
         this.createChart();
     }
 
-    componentDidUpdate(nextProps: any, nextState: any) {
-        // if (this.state.pdb.length === 4) {
-        //     this.basicContours();
-        //     this.updateChart();
-        //     return;
-        // }
-        //
-        // if (this.state.pdb === nextProps.pdbID) {
-        //     return;
-        // }
-
-    }
-
     componentWillUpdate(nextProps: any, nextState: any) {
         if (nextProps.typeOfPlot !== this.state.contours || this.state.initial ) {
-            // this.basicContours(nextProps.typeOfPlot);
+            this.basicContours(nextProps.typeOfPlot);
+            this.updateChart(nextProps.jsonObject, nextProps.chainsToShow, nextProps.typeOfPlot);
         }
         if (nextProps.pdbID !== this.state.pdb || nextProps.chainsToShow.length !== this.state.chainsToShow.length) {
-            this.updateChart(nextProps.jsonObject, nextProps.chainsToShow);
+            this.updateChart(nextProps.jsonObject, nextProps.chainsToShow, nextProps.typeOfPlot);
         }
     }
     //
     shouldComponentUpdate(nextProps: any, nextState: any) {
+        // window.addEventListener('resize', this.handleResize);
         if (nextState.pdb.length === 4 && nextProps.pdbID !== this.state.pdb)  {
             return true;
         }
@@ -83,6 +73,16 @@ class RamaData extends Component<RamaProps, States> {
         return nextProps.chainsToShow.length !== this.state.chainsToShow.length;
 
     }
+    //
+    // handleResize() {
+    //     this.canvasContainer.width = innerWidth;
+    //     this.canvasContainer.height = innerHeight;
+    //
+    //     console.log(this.canvasContainer.width);
+    //
+    //     this.canvasContainer.style.width = this.canvasContainer.width + 'px';
+    //     this.canvasContainer.style.height = this.canvasContainer.height + 'px';
+    // }
 
     componentWillReceiveProps(nextProps: any) {
         if (nextProps.pdbID !== this.state.pdb) {
@@ -174,7 +174,21 @@ class RamaData extends Component<RamaProps, States> {
             .classed('svg-content-responsive', true)
             .style('padding', '30px')
             .style('overflow', 'visible');
-        //
+
+        this.canvasContainer = d3.select('#rama-svg-container')
+            // .append('div')
+            // .attr('id', 'rama-canvas-container')
+            .append('canvas')
+            .classed('img-responsive', true)
+            .attr('id', 'rama-canvas')
+            .attr('width', width)
+            .attr('height', height)
+            .style('padding', '30px')
+            .style('overflow', 'visible');
+
+            // .style('width', '' + innerWidth)
+            // .style('height', '' + innerHeight);
+
         // add axes
 
         this.svgContainer.append('g')
@@ -219,11 +233,11 @@ class RamaData extends Component<RamaProps, States> {
         d3.selectAll('g.rama-grid g.tick text').remove();
     }
 
-    updateChart(jsonObject: any[], chainsToShow: any[]) {
+    updateChart(jsonObject: any[], chainsToShow: any[], contours: string) {
 
         this.svgContainer.selectAll('.dataGroup').remove();
         let { width, height } = this.props;
-        let { contours } = this.state;
+        // let { contours } = this.state;
 
         // scales
         const xScale = d3.scaleLinear()
@@ -400,9 +414,20 @@ class RamaData extends Component<RamaProps, States> {
 
     basicContours(contours: string) {
 
-        this.svgContainer.selectAll('#contoursGroup').remove();
+        d3.select('#rama-canvas-container').empty();
         let min = 9.419397742547137e-7;
         let svg = this.svgContainer;
+        let canvas = this.canvasContainer;
+
+        const { width, height } = this.props;
+
+        const xScale = d3.scaleLinear()
+            .domain([-180, 180])
+            .range([0, (width)]);
+
+        const yScale = d3.scaleLinear()
+            .domain([180, -180])
+            .range([0, (height)]);
 
         let xMap = this.xMap;
         let yMap = this.yMap;
@@ -431,62 +456,87 @@ class RamaData extends Component<RamaProps, States> {
                 return;
         }
 
+        let context = canvas.node().getContext('2d');
+        context.clearRect(0, 0, width, height);
+        console.log(context);
+
+        let detachedContainer = document.createElement('custom');
+
+        let dataContainer = d3.select(detachedContainer),
+            image = context.createImageData(innerWidth, innerHeight);
+
+        let heatColorScale = d3.scaleLinear<string>()
+                .domain([0.00024604911755509194  , 0.0374927634165468 ])
+                .interpolate(d3.interpolateRgb)
+                .range([
+                    // '#fff',
+                    '#fbffb7',
+                    '#fac524',
+                    '#660a00']);
+        //
         d3.csv(url, function (error: any, data: any) {
             if (error) { throw error; }
+            let median = d3.median(data, function (d: any) {
+                return d.value;
+            });
+            // let max = d3.max(data, function (d: any) {
+            //     return d.value;
+            // });
+            // let min = d3.min(data, function (d: any) {
+            //     return d.value;
+            // });
+            // let mean = d3.mean(data, function (d: any) {
+            //     return d.value;
+            // });
+            // console.log(median, max, mean, min);
             data.forEach(function (d: any) {
                 d.psi = +d.psi;
                 d.phi = +d.phi;
                 d.value = +d.value;
-                return d;
+                if (d.value < median) {
+                    return;
+                }
+                context.globalAlpha = 0.2;
+                context.beginPath();
+                context.arc(xScale(d.phi), yScale(d.psi), 5, 0, 2 * Math.PI);
+                context.fillStyle = heatColorScale(d.value);
+                context.fill();
+                context.closePath();
             });
-            for (let i = 2; i <= data.length; i += 2) {
-                data.splice(i, 30);
-            }
-
+            // for (let i = 2; i <= data.length; i += 2) {
+            //     data.splice(i, 30);
+            // }
+            //
             // console.log(data);
-            let heatColorScale = d3.scaleLinear<string>()
-                .domain([min, 0.045])
-                .interpolate(d3.interpolateRgb)
-                .range([
-                    '#fff28d',
-                    '#fac524',
-                    '#660a00']);
 
-            let median = d3.median(data, function (d: any) {
-                return d.value;
-            });
-            // let line = d3.line()
-            //     .x(function (d: any) {
-            //         return d.phi;
-            //     })
-            //     .y(function (d: any) {
-            //         return d.psi;
-            //     });
+            // let median = d3.median(data, function (d: any) {
+            //     return d.value;
+            // });
 
-            svg.selectAll('.shapes')
-                .data(data)
-                .enter()
-                .append('g')
-                .append('circle')
-                .attr('id', 'contoursGroup')
-                .attr('r', 9)
-                .attr('cx', xMap)
-                .attr('cy', yMap)
-                // .attr('d', line(data))
-                .merge(svg)
-                .style('opacity', function (d: any) {
-                    if (d.value < median) {
-                        return 0;
-                    }
-                    return 0.2;
-                })
-                .style('fill', function (d: any) {
-                    if (d.value > median) {
-                        return heatColorScale(d.value);
-                    }
-                    return 'white';
-                })
-                .attr('pointer-events', 'none');
+        //     svg.selectAll('.shapes')
+        //         .data(data)
+        //         .enter()
+        //         .append('g')
+        //         .append('circle')
+        //         .attr('id', 'contoursGroup')
+        //         .attr('r', 9)
+        //         .attr('cx', xMap)
+        //         .attr('cy', yMap)
+        //         // .attr('d', line(data))
+        //         .merge(svg)
+        //         .style('opacity', function (d: any) {
+        //             if (d.value < median) {
+        //                 return 0;
+        //             }
+        //             return 0.2;
+        //         })
+        //         .style('fill', function (d: any) {
+        //             if (d.value > median) {
+        //                 return heatColorScale(d.value);
+        //             }
+        //             return 'white';
+        //         })
+        //         .attr('pointer-events', 'none');
         });
     }
 
@@ -576,5 +626,6 @@ class RamaData extends Component<RamaProps, States> {
             <div/>
         );
     }
+
 }
 export default RamaData;
