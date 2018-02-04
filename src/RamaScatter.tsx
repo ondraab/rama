@@ -535,6 +535,7 @@ class RamaData extends Component<RamaProps, States> {
                 //
                 switch (contours) {
                     case '4':
+                        data.splice(0, data.length / 2.5);
                         break;
                     case '5':
                         data.splice(0, data.length / 1.6);
