@@ -1,12 +1,14 @@
 import * as React from 'react';
 import 'bootstrap/less/bootstrap.less';
 import {
-    Button, FormGroup, FormControl, InputGroup, DropdownButton, MenuItem,
+    Button, FormGroup, FormControl, InputGroup, DropdownButton, MenuItem, ButtonToolbar,
 } from 'react-bootstrap';
 import RamaData from './RamaScatter';
 import ParsePDB from './parsePDB';
 import { Typeahead } from 'react-bootstrap-typeahead';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
+import * as ToggleButtonGroup from 'react-bootstrap/lib/ToggleButtonGroup';
+import ToggleButton = require('react-bootstrap/lib/ToggleButton');
 
 interface States {
     showFilter?: boolean;
@@ -14,8 +16,9 @@ interface States {
     buttonClicked: boolean;
     buttonState: string;
     jsonObject: object[];
-    contoursType: string;
+    typeOfPlot: string;
     chainsToShow: string[];
+    contourType: number;
 }
 
 export default class FilterComponent extends React.Component<{}, States> {
@@ -30,8 +33,9 @@ export default class FilterComponent extends React.Component<{}, States> {
             buttonClicked: false,
             buttonState: 'disabled',
             jsonObject: [],
-            contoursType: '1',
+            typeOfPlot: '1',
             chainsToShow: [],
+            contourType: 1,
         };
         this.chains = [];
         this.handleDropdownClick = this.handleDropdownClick.bind(this);
@@ -81,20 +85,26 @@ export default class FilterComponent extends React.Component<{}, States> {
 
     public handleDropdownClick(key: any) {
         this.setState({
-            contoursType: key,
+            typeOfPlot: key,
+        });
+    }
+
+    public handleTypeChange(value: any) {
+        this.setState({
+            contourType: value,
         });
     }
 
     public render() {
-
         const ramanPlot = (
             <RamaData
                 pdbID={this.returnState()}
                 width={window.innerHeight}
                 height={window.innerHeight}
                 jsonObject={this.parsedPDB}
-                typeOfPlot={this.state.contoursType}
+                typeOfPlot={this.state.typeOfPlot}
                 chainsToShow={this.state.chainsToShow}
+                contourType={this.state.contourType}
             />
         );
 
@@ -127,13 +137,26 @@ export default class FilterComponent extends React.Component<{}, States> {
                     onSelect={this.handleDropdownClick}
                     pullRight={true}
                 >
-                    <MenuItem eventKey={'1'} active={'1' === this.state.contoursType}>General case</MenuItem>
-                    <MenuItem eventKey={'2'} active={'2' === this.state.contoursType}>Isoleucine and valine</MenuItem>
-                    <MenuItem eventKey={'3'} active={'3' === this.state.contoursType}>Pre-proline</MenuItem>
-                    <MenuItem eventKey={'4'} active={'4' === this.state.contoursType}>Glycine</MenuItem>
-                    <MenuItem eventKey={'5'} active={'5' === this.state.contoursType}>Trans proline</MenuItem>
-                    <MenuItem eventKey={'6'} active={'6' === this.state.contoursType}>Cis proline</MenuItem>
+                    <MenuItem eventKey={'1'} active={'1' === this.state.typeOfPlot}>General case</MenuItem>
+                    <MenuItem eventKey={'2'} active={'2' === this.state.typeOfPlot}>Isoleucine and valine</MenuItem>
+                    <MenuItem eventKey={'3'} active={'3' === this.state.typeOfPlot}>Pre-proline</MenuItem>
+                    <MenuItem eventKey={'4'} active={'4' === this.state.typeOfPlot}>Glycine</MenuItem>
+                    <MenuItem eventKey={'5'} active={'5' === this.state.typeOfPlot}>Trans proline</MenuItem>
+                    <MenuItem eventKey={'6'} active={'6' === this.state.typeOfPlot}>Cis proline</MenuItem>
                 </DropdownButton>
+                    <div id={'rama-radio-buttons-container'}>
+                    <ButtonToolbar>
+                        <ToggleButtonGroup
+                            type="radio"
+                            name="options"
+                            defaultValue={1}
+                            onChange={evt => this.handleTypeChange(evt)}
+                        >
+                            <ToggleButton value={1}>Lines</ToggleButton>
+                            <ToggleButton value={2}>Heat map</ToggleButton>
+                        </ToggleButtonGroup>
+                    </ButtonToolbar>
+                    </div>
             </div>
                 <div id={'rama-chain-select'}>
                     <Typeahead
