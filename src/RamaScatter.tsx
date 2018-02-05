@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Component } from 'react';
 import * as d3 from 'd3';
 import * as d3Contour from 'd3-contour/';
+import { zoom } from 'd3-zoom';
 
 interface RamaProps {
     pdbID: string;
@@ -240,7 +241,47 @@ class RamaData extends Component<RamaProps, States> {
 
         this.svgContainer.selectAll('g.dataGroup').remove();
         let { width, height } = this.props;
-        let outliersList = [];
+        let outliersList = [],
+            svg = this.svgContainer;
+
+        let brush = d3.brush().on('end', brushended),
+            idleTimeout,
+            idleDelay = 350,
+            leftAxis = this.yLeftAxis,
+            rightAxis = this.yRightAxis,
+            topAxis = this.xTopAxis,
+            bottomAxis = this.xBottomAxis;
+
+        function brushended() {
+            let s = d3.event.selection;
+            if (!s) {
+                if (!idleTimeout) {
+                    return idleTimeout = setTimeout(idled, idleDelay);
+                }
+                xScale.domain([-180, 180]);
+                yScale.domain([-180, 180]);
+            } else {
+                xScale.domain([s[0][0], s[1][0]].map(xScale.invert, xScale));
+                yScale.domain([s[1][1], s[0][1]].map(yScale.invert, yScale));
+                svg.select('.brush').call(brush.move, null);
+            }
+            zoom();
+        }
+
+        function idled() {
+            idleTimeout = null;
+        }
+
+        function zoom() {
+            let t = svg.transition().duration(750);
+            svg.selectAll('#x-axis').transition(t).call(topAxis);
+            svg.selectAll('#x-axis').transition(t).call(bottomAxis);
+            svg.selectAll('#y-axis').transition(t).call(leftAxis);
+            svg.selectAll('#y-axis').transition(t).call(rightAxis);
+            svg.selectAll('.dataGroup').transition(t)
+                .attr('cx', function(d: any) { return xScale(d.phi); })
+                .attr('cy', function(d: any) { return yScale(d.psi); });
+        }
 
         // scales
         const xScale = d3.scaleLinear()
@@ -314,6 +355,10 @@ class RamaData extends Component<RamaProps, States> {
             .attr('class', 'outliers').append('table')
             .attr('class', 'table table-hover table-responsive');
         //
+        this.svgContainer.append('g')
+            .attr('class', 'brush')
+            .call(brush);
+
         this.svgContainer.selectAll('.shapes')
             .data(jsonObject.filter(function (d: any, i: number) {
 
