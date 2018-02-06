@@ -130,20 +130,22 @@ export default class FilterComponent extends React.Component<{}, States> {
                     </InputGroup.Button>
                     </InputGroup>
                 </FormGroup>
-                <DropdownButton
-                    bsStyle={'primary'}
-                    title="Type of plot"
-                    id={'dropdown-basic-$1 rama-type-dropdown'}
-                    onSelect={this.handleDropdownClick}
-                    pullRight={true}
-                >
-                    <MenuItem eventKey={'1'} active={'1' === this.state.typeOfPlot}>General case</MenuItem>
-                    <MenuItem eventKey={'2'} active={'2' === this.state.typeOfPlot}>Isoleucine and valine</MenuItem>
-                    <MenuItem eventKey={'3'} active={'3' === this.state.typeOfPlot}>Pre-proline</MenuItem>
-                    <MenuItem eventKey={'4'} active={'4' === this.state.typeOfPlot}>Glycine</MenuItem>
-                    <MenuItem eventKey={'5'} active={'5' === this.state.typeOfPlot}>Trans proline</MenuItem>
-                    <MenuItem eventKey={'6'} active={'6' === this.state.typeOfPlot}>Cis proline</MenuItem>
-                </DropdownButton>
+                    <div>
+                    <DropdownButton
+                        bsStyle={'primary'}
+                        title="Type of plot"
+                        id={'dropdown-basic-$1 rama-type-dropdown'}
+                        onSelect={this.handleDropdownClick}
+                        pullRight={true}
+                    >
+                        <MenuItem eventKey={'1'} active={'1' === this.state.typeOfPlot}>General case</MenuItem>
+                        <MenuItem eventKey={'2'} active={'2' === this.state.typeOfPlot}>Isoleucine and valine</MenuItem>
+                        <MenuItem eventKey={'3'} active={'3' === this.state.typeOfPlot}>Pre-proline</MenuItem>
+                        <MenuItem eventKey={'4'} active={'4' === this.state.typeOfPlot}>Glycine</MenuItem>
+                        <MenuItem eventKey={'5'} active={'5' === this.state.typeOfPlot}>Trans proline</MenuItem>
+                        <MenuItem eventKey={'6'} active={'6' === this.state.typeOfPlot}>Cis proline</MenuItem>
+                    </DropdownButton>
+                    </div>
                     <div id={'rama-radio-buttons-container'}>
                     <ButtonToolbar>
                         <ToggleButtonGroup

@@ -52,19 +52,24 @@ class RamaData extends Component<RamaProps, States> {
     }
 
     componentWillUpdate(nextProps: any, nextState: any) {
-        if (nextProps.typeOfPlot !== this.state.contours || this.state.initial ) {
-            this.basicContours(nextProps.typeOfPlot, nextProps.contourType);
+        if (nextProps.chainsToShow.length !== this.state.chainsToShow.length) {
+            console.log(nextProps.chainsToShow, this.state.chainsToShow);
+            if (this.state.initial === true) {
+                this.basicContours(nextProps.typeOfPlot, nextProps.contourType);
+            }
             this.updateChart(nextProps.jsonObject, nextProps.chainsToShow, nextProps.typeOfPlot);
             return;
         }
-        if (nextProps.constructor !== this.state.contourType) {
+        if (nextProps.typeOfPlot !== this.state.contours) {
+            this.updateChart(nextProps.jsonObject, nextProps.chainsToShow, nextProps.typeOfPlot);
             this.basicContours(nextProps.typeOfPlot, nextProps.contourType);
         }
-        if (nextProps.pdbID !== this.state.pdb || nextProps.chainsToShow.length !== this.state.chainsToShow.length) {
-            this.updateChart(nextProps.jsonObject, nextProps.chainsToShow, nextProps.typeOfPlot);
+        if (nextProps.contourType !== this.state.contourType) {
+            this.basicContours(nextProps.typeOfPlot, nextProps.contourType);
         }
+
     }
-    //
+
     shouldComponentUpdate(nextProps: any, nextState: any) {
         if (nextState.pdb.length === 4 && nextProps.pdbID !== this.state.pdb)  {
             return true;
@@ -85,7 +90,6 @@ class RamaData extends Component<RamaProps, States> {
                 pdb: nextProps.pdbID,
                 jsonObject: nextProps.jsonObject,
                 chainsToShow: nextProps.chainsToShow,
-                initial: false,
             });
         }
         if (nextProps.typeOfPlot !== this.state.contours) {
@@ -194,7 +198,7 @@ class RamaData extends Component<RamaProps, States> {
 
         this.svgContainer.append('g')
             .attr('transform', function () {
-                return 'translate(' + ( width) + ', 0)';
+                return 'translate(' + (width) + ', 0)';
             })
             .call(this.yRightAxis)
             .attr('id', 'y-axis');
@@ -241,9 +245,10 @@ class RamaData extends Component<RamaProps, States> {
 
         this.svgContainer.selectAll('g.dataGroup').remove();
         let { width, height } = this.props;
+        let { initial } = this.state;
         let outliersList = [],
             svg = this.svgContainer;
-
+        console.log(width);
         let brush = d3.brush().on('end', brushended),
             idleTimeout,
             idleDelay = 350,
@@ -287,11 +292,13 @@ class RamaData extends Component<RamaProps, States> {
         const xScale = d3.scaleLinear()
             .domain([-180, 180])
             .range([0, (width)]);
+            // .range([0, (0.985 * width)]);
 
         const yScale = d3.scaleLinear()
             .domain([180, -180])
             .range([0, (height)]);
-
+            // .range([0, (0.985 * height)]);
+            //
         // function stroke
         function stroke(d: any) {
             if (d.rama === 'OUTLIER') {
@@ -361,8 +368,7 @@ class RamaData extends Component<RamaProps, States> {
 
         this.svgContainer.selectAll('.shapes')
             .data(jsonObject.filter(function (d: any, i: number) {
-
-                if (chainsToShow.indexOf(d.chain) !== -1) {
+                if (initial || chainsToShow.indexOf(d.chain) !== -1) {
                     if (d.phi !== null || d.psi !== null) {
                         return switchPlotType(d, i);
                     }
@@ -386,7 +392,7 @@ class RamaData extends Component<RamaProps, States> {
                 return symbolTypes.circle();
             })
             .attr('transform', function(d: any) {
-                return 'translate(' + xScale(d.phi) + ',' + yScale(d.psi) + ')';
+                return 'translate(' + 0.985 * xScale(d.phi) + ',' + 0.985 * yScale(d.psi) + ')';
             })
             .merge(this.svgContainer)
             .style('fill', 'none')
@@ -450,6 +456,9 @@ class RamaData extends Component<RamaProps, States> {
         outliersList.sort(function (a: any, b: any) {
             return a.num - b.num;
         });
+        this.setState({
+            initial: false
+        });
         this.addTable(outliersList);
     }
 
@@ -464,10 +473,12 @@ class RamaData extends Component<RamaProps, States> {
         const xScale = d3.scaleLinear()
             .domain([-180, 180])
             .range([0, (width)]);
+            // .range([0, (0.985 * width)]);
 
         const yScale = d3.scaleLinear()
             .domain([180, -180])
             .range([0, (height)]);
+            // .range([0, (0.985 * height)]);
 
         let url = 'https://raw.githubusercontent.com/ondraab/rama/master/public/data/';
         switch (contours) {
@@ -497,31 +508,30 @@ class RamaData extends Component<RamaProps, States> {
         context.clearRect(0, 0, width, height);
 
         if (contourType === 2) {
-            let heatColorScale = d3.scaleLinear<string>()
-                .domain([9.419397742547137e-7, 0.045])
-                .interpolate(d3.interpolateRgb)
-                .range([
-                    '#fff28d',
-                    '#fac524',
-                    '#660a00']);
+
             d3.csv(url, function (error: any, data: any) {
                 if (error) { throw error; }
-                let median = d3.median(data, function (d: any) {
-                    return d.value;
+                let heatColorScale = d3.scaleLinear<string>()
+                    .domain([9.419397742547137e-7, 0.045])
+                    .interpolate(d3.interpolateRgb)
+                    .range([
+                        '#fff28d',
+                        '#fac524',
+                        '#660a00']);
+                data.sort(function (a: any, b: any) {
+                    return a.value - b.value;
                 });
+                data.splice(0, data.length / 2);
                 data.forEach(function (d: any) {
-                d.psi = +d.psi;
-                d.phi = +d.phi;
-                d.value = +d.value;
-                if (d.value < median) {
-                    return;
-                }
-                context.globalAlpha = 0.2;
-                context.beginPath();
-                context.arc(xScale(d.phi), yScale(d.psi), 5, 0, 2 * Math.PI);
-                context.fillStyle = heatColorScale(d.value);
-                context.fill();
-                context.closePath();
+                    d.psi = +d.psi;
+                    d.phi = +d.phi;
+                    d.value = +d.value;
+                    context.globalAlpha = 0.2;
+                    context.beginPath();
+                    context.arc(xScale(d.phi), yScale(d.psi), 5, 0, 2 * Math.PI);
+                    context.fillStyle = heatColorScale(d.value);
+                    context.fill();
+                    context.closePath();
             });
             });
         } else {
@@ -576,7 +586,7 @@ class RamaData extends Component<RamaProps, States> {
                     .attr('class', 'contour-line')
                     .attr('margin', '30px')
                     .attr('d', d3.geoPath())
-                    .attr('transform', 'scale(0.985,0.985),translate(5, 5)');
+                    .attr('transform', 'scale(0.985, 0.985), translate(5, 5)');
                 //
                 switch (contours) {
                     case '4':

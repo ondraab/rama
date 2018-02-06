@@ -32,7 +32,7 @@ div.rama-tooltip {
   height: 40px;
 }
 .form-group {
-  /*width: 60%;*/
+  width: 80%;
   padding-right: 1%;
 }
 
@@ -90,10 +90,10 @@ label.btn.btn-default {
   width: 50%;
 }
 div.btn-toolbar {
-  min-width: 180px;
+  width: 180px;
 }
 div.btn-group {
-  width: 100%;
+width: 100%;
 }
 button.dropdown-toggle {
   width: 100%;
@@ -159,7 +159,11 @@ button.dropdown-toggle {
   #rama-form-div {
     justify-content: space-between;
   }
-  rama-type-dropdown {
-    width: 100%;
+  .form-group {
+    width: 80%;
+    padding-right: 1%;
   }
+  /*rama-type-dropdown {*/
+    /*max-width: 30%;*/
+  /*}*/
 }
