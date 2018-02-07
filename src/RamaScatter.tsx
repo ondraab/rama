@@ -53,7 +53,6 @@ class RamaData extends Component<RamaProps, States> {
 
     componentWillUpdate(nextProps: any, nextState: any) {
         if (nextProps.chainsToShow.length !== this.state.chainsToShow.length) {
-            console.log(nextProps.chainsToShow, this.state.chainsToShow);
             if (this.state.initial === true) {
                 this.basicContours(nextProps.typeOfPlot, nextProps.contourType);
             }
@@ -113,11 +112,11 @@ class RamaData extends Component<RamaProps, States> {
     createChart() {
         let {width, height} = this.props;
 
-        if (width > 736) {
-            width = 736;
+        if (width > 768) {
+            width = 580;
         }
-        if (height > 736) {
-            height = 736;
+        if (height > 768) {
+            height = 580;
         }
 
         // setup x
@@ -153,12 +152,11 @@ class RamaData extends Component<RamaProps, States> {
         };
 
         function makeYGridlines() {
-            return d3.axisLeft(yScale);
+            return d3.axisRight(yScale);
         }
 
         function makeXGridlines() {
-            return d3.axisBottom(xScale)
-                .ticks(8);
+            return d3.axisTop(xScale);
         }
 
         this.svgContainer = d3.select('.rama-root').append('div')
@@ -168,7 +166,7 @@ class RamaData extends Component<RamaProps, States> {
             .attr('preserveAspectRatio', 'xMinYMin meet')
             .attr('viewBox', '0 0 ' + width + ' ' + height)
             .classed('svg-content-responsive', true)
-            .style('padding', '30px 30px 30px 40px')
+            .style('padding', '30px 30px 30px 50px')
             .style('overflow', 'visible')
             .style('fill', 'transparent');
 
@@ -178,7 +176,7 @@ class RamaData extends Component<RamaProps, States> {
             .attr('id', 'rama-canvas')
             .attr('width', width)
             .attr('height', height)
-            .style('padding', '30px 30px 30px 40px')
+            .style('padding', '30px 30px 30px 50px')
             .style('overflow', 'visible');
 
         // add axes
@@ -207,12 +205,12 @@ class RamaData extends Component<RamaProps, States> {
             .attr('class', 'rama-grid')
             .attr('transform', 'translate(0,' + height + ')')
             .call(makeXGridlines()
-                .tickSize(-height));
+                .tickSize(width));
 
         this.svgContainer.append('g')
             .attr('class', 'rama-grid')
             .call(makeYGridlines()
-                .tickSize(-height));
+                .tickSize(height));
 
         // axis labels
 
@@ -220,12 +218,14 @@ class RamaData extends Component<RamaProps, States> {
             .attr('x', width / 2 )
             .attr('y', height + 35)
             .style('text-anchor', 'middle')
+            .style('fill', '#000')
             .text('Phi');
 
         this.svgContainer.append('text')
             .attr('x', -35 )
             .attr('y', height / 2)
             .style('text-anchor', 'middle')
+            .style('fill', '#000')
             .text('Psi');
 
         // outliers headline
@@ -245,6 +245,15 @@ class RamaData extends Component<RamaProps, States> {
 
         this.svgContainer.selectAll('g.dataGroup').remove();
         let { width, height } = this.props;
+
+        if (width > 768) {
+            console.log('nana');
+            width = 580;
+        }
+        if (height > 768) {
+            height = 580;
+        }
+        //
         let { initial } = this.state;
         let outliersList = [],
             svg = this.svgContainer;
@@ -392,7 +401,7 @@ class RamaData extends Component<RamaProps, States> {
                 return symbolTypes.circle();
             })
             .attr('transform', function(d: any) {
-                return 'translate(' + 0.985 * xScale(d.phi) + ',' + 0.985 * yScale(d.psi) + ')';
+                return 'translate(' + xScale(d.phi) + ',' +  yScale(d.psi) + ')';
             })
             .merge(this.svgContainer)
             .style('fill', 'none')
@@ -468,17 +477,24 @@ class RamaData extends Component<RamaProps, States> {
         let canvas = this.canvasContainer;
         let svg = this.svgContainer;
 
-        const { width, height } = this.props;
+        let { width, height } = this.props;
+
+        if (width > 768) {
+            width = 580;
+        }
+        if (height > 768) {
+            height = 580;
+        }
 
         const xScale = d3.scaleLinear()
             .domain([-180, 180])
-            .range([0, (width)]);
-            // .range([0, (0.985 * width)]);
+            // .range([0, (width)]);
+            .range([0, (0.985 * width)]);
 
         const yScale = d3.scaleLinear()
             .domain([180, -180])
-            .range([0, (height)]);
-            // .range([0, (0.985 * height)]);
+            // .range([0, (height)]);
+            .range([0, (0.985 * height)]);
 
         let url = 'https://raw.githubusercontent.com/ondraab/rama/master/public/data/';
         switch (contours) {
@@ -579,15 +595,14 @@ class RamaData extends Component<RamaProps, States> {
                         (data))
                     .enter()
                     .append('path')
-                    .attr('id', 'contour-line')
                     .attr('stroke', '#1359eb')
                     .attr('stroke-width', '2')
                     .attr('fill', 'none')
                     .attr('class', 'contour-line')
                     .attr('margin', '30px')
                     .attr('d', d3.geoPath())
-                    .attr('transform', 'scale(0.985, 0.985), translate(5, 5)');
-                //
+                    .attr('transform', ' translate(5, 5)');
+                //scale(0.99, 0.99),
                 switch (contours) {
                     case '4':
                         data.splice(0, data.length / 2.5);
@@ -617,11 +632,11 @@ class RamaData extends Component<RamaProps, States> {
                     .attr('stroke', '#3ee2eb')
                     .attr('stroke-width', '2')
                     .attr('fill', 'none')
-                    .attr('id', 'contour-line')
                     .attr('class', 'contour-line')
                     .attr('margin', '30px')
                     .attr('d', d3.geoPath())
-                    .attr('transform', 'scale(0.985,0.985),translate(5, 5)');
+                    .attr('transform', 'translate(5, 5)');
+            //    scale(0.99,0.99),
             });
         }
     }

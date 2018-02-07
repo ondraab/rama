@@ -73,6 +73,7 @@ div.outliers-container {
 #rama-svg-container {
   width: 100%;
   max-width: inherit;
+  height: 100%;
 }
 .svg-container {
   /*display: inline-block;*/
