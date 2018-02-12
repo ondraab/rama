@@ -99,8 +99,8 @@ export default class FilterComponent extends React.Component<{}, States> {
         const ramanPlot = (
             <RamaData
                 pdbID={this.returnState()}
-                width={window.innerHeight}
-                height={window.innerHeight}
+                width={window.innerWidth}
+                height={window.innerWidth}
                 jsonObject={this.parsedPDB}
                 typeOfPlot={this.state.typeOfPlot}
                 chainsToShow={this.state.chainsToShow}
