@@ -278,6 +278,10 @@ class RamaData extends Component<RamaProps, States> {
         if (height > 768) {
             height = 580;
         }
+        let objSize = 40;
+        if (window.screen.availWidth < 1920) {
+            objSize = 30;
+        }
 
         let { initial } = this.state;
         let outliersList = [],
@@ -313,8 +317,8 @@ class RamaData extends Component<RamaProps, States> {
 
         // symbolTypes
         let symbolTypes = {
-            'triangle': d3.symbol().type(d3.symbolTriangle).size(50),
-            'circle': d3.symbol().type(d3.symbolCircle).size(50)
+            'triangle': d3.symbol().type(d3.symbolTriangle).size(objSize),
+            'circle': d3.symbol().type(d3.symbolCircle).size(objSize)
         };
 
         function switchPlotType(d: any, i: number) {
@@ -337,6 +341,10 @@ class RamaData extends Component<RamaProps, States> {
                     }
                     break;
                 case '5':
+                    if (d.cisPeptide === null && d.aa === 'PRO') {
+                        return d;
+                    }
+                    break;
                 case '6':
                     if (d.cisPeptide === 'Y' && d.aa === 'PRO') {
                         return d;
@@ -396,7 +404,7 @@ class RamaData extends Component<RamaProps, States> {
             .style('stroke', function (d: any) {
                 return stroke(d);
             })
-            .style('stroke-width', '1')
+            .style('stroke-width', '0.5')
             .on('mouseover', function (d: any) {
                 toolTip.transition()
                     .duration(50)
@@ -434,10 +442,10 @@ class RamaData extends Component<RamaProps, States> {
                         .duration(50)
                         .attr('d', function (dat: any) {
                             if (dat.aa === 'GLY') {
-                                symbolTypes.triangle.size(40);
+                                symbolTypes.triangle.size(objSize);
                                 return symbolTypes.triangle();
                             }
-                            symbolTypes.circle.size(40);
+                            symbolTypes.circle.size(objSize);
                             return symbolTypes.circle();
                         })
                         .style('fill', 'none')

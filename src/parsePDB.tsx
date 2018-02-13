@@ -6,8 +6,10 @@ class Res {
     private chain: string;
     private num: number;
     private cisPeptide: string;
+    private modelId: number;
 
-    constructor(aa: string, phi: number, psi: number, rama: string, chain: string, num: number, cisPeptide: string) {
+    constructor(aa: string, phi: number, psi: number, rama: string, chain: string, num: number, cisPeptide: string,
+                modelId: number) {
         this.aa = aa;
         this.phi = phi;
         this.psi = psi;
@@ -15,6 +17,7 @@ class Res {
         this.chain = chain;
         this.num = num;
         this.cisPeptide = cisPeptide;
+        this.modelId = modelId;
     }
 }
 
@@ -23,7 +26,7 @@ export class ParsePDB {
     private _chainsArray: string[];
 
     constructor(pdb: string) {
-        this.pdbID = pdb;
+        this.pdbID = pdb.toLowerCase();
         this._chainsArray = [];
     }
 
@@ -78,7 +81,8 @@ export class ParsePDB {
                                           resid.rama,
                                           chain.chain_id,
                                           resid.residue_number,
-                                          resid.cis_peptide));
+                                          resid.cis_peptide,
+                                          mod.model_id));
                         // switch (resid.rama) {
                         //     case 'Favored':
                         //         fav.push(new Res(resid.residue_name,
