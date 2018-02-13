@@ -67,55 +67,60 @@ export class ParsePDB {
         xmlHttp.open('GET',
                      'https://wwwdev.ebi.ac.uk/pdbe/api/validation/rama_sidechain_listing/entry/' + this.pdbID, false);
         xmlHttp.send();
-        let list: object[] = [];
-        for (let mol of JSON.parse(xmlHttp.responseText)[this.pdbID].molecules) {
-            // console.log(mol);
-            for (let chain of mol.chains) {
-                this._chainsArray.push(chain.chain_id);
-                for (let mod of chain.models) {
-                    // this._chainsArray.push(chain.chain_id);
-                    for (let resid of mod.residues) {
-                        list.push(new Res(resid.residue_name,
-                                          resid.phi,
-                                          resid.psi,
-                                          resid.rama,
-                                          chain.chain_id,
-                                          resid.residue_number,
-                                          resid.cis_peptide,
-                                          mod.model_id));
-                        // switch (resid.rama) {
-                        //     case 'Favored':
-                        //         fav.push(new Res(resid.residue_name,
-                        //                          resid.phi,
-                        //                          resid.psi,
-                        //                          resid.rama,
-                        //                          chain.chain_id,
-                        //                          resid.residue_number));
-                        //         break;
-                        //     case 'Allowed':
-                        //         allow.push(new Res(resid.residue_name,
-                        //                            resid.phi,
-                        //                            resid.psi,
-                        //                            resid.rama,
-                        //                            chain.chain_id,
-                        //                            resid.residue_number));
-                        //         break;
-                        //     case 'OUTLIER':
-                        //         outl.push(new Res(resid.residue_name,
-                        //                           resid.phi,
-                        //                           resid.psi,
-                        //                           resid.rama,
-                        //                           chain.chain_id,
-                        //                           resid.residue_number));
-                        //         break;
-                        //     default:
-                        //         continue;
-                        // }
+        if (xmlHttp.status !== 200) {
+            window.alert('No data to show. Please check your PDBid');
+        } else {
+            let list: object[] = [];
+            let molecules = JSON.parse(xmlHttp.responseText)[this.pdbID];
+            for (let mol of molecules.molecules) {
+                // console.log(mol);
+                for (let chain of mol.chains) {
+                    this._chainsArray.push(chain.chain_id);
+                    for (let mod of chain.models) {
+                        // this._chainsArray.push(chain.chain_id);
+                        for (let resid of mod.residues) {
+                            list.push(new Res(resid.residue_name,
+                                              resid.phi,
+                                              resid.psi,
+                                              resid.rama,
+                                              chain.chain_id,
+                                              resid.residue_number,
+                                              resid.cis_peptide,
+                                              mod.model_id));
+                            // switch (resid.rama) {
+                            //     case 'Favored':
+                            //         fav.push(new Res(resid.residue_name,
+                            //                          resid.phi,
+                            //                          resid.psi,
+                            //                          resid.rama,
+                            //                          chain.chain_id,
+                            //                          resid.residue_number));
+                            //         break;
+                            //     case 'Allowed':
+                            //         allow.push(new Res(resid.residue_name,
+                            //                            resid.phi,
+                            //                            resid.psi,
+                            //                            resid.rama,
+                            //                            chain.chain_id,
+                            //                            resid.residue_number));
+                            //         break;
+                            //     case 'OUTLIER':
+                            //         outl.push(new Res(resid.residue_name,
+                            //                           resid.phi,
+                            //                           resid.psi,
+                            //                           resid.rama,
+                            //                           chain.chain_id,
+                            //                           resid.residue_number));
+                            //         break;
+                            //     default:
+                            //         continue;
+                            // }
+                        }
                     }
                 }
             }
+            return list;
         }
-        return list;
     }
     get chainsArray(): string[] {
         return this._chainsArray;

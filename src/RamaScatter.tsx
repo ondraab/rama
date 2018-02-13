@@ -452,7 +452,7 @@ class RamaData extends Component<RamaProps, States> {
                         .style('stroke', function (d: any) {
                             return stroke(d);
                         })
-                        .style('stroke-width', '1');
+                        .style('stroke-width', '0.5');
                     toolTip.transition()
                         .duration(50)
                         .style('opacity', 0);
@@ -539,11 +539,16 @@ class RamaData extends Component<RamaProps, States> {
 
         if (contourType === 2) {
             img.onload = function () {
-                    context.drawImage(img, 0, 0, width, height * img.height / img.width);
+                    context.drawImage(img, 0, 0,
+                                      width, height * img.height / img.width
+                    );
                 };
         } else {
+            console.log(svgImg);
             svgImg.onload = function () {
-                context.drawImage(svgImg, 0, 0);
+                context.drawImage(svgImg, 0, 0,
+                                  width, height * svgImg.height / svgImg.width
+                );
             };
             // d3.csv(url, function (error: any, data: any) {
             //     if (error) {
