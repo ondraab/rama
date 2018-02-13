@@ -22,7 +22,6 @@ div.rama-tooltip {
 #rama-radio-buttons-container {
   padding: 0 5px 0 2px;
   display: inline;
-  /*width: 40%;*/
 }
 #rama-form-div {
   padding: 2px;
@@ -32,12 +31,12 @@ div.rama-tooltip {
   height: 40px;
 }
 .form-group {
-  /*width: 60%;*/
+  width: 80%;
   padding-right: 1%;
 }
 
 td#rama-td {
-  text-align: right;
+  text-align: left;
 }
 div.outliers-container {
   height: 500px;
@@ -73,14 +72,20 @@ div.outliers-container {
 #rama-svg-container {
   width: 100%;
   max-width: inherit;
+  height: 100%;
+}
+canvas#rama-canvas {
+  padding: 30px 30px 30px 50px;
+  width: 100%;
 }
 .svg-container {
   /*display: inline-block;*/
   position: absolute;
   width: 100%;
-  padding-bottom: 50%; /* aspect ratio */
+  padding-bottom: 100%; /* aspect ratio */
   vertical-align: top;
   overflow: visible;
+  padding: 30px 30px 30px 50px;
 }
 /*#rama-canvas-container{*/
   /*width: 100%;*/
@@ -90,10 +95,10 @@ label.btn.btn-default {
   width: 50%;
 }
 div.btn-toolbar {
-  min-width: 180px;
+  width: 180px;
 }
 div.btn-group {
-  width: 100%;
+width: 100%;
 }
 button.dropdown-toggle {
   width: 100%;
@@ -111,7 +116,7 @@ button.dropdown-toggle {
     display: inline-block;
     position: absolute;
     /*width: 85%;*/
-    padding-bottom: 100%; /* aspect ratio */
+    padding: 30px 30px 30px 50px; /* aspect ratio */
     vertical-align: top;
     overflow: visible;
     max-height: 650px;
@@ -159,7 +164,11 @@ button.dropdown-toggle {
   #rama-form-div {
     justify-content: space-between;
   }
-  rama-type-dropdown {
-    width: 100%;
+  .form-group {
+    width: 80%;
+    padding-right: 1%;
   }
+  /*rama-type-dropdown {*/
+    /*max-width: 30%;*/
+  /*}*/
 }

@@ -5,14 +5,16 @@ class Res {
     private rama: string;
     private chain: string;
     private num: number;
+    private cisPeptide: string;
 
-    constructor(aa: string, phi: number, psi: number, rama: string, chain: string, num: number) {
+    constructor(aa: string, phi: number, psi: number, rama: string, chain: string, num: number, cisPeptide: string) {
         this.aa = aa;
         this.phi = phi;
         this.psi = psi;
         this.rama = rama;
         this.chain = chain;
         this.num = num;
+        this.cisPeptide = cisPeptide;
     }
 }
 
@@ -60,7 +62,7 @@ export class ParsePDB {
         // xmlHttp.send();
         let xmlHttp = new XMLHttpRequest();
         xmlHttp.open('GET',
-                     'http://www.ebi.ac.uk/pdbe/api/validation/rama_sidechain_listing/entry/' + this.pdbID, false);
+                     'https://wwwdev.ebi.ac.uk/pdbe/api/validation/rama_sidechain_listing/entry/' + this.pdbID, false);
         xmlHttp.send();
         let list: object[] = [];
         for (let mol of JSON.parse(xmlHttp.responseText)[this.pdbID].molecules) {
@@ -75,7 +77,8 @@ export class ParsePDB {
                                           resid.psi,
                                           resid.rama,
                                           chain.chain_id,
-                                          resid.residue_number));
+                                          resid.residue_number,
+                                          resid.cis_peptide));
                         // switch (resid.rama) {
                         //     case 'Favored':
                         //         fav.push(new Res(resid.residue_name,
