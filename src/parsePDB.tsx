@@ -69,6 +69,7 @@ export class ParsePDB {
         xmlHttp.send();
         if (xmlHttp.status !== 200) {
             window.alert('No data to show. Please check your PDBid');
+            return;
         } else {
             let list: object[] = [];
             let molecules = JSON.parse(xmlHttp.responseText)[this.pdbID];

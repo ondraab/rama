@@ -170,6 +170,8 @@ class RamaData extends Component<RamaProps, States> {
             .append('svg')
             .classed('svg-container', true)
             .attr('id', 'rama-svg')
+            // .attr('width', width)
+            // .attr('height', height)
             .attr('preserveAspectRatio', 'xMinYMin meet')
             .attr('viewBox', '0 0 ' + width + ' ' + height)
             .classed('svg-content-responsive', true)
@@ -400,7 +402,7 @@ class RamaData extends Component<RamaProps, States> {
                 return 'translate(' + xScale(d.phi) + ',' +  yScale(d.psi) + ')';
             })
             .merge(this.svgContainer)
-            .style('fill', 'none')
+            .style('fill', 'transparent')
             .style('stroke', function (d: any) {
                 return stroke(d);
             })
@@ -420,9 +422,10 @@ class RamaData extends Component<RamaProps, States> {
                     + d.phi
                     + '<br/>psi: '
                     + d.psi)
-                    .style('left', (d3.event.pageX) + 'px')
-                    .style('top', (d3.event.pageY - 38) + 'px');
+                    .style('left', (d3.event.pageX + 10) + 'px')
+                    .style('top', (d3.event.pageY - 48) + 'px');
                 d3.select(this)
+                    //
                     .attr('d', function (dat: any) {
                         if (dat.aa === 'GLY') {
                             symbolTypes.triangle.size(175);
@@ -439,7 +442,7 @@ class RamaData extends Component<RamaProps, States> {
             .on('mouseout', function () {
                     d3.select(this)
                         .transition()
-                        .duration(50)
+                        // .duration(50)
                         .attr('d', function (dat: any) {
                             if (dat.aa === 'GLY') {
                                 symbolTypes.triangle.size(objSize);
@@ -448,7 +451,7 @@ class RamaData extends Component<RamaProps, States> {
                             symbolTypes.circle.size(objSize);
                             return symbolTypes.circle();
                         })
-                        .style('fill', 'none')
+                        .style('fill', 'transparent')
                         .style('stroke', function (d: any) {
                             return stroke(d);
                         })
@@ -471,7 +474,7 @@ class RamaData extends Component<RamaProps, States> {
         d3.select('#rama-canvas-container').empty();
         d3.selectAll('.contour-line').remove();
         let canvas = this.canvasContainer;
-        // let svg = this.svgContainer;
+        let svg = this.svgContainer;
 
         let { width, height } = this.props;
 
@@ -506,7 +509,7 @@ class RamaData extends Component<RamaProps, States> {
                 svgImg.src = lineGeneralContour;
                 break;
             case '2':
-            //     url += 'rama8000-ileval-nopreP.csv';
+                // url += 'rama8000-ileval-nopreP.csv';
                 img.src = ileVal;
                 svgImg.src = lineIleVal;
                 break;
@@ -544,12 +547,18 @@ class RamaData extends Component<RamaProps, States> {
                     );
                 };
         } else {
-            console.log(svgImg);
             svgImg.onload = function () {
                 context.drawImage(svgImg, 0, 0,
                                   width, height * svgImg.height / svgImg.width
                 );
             };
+            // setTimeout(function () {
+            //             // let s = new XMLSerializer().serializeToString(document.getElementById('rama-svg'));
+            //             // let encode = window.btoa(s);
+            //     let enc: any = document.getElementById('rama-canvas');
+            //             console.log(enc.toDataURL());
+            //         },         3000);
+            // // console.log(canvas.toDataURL());
             // d3.csv(url, function (error: any, data: any) {
             //     if (error) {
             //         throw error;
@@ -645,13 +654,13 @@ class RamaData extends Component<RamaProps, States> {
             //         .attr('transform', scale);
             // // //    scale(0.99,0.99),
             // });
-            // // if (contours !== '1') {
-            // //     setTimeout(function () {
-            // //         let s = new XMLSerializer().serializeToString(document.getElementById('rama-svg'));
-            // //         let encode = window.btoa(s);
-            // //         console.log('data:image/svg+xml;base64,' + encode);
-            // //     },         3000);
-            // // }
+            // if (contours !== '1') {
+            //     setTimeout(function () {
+            //         let s = new XMLSerializer().serializeToString(document.getElementById('rama-svg'));
+            //         let encode = window.btoa(s);
+            //         console.log('data:image/svg+xml;base64,' + encode);
+            //     },         3000);
+            // }
         //
         }
     }
@@ -702,7 +711,7 @@ class RamaData extends Component<RamaProps, States> {
                     .style('cursor', 'default');
                 d3.select('#' + d.aa + d.num)
                     .transition()
-                    .duration(50)
+                    // .duration(50)
                     .attr('d', function (dat: any) {
                         if (dat.aa === 'GLY') {
                             symbolTypes.triangle.size(40);
@@ -711,7 +720,7 @@ class RamaData extends Component<RamaProps, States> {
                         symbolTypes.circle.size(40);
                         return symbolTypes.circle();
                     })
-                    .style('fill', 'none')
+                    .style('fill', 'transparent')
                     .style('stroke', function (d: any) {
                         return stroke(d);
                     })
