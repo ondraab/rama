@@ -29,7 +29,7 @@ export default class FilterComponent extends React.Component<{}, States> {
         super(props);
         this.state = {
             showFilter: false,
-            inputValue: '',
+            inputValue: '1tqn',
             buttonClicked: false,
             buttonState: 'disabled',
             jsonObject: [],
@@ -39,6 +39,7 @@ export default class FilterComponent extends React.Component<{}, States> {
         };
         this.chains = [];
         this.handleDropdownClick = this.handleDropdownClick.bind(this);
+        this.down();
     }
 
     public updateInputValue(evt: any) {

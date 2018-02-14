@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Component } from 'react';
 import * as d3 from 'd3';
-import * as d3Contour from 'd3-contour';
 import { generalContour, cisPro, gly, ileVal, prePro, transPro } from './HeatMapContours';
 import { lineGeneralContour, lineCisPro, lineGly, lineIleVal, linePrePro, lineTransPro } from './LineContours';
 
@@ -59,9 +58,7 @@ class RamaData extends Component<RamaProps, States> {
 
     componentWillUpdate(nextProps: any, nextState: any) {
         if (nextProps.chainsToShow.length !== this.state.chainsToShow.length) {
-            if (this.state.initial === true) {
-                this.basicContours(nextProps.typeOfPlot, nextProps.contourType);
-            }
+            this.basicContours(nextProps.typeOfPlot, nextProps.contourType);
             this.updateChart(nextProps.jsonObject, nextProps.chainsToShow, nextProps.typeOfPlot);
             return;
         }
@@ -251,7 +248,8 @@ class RamaData extends Component<RamaProps, States> {
         d3.select('.rama-outliers-div').append('div')
             .attr('class', 'outliers-container');
         d3.selectAll('g.rama-grid g.tick text').remove();
-
+        this.updateChart(this.props.jsonObject, this.props.chainsToShow, this.props.typeOfPlot);
+        this.basicContours(this.props.typeOfPlot, this.props.contourType);
     }
 
     // resize() {
