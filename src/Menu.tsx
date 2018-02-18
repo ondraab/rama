@@ -24,6 +24,7 @@ interface States {
 export default class FilterComponent extends React.Component<{}, States> {
     parsedPDB;
     chains;
+    input;
 
     constructor(props: any) {
         super(props);
@@ -38,8 +39,11 @@ export default class FilterComponent extends React.Component<{}, States> {
             contourType: 1,
         };
         this.chains = [];
+        this.input = '';
         this.handleDropdownClick = this.handleDropdownClick.bind(this);
-        this.down();
+        let pdb = new ParsePDB(this.state.inputValue);
+        this.parsedPDB = pdb.downloadAndParse();
+        this.chains = pdb.chainsArray;
     }
 
     public updateInputValue(evt: any) {
@@ -62,19 +66,23 @@ export default class FilterComponent extends React.Component<{}, States> {
         return 'success';
     }
 
-    public returnState() {
-        if (this.state.buttonClicked === true && this.state.inputValue.length === 4) {
-            this.down();
-            return this.state.inputValue;
-        }
-        return '';
-    }
+    // public returnState() {
+    //     if (this.state.buttonClicked === true && this.state.inputValue.length === 4) {
+    //         this.down();
+    //         return this.state.inputValue;
+    //     }
+    //     return '';
+    // }
 
     public down() {
         this.chains = [];
         let pdb = new ParsePDB(this.state.inputValue);
         this.parsedPDB = pdb.downloadAndParse();
         this.chains = pdb.chainsArray;
+        this.setState({
+             chainsToShow: this.chains
+            });
+        // console.log(this.chains);
         // this.chainOptions();
     }
 
@@ -99,7 +107,7 @@ export default class FilterComponent extends React.Component<{}, States> {
     public render() {
         const ramanPlot = (
             <RamaData
-                pdbID={this.returnState()}
+                pdbID={this.state.inputValue}
                 width={window.innerWidth}
                 height={window.innerWidth}
                 jsonObject={this.parsedPDB}
@@ -120,9 +128,7 @@ export default class FilterComponent extends React.Component<{}, States> {
                         <FormControl type="text" placeholder={'PDBid'} onChange={evt => this.updateInputValue(evt)}/>
                         <InputGroup.Button>
                         <Button
-                            onClick={() => this.setState({
-                                buttonClicked: true
-                            })}
+                            onClick={() => this.down()}
                             bsStyle={'primary'}
                             disabled={this.state.inputValue.length !== 4}
                         >
