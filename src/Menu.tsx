@@ -47,9 +47,7 @@ export default class FilterComponent extends React.Component<{}, States> {
     }
 
     public updateInputValue(evt: any) {
-        this.setState({
-            inputValue: evt.target.value
-        });
+        this.input = evt.target.value;
         if (this.state.buttonClicked === true) {
            this.setState({
                buttonClicked: false,
@@ -76,14 +74,19 @@ export default class FilterComponent extends React.Component<{}, States> {
 
     public down() {
         this.chains = [];
-        let pdb = new ParsePDB(this.state.inputValue);
+        let pdb = new ParsePDB(this.input);
         this.parsedPDB = pdb.downloadAndParse();
         this.chains = pdb.chainsArray;
         this.setState({
-             chainsToShow: this.chains
-            });
-        // console.log(this.chains);
-        // this.chainOptions();
+            inputValue: this.input,
+            chainsToShow: this.chains,
+            jsonObject: this.parsedPDB
+        },            function () {
+            // this.chains = [];
+            // let pdb = new ParsePDB(this.state.inputValue);
+            // this.parsedPDB = pdb.downloadAndParse();
+            // this.chains = pdb.chainsArray;
+        });
     }
 
     public chainFilter(selected: any) {

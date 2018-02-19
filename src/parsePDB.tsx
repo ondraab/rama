@@ -68,10 +68,8 @@ export class ParsePDB {
                      'https://wwwdev.ebi.ac.uk/pdbe/api/validation/rama_sidechain_listing/entry/' + this.pdbID, false);
         xmlHttp.send();
         if (xmlHttp.status !== 200) {
-            console.log('parsed if');
             return [];
         } else {
-            console.log('parsed else');
             let list: object[] = [];
             let molecules = JSON.parse(xmlHttp.responseText)[this.pdbID];
             for (let mol of molecules.molecules) {

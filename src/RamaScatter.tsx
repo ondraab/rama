@@ -59,55 +59,41 @@ class RamaData extends Component<RamaProps, States> {
 
     componentWillUpdate(nextProps: any, nextState: any) {
 
-        if (nextProps.jsonObject !== this.props.jsonObject){
-            console.log('1com will update');
-            console.log(nextProps.chainsToShow);
+        if (nextProps.jsonObject !== this.props.jsonObject) {
             this.updateChart(nextProps.jsonObject, nextProps.chainsToShow, nextProps.typeOfPlot);
             return;
         }
         if (nextProps.chainsToShow !== this.state.chainsToShow) {
-            console.log('2com will update');
             this.basicContours(nextProps.typeOfPlot, nextProps.contourType);
             this.updateChart(nextProps.jsonObject, nextProps.chainsToShow, nextProps.typeOfPlot);
             return;
         }
         if (nextProps.typeOfPlot !== this.state.contours) {
-            console.log('3com will update');
             this.updateChart(nextProps.jsonObject, nextProps.chainsToShow, nextProps.typeOfPlot);
             this.basicContours(nextProps.typeOfPlot, nextProps.contourType);
         }
         if (nextProps.contourType !== this.state.contourType) {
-            console.log('4com will update');
             this.basicContours(nextProps.typeOfPlot, nextProps.contourType);
         }
-        console.log('5com will update');
 
     }
 
     shouldComponentUpdate(nextProps: any, nextState: any) {
-        console.log(this.props.jsonObject);
-        console.log(nextProps.jsonObject);
         if (nextState.pdb.length === 4 && nextProps.pdbID !== this.state.pdb)  {
-            console.log('1should');
             return true;
         }
         if (nextProps.typeOfPlot !== this.state.contours) {
-            console.log('2should');
             return true;
         }
         if (nextProps.contourType !== this.state.contourType) {
-            console.log('3should');
             return true;
         }
-        let lll = nextProps.chainsToShow.length !== this.state.chainsToShow.length;
-        console.log(lll);
-        return lll;
+        return nextProps.chainsToShow.length !== this.state.chainsToShow.length;
     }
 
     componentWillReceiveProps(nextProps: any) {
         //
         if (nextProps.pdbID !== this.state.pdb) {
-            console.log('1comwillrecieve');
             this.setState({
                 pdb: nextProps.pdbID,
                 jsonObject: nextProps.jsonObject,
@@ -116,20 +102,16 @@ class RamaData extends Component<RamaProps, States> {
             return;
         }
         if (nextProps.typeOfPlot !== this.state.contours) {
-            console.log('2comwillrecieve');
             this.setState({
                 contours: nextProps.typeOfPlot,
             });
         }
         if (nextProps.chainsToShow  !== this.state.chainsToShow) {
-            console.log(nextProps.chainsToShow);
-            console.log(this.state.chainsToShow);
             this.setState({
                 chainsToShow: nextProps.chainsToShow,
             });
         }
         if (nextProps.contourType  !== this.state.contourType) {
-            console.log('4comwillrecieve');
             this.setState({
                 contourType: nextProps.contourType,
             });
@@ -198,8 +180,15 @@ class RamaData extends Component<RamaProps, States> {
             .attr('viewBox', '0 0 ' + width + ' ' + height)
             .classed('svg-content-responsive', true)
             // .style('padding', '30px 30px 30px 50px')
-            .style('overflow', 'visible')
+            .style('overflow', 'hidden')
             .style('fill', 'transparent');
+        d3.select('svg.svg-container').append('clipPath')
+            .attr('id', 'clipRect')
+            .append('rect')
+            .attr('width', '580')
+            .attr('height', '580');
+            // .attr('cx', '100');
+
         //
         this.canvasContainer = d3.select('#rama-svg-container')
             .append('canvas')
@@ -213,67 +202,67 @@ class RamaData extends Component<RamaProps, States> {
             // .style('padding', '30px 30px 30px 50px')
             .style('overflow', 'visible');
 
-        // add axes
-
-        this.svgContainer.append('g')
-            .call(this.xTopAxis)
-            .attr('id', 'x-axis');
-
-        this.svgContainer.append('g')
-            .attr('transform', 'translate(0,' + (height) + ')')
-            .call(this.xBottomAxis)
-            .attr('id', 'x-axis');
-
-        this.svgContainer.append('g')
-            .call(this.yLeftAxis)
-            .attr('id', 'y-axis');
-
-        this.svgContainer.append('g')
-            .attr('transform', function () {
-                return 'translate(' + (width) + ', 0)';
-            })
-            .call(this.yRightAxis)
-            .attr('id', 'y-axis');
-
-        this.svgContainer.append('g')
-            .attr('class', 'rama-grid')
-            .attr('transform', 'translate(0,' + height + ')')
-            .call(makeXGridlines()
-                .tickSize(width));
-
-        this.svgContainer.append('g')
-            .attr('class', 'rama-grid')
-            .call(makeYGridlines()
-                .tickSize(height));
-
-        // axis labels
-
-        this.svgContainer.append('text')
-            .attr('x', width / 2 )
-            .attr('y', height + 35)
-            .style('text-anchor', 'middle')
-            .style('fill', '#000')
-            .text('Phi');
-
-        this.svgContainer.append('text')
-            .attr('x', -35 )
-            .attr('y', height / 2)
-            .style('text-anchor', 'middle')
-            .style('fill', '#000')
-            .text('Psi');
-
-        // outliers headline
-        d3.select('.rama-root').append('div')
-            .attr('class', 'rama-outliers-div')
-            .append('div')
-            .attr('class', 'rama-outliers-headline')
-            .append('h4')
-            .text('OUTLIERS');
-
-        d3.select('.rama-outliers-div').append('div')
-            .attr('class', 'outliers-container');
-        d3.selectAll('g.rama-grid g.tick text').remove();
-        this.updateChart(this.props.jsonObject, this.props.chainsToShow, this.props.typeOfPlot);
+        // // add axes
+        //
+        // this.svgContainer.append('g')
+        //     .call(this.xTopAxis)
+        //     .attr('id', 'x-axis');
+        //
+        // this.svgContainer.append('g')
+        //     .attr('transform', 'translate(0,' + (height) + ')')
+        //     .call(this.xBottomAxis)
+        //     .attr('id', 'x-axis');
+        //
+        // this.svgContainer.append('g')
+        //     .call(this.yLeftAxis)
+        //     .attr('id', 'y-axis');
+        //
+        // this.svgContainer.append('g')
+        //     .attr('transform', function () {
+        //         return 'translate(' + (width) + ', 0)';
+        //     })
+        //     .call(this.yRightAxis)
+        //     .attr('id', 'y-axis');
+        //
+        // this.svgContainer.append('g')
+        //     .attr('class', 'rama-grid')
+        //     .attr('transform', 'translate(0,' + height + ')')
+        //     .call(makeXGridlines()
+        //         .tickSize(width));
+        //
+        // this.svgContainer.append('g')
+        //     .attr('class', 'rama-grid')
+        //     .call(makeYGridlines()
+        //         .tickSize(height));
+        //
+        // // axis labels
+        //
+        // this.svgContainer.append('text')
+        //     .attr('x', width / 2 )
+        //     .attr('y', height + 35)
+        //     .style('text-anchor', 'middle')
+        //     .style('fill', '#000')
+        //     .text('Phi');
+        //
+        // this.svgContainer.append('text')
+        //     .attr('x', -35 )
+        //     .attr('y', height / 2)
+        //     .style('text-anchor', 'middle')
+        //     .style('fill', '#000')
+        //     .text('Psi');
+        //
+        // // outliers headline
+        // d3.select('.rama-root').append('div')
+        //     .attr('class', 'rama-outliers-div')
+        //     .append('div')
+        //     .attr('class', 'rama-outliers-headline')
+        //     .append('h4')
+        //     .text('OUTLIERS');
+        //
+        // d3.select('.rama-outliers-div').append('div')
+        //     .attr('class', 'outliers-container');
+        // d3.selectAll('g.rama-grid g.tick text').remove();
+        // this.updateChart(this.props.jsonObject, this.props.chainsToShow, this.props.typeOfPlot);
         this.basicContours(this.props.typeOfPlot, this.props.contourType);
     }
 
@@ -570,135 +559,171 @@ class RamaData extends Component<RamaProps, States> {
                     );
                 };
         } else {
-            // svgImg.onload = function () {
-            //     context.drawImage(svgImg, 0, 0,
-            //                       width, height * svgImg.height / svgImg.width
-            //     );
-            // };
-            // setTimeout(function () {
-            //             // let s = new XMLSerializer().serializeToString(document.getElementById('rama-svg'));
-            //             // let encode = window.btoa(s);
-            //     let enc: any = document.getElementById('rama-canvas');
-            //             console.log(enc.toDataURL());
-            //         },         3000);
-            // // console.log(canvas.toDataURL());
-            d3.csv(url, function (error: any, data: any) {
-                if (error) {
-                    throw error;
-                }
-
-                data.sort(function (a: any, b: any) {
-                    return b.value - a.value;
-                });
-                data.forEach(function (d: any) {
-                    d.psi = +d.psi;
-                    d.phi = +d.phi;
-                    d.value = +d.value;
-                });
-                // scale(0.965, 0.965), translate(16, 16)
-                let scale = '';
-                switch (contours) {
-                    case '3':
-                        data.splice(0, data.length / 1.7);
-                        break;
-                    case '4':
-                        data.splice(0, data.length / 1.9);
-                        scale = 'translate(7,7),scale(0.995,0.995)';
-                        break;
-                    case '6':
-                        scale = 'scale(0.985, 0.985), translate(13, 13)';
-                        break;
-                    default:
-                        //
-                        // console.log(data[0], data[data.length-1]);
-                        data = data.slice(0, (data.length / 2.1) - 800);
-                        console.log(data.length);
-                        // data.splice(0, data.length-1000);
-                }
-                let median = d3.median(data, function (d: any) {
-                    return d.value;
-                });
-                let max = d3.max(data, function (d: any) {
-                    return +d.value;
-                });
-                let min = d3.min(data, function (d: any) {
-                    return +d.value;
-                });
-                //
-                let line = d3.line();
-                svg.selectAll('.shapes')
-                    .data(d3Contour.contourDensity()
-                        .x(function (d: any) {
-                            return xScale(d.phi);
-                        })
-                        .y(function (d: any) {
-                            return yScale(d.psi);
-                        })
-                        .size([height, width])
-                        .thresholds(d3.ticks(min, max, 1))
-                        .thresholds(d3.range(min, max))
-                        .cellSize(1)
-                        .bandwidth(1)
-                        (data))
-                    //
-                    .enter()
-                    .append('path')
-                    .attr('stroke', '#1359eb')
-                    .attr('stroke-width', '2')
-                    .attr('fill', 'none')
-                    .attr('class', 'line')
-                    .attr('id', 'contour-basis-line')
-                    .attr('margin', '30px')
-                    .attr('d', d3.geoPath())
-                    .attr('transform', scale);
-                let pa: any = document.getElementById('contour-basis-line');
-                console.log(pa);
-                // scale(0.99, 0.99),
-                switch (contours) {
-                    case '4':
-                        data.splice(0, data.length / 2.5);
-                        break;
-                    case '5':
-                        data.splice(0, data.length / 1.6);
-                        break;
-                    default:
-                        data.splice(0, data.length / 1.7);
-                        break;
-                }
-                // let elem:any = svg.getElementsByClassName('contour-line').width;
-                // console.log(elem);
-                // svg.selectAll('.shapes')
-                //     .data(d3Contour.contourDensity()
-                //         .x(function (d: any) {
-                //             return xScale(d.phi);
-                //         })
-                //         .y(function (d: any) {
-                //             return yScale(d.psi);
-                //         })
-                //         .size([height, width])
-                //         .thresholds(d3.range(median, max, 5))
-                //         .cellSize(1)
-                //         .bandwidth(6)
-                //         (data))
-                //     .enter()
-                //     .append('path')
-                //     .attr('stroke', '#3ee2eb')
-                //     .attr('stroke-width', '2')
-                //     .attr('fill', 'none')
-                //     .attr('class', 'contour-line')
-                //     .attr('margin', '30px')
-                //     .attr('d', d3.geoPath())
-                //     .attr('transform', scale);
-            // //    scale(0.99,0.99),
-            });
-            if (contours !== '1') {
-                setTimeout(function () {
-                    let s = new XMLSerializer().serializeToString(document.getElementById('rama-svg'));
-                    let encode = window.btoa(s);
-                    console.log('data:image/svg+xml;base64,' + encode);
-                },         3000);
-            }
-        //
+            svgImg.onload = function () {
+                context.drawImage(svgImg, 0, 0,
+                                  width, height * svgImg.height / svgImg.width
+                );
+            };
+            setTimeout(function () {
+                        // let s = new XMLSerializer().serializeToString(document.getElementById('rama-svg'));
+                        // let encode = window.btoa(s);
+                let enc: any = document.getElementById('rama-canvas');
+                        console.log(enc.toDataURL());
+                    },         3000);
+            // console.log(canvas.toDataURL());
+            // d3.csv(url, function (error: any, data: any) {
+            //     if (error) {
+            //         throw error;
+            //     }
+            //
+            //     data.sort(function (a: any, b: any) {
+            //         return b.value - a.value;
+            //     });
+            //     data.forEach(function (d: any) {
+            //         d.psi = +d.psi;
+            //         d.phi = +d.phi;
+            //         d.value = +d.value;
+            //     });
+            //     //
+            //     // scale(0.965, 0.965), translate(16, 16)
+            //     let scale = '';
+            //     switch (contours) {
+            //         case '2':
+            //             data = data.slice(0, data.length / 2.7);
+            //             break;
+            //         case '3':
+            //             data = data.slice(0, data.length / 2.5);
+            //             break;
+            //         case '4':
+            //             data = data.slice(0, data.length / 1.5);
+            //             break;
+            //         case '5':
+            //             data = data.slice(0, data.length / 3.7);
+            //             break;
+            //         case '6':
+            //             data = data.slice(0, data.length / 2.2);
+            //             break;
+            //         default:
+            //
+            //             // console.log(data[0], data[data.length-1]);
+            //             data = data.slice(0, (data.length / 2.1) - 850);
+            //             // data.splice(0, data.length-1000);
+            //     }
+            //     let median = d3.median(data, function (d: any) {
+            //         return d.value;
+            //     });
+            //     let max = d3.max(data, function (d: any) {
+            //         return +d.value;
+            //     });
+            //     let min = d3.min(data, function (d: any) {
+            //         return +d.value;
+            //     });
+            //     //
+            //     // let line = d3.line();
+            //     console.log(data.length);
+            //     svg.selectAll('.shapes')
+            //         .data(d3Contour.contourDensity()
+            //             .x(function (d: any) {
+            //                 return xScale(d.phi);
+            //             })
+            //             .y(function (d: any) {
+            //                 return yScale(d.psi);
+            //             })
+            //             .size([height, width])
+            //             .thresholds(d3.range(median, max, 5))
+            //             .cellSize(1)
+            //             .bandwidth(6)
+            //             (data))
+            //         .enter()
+            //         .append('path')
+            //         .attr('stroke', '#1359eb')
+            //         .attr('stroke-width', '2')
+            //         .attr('fill', 'none')
+            //         .attr('class', 'contour-line')
+            //         .attr('margin', '30px')
+            //         .attr('d', d3.geoPath())
+            //         .attr('transform', scale)
+            //         .attr('clip-path', 'url(#clipRect)');
+            //     // svg.selectAll('.shapes')
+            //     //     .data(d3Contour.contourDensity()
+            //     //         .x(function (d: any) {
+            //     //             return xScale(d.phi);
+            //     //         })
+            //     //         .y(function (d: any) {
+            //     //             return yScale(d.psi);
+            //     //         })
+            //     //         .size([height, width])
+            //     //         .thresholds(d3.ticks(min, max, 1))
+            //     //         .thresholds(d3.range(min, max))
+            //     //         .cellSize(1)
+            //     //         .bandwidth(1)
+            //     //         (data))
+            //     //     //
+            //     //     .enter()
+            //     //     .append('path')
+            //     //     .attr('stroke', '#1359eb')
+            //     //     .attr('stroke-width', '2')
+            //     //     .attr('fill', 'none')
+            //     //     .attr('class', 'line')
+            //     //     .attr('id', 'contour-basis-line')
+            //     //     .attr('margin', '30px')
+            //     //     .attr('d', d3.geoPath())
+            //     //     .attr('transform', scale);
+            //     let pa: any = document.getElementById('contour-basis-line');
+            //     // scale(0.99, 0.99),
+            //     switch (contours) {
+            //         //
+            //         case '3':
+            //             data = data.slice(0, data.length / 2.9);
+            //             break;
+            //         case '2':
+            //             data = data.slice(0, data.length / 3);
+            //             break;
+            //         case '4':
+            //             data = data.slice(0, data.length / 1.65);
+            //             break;
+            //         case '5':
+            //             data = data.slice(0, data.length / 1.8);
+            //             break;
+            //         case '6':
+            //             data = data.slice(0, data.length / 2.2);
+            //             break;
+            //         default:
+            //             data = data.slice(0, data.length / 2.7);
+            //             break;
+            //     }
+            //     console.log(data.length);
+            //     svg.selectAll('.shapes')
+            //         .data(d3Contour.contourDensity()
+            //             .x(function (d: any) {
+            //                 return xScale(d.phi);
+            //             })
+            //             .y(function (d: any) {
+            //                 return yScale(d.psi);
+            //             })
+            //             .size([height, width])
+            //             .thresholds(d3.range(median, max, 5))
+            //             .cellSize(1)
+            //             .bandwidth(6)
+            //             (data))
+            //         .enter()
+            //         .append('path')
+            //         .attr('stroke', '#3ee2eb')
+            //         .attr('stroke-width', '2')
+            //         .attr('fill', 'none')
+            //         .attr('class', 'contour-line')
+            //         .attr('margin', '30px')
+            //         .attr('d', d3.geoPath())
+            //         .attr('transform', scale);
+            //    // scale(0.99,0.99),
+            // });
+            // if (contours !== '1') {
+            //     setTimeout(function () {
+            //         let s = new XMLSerializer().serializeToString(document.getElementById('rama-svg'));
+            //         let encode = window.btoa(s);
+            //         console.log('data:image/svg+xml;base64,' + encode);
+            //     },         3000);
+            // }
         }
     }
 
