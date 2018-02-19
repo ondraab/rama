@@ -46,7 +46,7 @@ class RamaData extends Component<RamaProps, States> {
         this.state = {
             pdb: this.props.pdbID,
             contours: this.props.typeOfPlot,
-            chainsToShow: [],
+            chainsToShow: ['A'],
             jsonObject: [],
             initial: true,
             contourType: 1,
@@ -180,13 +180,13 @@ class RamaData extends Component<RamaProps, States> {
             .attr('viewBox', '0 0 ' + width + ' ' + height)
             .classed('svg-content-responsive', true)
             // .style('padding', '30px 30px 30px 50px')
-            .style('overflow', 'hidden')
+            .style('overflow', 'visible')
             .style('fill', 'transparent');
-        d3.select('svg.svg-container').append('clipPath')
-            .attr('id', 'clipRect')
-            .append('rect')
-            .attr('width', '580')
-            .attr('height', '580');
+        // d3.select('svg.svg-container').append('clipPath')
+        //     .attr('id', 'clipRect')
+        //     .append('rect')
+        //     .attr('width', '580')
+        //     .attr('height', '580');
             // .attr('cx', '100');
 
         //
@@ -203,66 +203,66 @@ class RamaData extends Component<RamaProps, States> {
             .style('overflow', 'visible');
 
         // // add axes
-        //
-        // this.svgContainer.append('g')
-        //     .call(this.xTopAxis)
-        //     .attr('id', 'x-axis');
-        //
-        // this.svgContainer.append('g')
-        //     .attr('transform', 'translate(0,' + (height) + ')')
-        //     .call(this.xBottomAxis)
-        //     .attr('id', 'x-axis');
-        //
-        // this.svgContainer.append('g')
-        //     .call(this.yLeftAxis)
-        //     .attr('id', 'y-axis');
-        //
-        // this.svgContainer.append('g')
-        //     .attr('transform', function () {
-        //         return 'translate(' + (width) + ', 0)';
-        //     })
-        //     .call(this.yRightAxis)
-        //     .attr('id', 'y-axis');
-        //
-        // this.svgContainer.append('g')
-        //     .attr('class', 'rama-grid')
-        //     .attr('transform', 'translate(0,' + height + ')')
-        //     .call(makeXGridlines()
-        //         .tickSize(width));
-        //
-        // this.svgContainer.append('g')
-        //     .attr('class', 'rama-grid')
-        //     .call(makeYGridlines()
-        //         .tickSize(height));
-        //
-        // // axis labels
-        //
-        // this.svgContainer.append('text')
-        //     .attr('x', width / 2 )
-        //     .attr('y', height + 35)
-        //     .style('text-anchor', 'middle')
-        //     .style('fill', '#000')
-        //     .text('Phi');
-        //
-        // this.svgContainer.append('text')
-        //     .attr('x', -35 )
-        //     .attr('y', height / 2)
-        //     .style('text-anchor', 'middle')
-        //     .style('fill', '#000')
-        //     .text('Psi');
-        //
-        // // outliers headline
-        // d3.select('.rama-root').append('div')
-        //     .attr('class', 'rama-outliers-div')
-        //     .append('div')
-        //     .attr('class', 'rama-outliers-headline')
-        //     .append('h4')
-        //     .text('OUTLIERS');
-        //
-        // d3.select('.rama-outliers-div').append('div')
-        //     .attr('class', 'outliers-container');
-        // d3.selectAll('g.rama-grid g.tick text').remove();
-        // this.updateChart(this.props.jsonObject, this.props.chainsToShow, this.props.typeOfPlot);
+
+        this.svgContainer.append('g')
+            .call(this.xTopAxis)
+            .attr('id', 'x-axis');
+
+        this.svgContainer.append('g')
+            .attr('transform', 'translate(0,' + (height) + ')')
+            .call(this.xBottomAxis)
+            .attr('id', 'x-axis');
+
+        this.svgContainer.append('g')
+            .call(this.yLeftAxis)
+            .attr('id', 'y-axis');
+
+        this.svgContainer.append('g')
+            .attr('transform', function () {
+                return 'translate(' + (width) + ', 0)';
+            })
+            .call(this.yRightAxis)
+            .attr('id', 'y-axis');
+
+        this.svgContainer.append('g')
+            .attr('class', 'rama-grid')
+            .attr('transform', 'translate(0,' + height + ')')
+            .call(makeXGridlines()
+                .tickSize(width));
+
+        this.svgContainer.append('g')
+            .attr('class', 'rama-grid')
+            .call(makeYGridlines()
+                .tickSize(height));
+
+        // axis labels
+
+        this.svgContainer.append('text')
+            .attr('x', width / 2 )
+            .attr('y', height + 35)
+            .style('text-anchor', 'middle')
+            .style('fill', '#000')
+            .text('Phi');
+
+        this.svgContainer.append('text')
+            .attr('x', -35 )
+            .attr('y', height / 2)
+            .style('text-anchor', 'middle')
+            .style('fill', '#000')
+            .text('Psi');
+
+        // outliers headline
+        d3.select('.rama-root').append('div')
+            .attr('class', 'rama-outliers-div')
+            .append('div')
+            .attr('class', 'rama-outliers-headline')
+            .append('h4')
+            .text('OUTLIERS');
+
+        d3.select('.rama-outliers-div').append('div')
+            .attr('class', 'outliers-container');
+        d3.selectAll('g.rama-grid g.tick text').remove();
+        this.updateChart(this.props.jsonObject, this.props.chainsToShow, this.props.typeOfPlot);
         this.basicContours(this.props.typeOfPlot, this.props.contourType);
     }
 
@@ -296,7 +296,10 @@ class RamaData extends Component<RamaProps, States> {
         if (window.screen.availWidth < 1920) {
             objSize = 30;
         }
-
+        if (window.screen.width < 350) {
+            objSize = 5;
+        }
+        //
         let { initial } = this.state;
         let outliersList = [],
             svg = this.svgContainer;
@@ -317,9 +320,9 @@ class RamaData extends Component<RamaProps, States> {
             if (d.rama === 'OUTLIER') {
                 return '#ca36ac';
             }
-            if (d.aa === 'GLY') {
-                return '#0aca40';
-            }
+            // if (d.aa === 'GLY') {
+            //     return '#0aca40';
+            // }
             return 'black';
         }
 
@@ -334,7 +337,6 @@ class RamaData extends Component<RamaProps, States> {
             'triangle': d3.symbol().type(d3.symbolTriangle).size(objSize),
             'circle': d3.symbol().type(d3.symbolCircle).size(objSize)
         };
-
         function switchPlotType(d: any, i: number) {
             switch (contours) {
                 case '1':
@@ -424,11 +426,11 @@ class RamaData extends Component<RamaProps, States> {
                     .duration(50)
                     .style('opacity', .95);
                 toolTip.html(
-                    d.aa
+                    d.chain
                     + ' '
                     + d.num
                     + ' '
-                    + d.chain
+                    + d.aa
                     + '<br/>'
                     + 'phi: '
                     + d.phi
@@ -486,7 +488,7 @@ class RamaData extends Component<RamaProps, States> {
         d3.select('#rama-canvas-container').empty();
         d3.selectAll('.contour-line').remove();
         let canvas = this.canvasContainer;
-        let svg = this.svgContainer;
+        // let svg = this.svgContainer;
 
         let { width, height } = this.props;
 
@@ -501,15 +503,15 @@ class RamaData extends Component<RamaProps, States> {
         // let width = (node.getBoundingClientRect().width) - this.leftPadding - this.padding;
         // let height = (node.getBoundingClientRect().height) - this.leftPadding - this.padding;
         // console.log(width, height);
-        const xScale = d3.scaleLinear()
-            .domain([-180, 180])
-            .range([0, (width)]);
-            // .range([0, (0.985 * width)]);
-
-        const yScale = d3.scaleLinear()
-            .domain([180, -180])
-            .range([0, (height)]);
-            // .range([0, (0.985 * height)]);
+        // const xScale = d3.scaleLinear()
+        //     .domain([-180, 180])
+        //     .range([0, (width)]);
+        //     // .range([0, (0.985 * width)]);
+        //
+        // const yScale = d3.scaleLinear()
+        //     .domain([180, -180])
+        //     .range([0, (height)]);
+        //     // .range([0, (0.985 * height)]);
 
         let url = 'https://raw.githubusercontent.com/ondraab/rama/master/public/data/';
         let img = new Image;
@@ -564,13 +566,13 @@ class RamaData extends Component<RamaProps, States> {
                                   width, height * svgImg.height / svgImg.width
                 );
             };
-            setTimeout(function () {
-                        // let s = new XMLSerializer().serializeToString(document.getElementById('rama-svg'));
-                        // let encode = window.btoa(s);
-                let enc: any = document.getElementById('rama-canvas');
-                        console.log(enc.toDataURL());
-                    },         3000);
-            // console.log(canvas.toDataURL());
+            //
+            // setTimeout(function () {
+            //             // let s = new XMLSerializer().serializeToString(document.getElementById('rama-svg'));
+            //             // let encode = window.btoa(s);
+            //     let enc: any = document.getElementById('rama-canvas');
+            //     console.log(enc.toDataURL());
+            //         }, 3000);
             // d3.csv(url, function (error: any, data: any) {
             //     if (error) {
             //         throw error;
@@ -724,19 +726,27 @@ class RamaData extends Component<RamaProps, States> {
             //         console.log('data:image/svg+xml;base64,' + encode);
             //     },         3000);
             // }
+        //
         }
     }
 
     addTable(sortedTable: any[]) {
+        let objSize = 40;
+        if (window.screen.availWidth < 1920) {
+            objSize = 30;
+        }
+        if (window.screen.width < 350) {
+            objSize = 5;
+        }
 
         // function stroke
         function stroke(d: any) {
             if (d.rama === 'OUTLIER') {
                 return '#ca36ac';
             }
-            if (d.aa === 'GLY') {
-                return '#0aca40';
-            }
+            // if (d.aa === 'GLY') {
+            //     return '#0aca40';
+            // }
             return 'black';
         }
 
@@ -776,17 +786,17 @@ class RamaData extends Component<RamaProps, States> {
                     // .duration(50)
                     .attr('d', function (dat: any) {
                         if (dat.aa === 'GLY') {
-                            symbolTypes.triangle.size(40);
+                            symbolTypes.triangle.size(objSize);
                             return symbolTypes.triangle();
                         }
-                        symbolTypes.circle.size(40);
+                        symbolTypes.circle.size(objSize);
                         return symbolTypes.circle();
                     })
                     .style('fill', 'transparent')
                     .style('stroke', function (d: any) {
                         return stroke(d);
                     })
-                    .style('stroke-width', '1');
+                    .style('stroke-width', '0.5');
             })
             .selectAll('td')
             .data(function (d: any) {return [d.chain, d.num, d.aa]; })

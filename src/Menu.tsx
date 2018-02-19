@@ -35,7 +35,7 @@ export default class FilterComponent extends React.Component<{}, States> {
             buttonState: 'disabled',
             jsonObject: [],
             typeOfPlot: '1',
-            chainsToShow: [],
+            chainsToShow: ['A'],
             contourType: 1,
         };
         this.chains = [];
