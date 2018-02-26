@@ -132,6 +132,7 @@ button.dropdown-toggle {
     width: 100%;
     max-width: 650px;
     min-width: 650px;
+    margin-left: 40px;
   }
   .svg-content-responsive {
     display: inline-block;

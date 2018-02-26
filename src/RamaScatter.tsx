@@ -40,7 +40,7 @@ class RamaData extends Component<RamaProps, States> {
     selectEvent;
     constructor(props: any) {
         super(props);
-        this.leftPadding = 70;
+        this.leftPadding = 50;
         this.padding = 30;
         this.createChart = this.createChart.bind(this);
         this.state = {

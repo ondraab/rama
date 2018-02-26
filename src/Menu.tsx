@@ -5,7 +5,6 @@ import {
 } from 'react-bootstrap';
 import RamaData from './RamaScatter';
 import ParsePDB from './parsePDB';
-import { Typeahead } from 'react-bootstrap-typeahead';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 import * as ToggleButtonGroup from 'react-bootstrap/lib/ToggleButtonGroup';
 import * as ToggleButton from 'react-bootstrap/lib/ToggleButton';
@@ -145,15 +144,17 @@ export default class FilterComponent extends React.Component<{}, States> {
             />
         );
     const makeChainToolbar = (
-        this.chains.map(function (d: any) {
-            return <ToggleButton value={d}>{d}</ToggleButton>
-        })
+        <ToggleButtonGroup name={'chain-select'} type={'checkbox'} defaultValue={this.chains}>
+            {this.chains.map(function (d: any) {
+                return <ToggleButton value={d} key={d}>{d}</ToggleButton>;
+            })}
+        </ToggleButtonGroup>
     );
 
     const typeOfPlotArr = ['General case', 'Isoleucine and valine', 'Pre-proline', 'Glycine', 'Trans proline', 'Cis proline'];
 
     return (
-            <div>
+        <div>
                 <div id={'rama-form-div'}>
                 <FormGroup
                     controlId={'controlText'}
@@ -179,11 +180,6 @@ export default class FilterComponent extends React.Component<{}, States> {
                         id={'dropdown-basic-$1 rama-type-dropdown'}
                         onSelect={this.handleDropdownClick}
                         pullRight={true}
-                        // open={this.state.dropdownOpen}
-                        // noCaret
-                        // open={this.state.dropdownOpen}
-                        // onMouseEnter={handleHoverOpen}
-                        // onMouseLeave={handleHoverClose}
                     >
                         <MenuItem eventKey={'1'} active={'1' === this.state.typeOfPlot}>General case</MenuItem>
                         <MenuItem eventKey={'2'} active={'2' === this.state.typeOfPlot}>Isoleucine and valine</MenuItem>
@@ -206,7 +202,7 @@ export default class FilterComponent extends React.Component<{}, States> {
                         </ToggleButtonGroup>
                     </ButtonToolbar>
                     </div>
-            </div>
+                </div>
                 {/*<div id={'rama-chain-select'}>*/}
                     {/*<Typeahead*/}
                         {/*clearButton={true}*/}
@@ -221,14 +217,12 @@ export default class FilterComponent extends React.Component<{}, States> {
                 <div id={'rama-root'}>
                     <div id={'rama-chain-toggle-div'}>
                         <ButtonGroup vertical={true} id={'rama-chain-toggle'}>
-                            <ToggleButtonGroup name={'chain-select'} type={'checkbox'}>
                                 {makeChainToolbar}
-                            </ToggleButtonGroup>
                         </ButtonGroup>
                     </div>
                     {ramanPlot}
                 </div>
-            </div>
+        </div>
         );
     }
 }
