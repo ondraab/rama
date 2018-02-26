@@ -8,7 +8,8 @@ import ParsePDB from './parsePDB';
 import { Typeahead } from 'react-bootstrap-typeahead';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 import * as ToggleButtonGroup from 'react-bootstrap/lib/ToggleButtonGroup';
-import ToggleButton = require('react-bootstrap/lib/ToggleButton');
+import * as ToggleButton from 'react-bootstrap/lib/ToggleButton';
+import * as ButtonGroup from 'react-bootstrap/lib/ButtonGroup';
 
 interface States {
     showFilter?: boolean;
@@ -19,6 +20,7 @@ interface States {
     typeOfPlot: string;
     chainsToShow: string[];
     contourType: number;
+    dropdownOpen: boolean;
 }
 
 export default class FilterComponent extends React.Component<{}, States> {
@@ -37,10 +39,12 @@ export default class FilterComponent extends React.Component<{}, States> {
             typeOfPlot: '1',
             chainsToShow: ['A'],
             contourType: 1,
+            dropdownOpen: false,
         };
         this.chains = [];
         this.input = '';
         this.handleDropdownClick = this.handleDropdownClick.bind(this);
+        // this.handleHover = this.handleHover.bind(this);
         let pdb = new ParsePDB(this.state.inputValue);
         this.parsedPDB = pdb.downloadAndParse();
         this.chains = pdb.chainsArray;
@@ -101,6 +105,17 @@ export default class FilterComponent extends React.Component<{}, States> {
         });
     }
 
+    // public handleHoverOpen() {
+    //     this.setState({
+    //         dropdownOpen: true,
+    //     });
+    // }
+    // public handleHoverClose() {
+    //     this.setState({
+    //         dropdownOpen: false,
+    //     });
+    // }
+
     public handleTypeChange(value: any) {
         this.setState({
             contourType: value,
@@ -108,7 +123,17 @@ export default class FilterComponent extends React.Component<{}, States> {
     }
 
     public render() {
-        const ramanPlot = (
+    function  handleHoverOpen() {
+            this.setState({
+                dropdownOpen: true,
+            });
+        }
+    function  handleHoverClose() {
+            this.setState({
+                dropdownOpen: false,
+            });
+        }
+    const ramanPlot = (
             <RamaData
                 pdbID={this.state.inputValue}
                 width={window.innerWidth}
@@ -119,8 +144,15 @@ export default class FilterComponent extends React.Component<{}, States> {
                 contourType={this.state.contourType}
             />
         );
+    const makeChainToolbar = (
+        this.chains.map(function (d: any) {
+            return <ToggleButton value={d}>{d}</ToggleButton>
+        })
+    );
 
-        return (
+    const typeOfPlotArr = ['General case', 'Isoleucine and valine', 'Pre-proline', 'Glycine', 'Trans proline', 'Cis proline'];
+
+    return (
             <div>
                 <div id={'rama-form-div'}>
                 <FormGroup
@@ -143,10 +175,15 @@ export default class FilterComponent extends React.Component<{}, States> {
                     <div>
                     <DropdownButton
                         bsStyle={'primary'}
-                        title="Type of plot"
+                        title={typeOfPlotArr[Number(this.state.typeOfPlot) - 1]}
                         id={'dropdown-basic-$1 rama-type-dropdown'}
                         onSelect={this.handleDropdownClick}
                         pullRight={true}
+                        // open={this.state.dropdownOpen}
+                        // noCaret
+                        // open={this.state.dropdownOpen}
+                        // onMouseEnter={handleHoverOpen}
+                        // onMouseLeave={handleHoverClose}
                     >
                         <MenuItem eventKey={'1'} active={'1' === this.state.typeOfPlot}>General case</MenuItem>
                         <MenuItem eventKey={'2'} active={'2' === this.state.typeOfPlot}>Isoleucine and valine</MenuItem>
@@ -170,17 +207,27 @@ export default class FilterComponent extends React.Component<{}, States> {
                     </ButtonToolbar>
                     </div>
             </div>
-                <div id={'rama-chain-select'}>
-                    <Typeahead
-                        clearButton={true}
-                        options={this.chains}
-                        selected={this.chains.sort()}
-                        labelKey="name"
-                        multiple={true}
-                        onChange={(selected) => this.chainFilter(selected)}
-                    />
+                {/*<div id={'rama-chain-select'}>*/}
+                    {/*<Typeahead*/}
+                        {/*clearButton={true}*/}
+                        {/*options={this.chains}*/}
+                        {/*selected={this.chains.sort()}*/}
+                        {/*labelKey="name"*/}
+                        {/*multiple={true}*/}
+                        {/*onChange={(selected) => this.chainFilter(selected)}*/}
+                    {/*/>*/}
+                    {/**/}
+                {/*</div>*/}
+                <div id={'rama-root'}>
+                    <div id={'rama-chain-toggle-div'}>
+                        <ButtonGroup vertical={true} id={'rama-chain-toggle'}>
+                            <ToggleButtonGroup name={'chain-select'} type={'checkbox'}>
+                                {makeChainToolbar}
+                            </ToggleButtonGroup>
+                        </ButtonGroup>
+                    </div>
+                    {ramanPlot}
                 </div>
-                {ramanPlot}
             </div>
         );
     }

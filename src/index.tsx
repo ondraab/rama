@@ -2,7 +2,6 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import registerServiceWorker from './registerServiceWorker';
 import './index.css';
-import RamaData  from './RamaScatter';
 import Menu from './Menu';
 import 'bootstrap/dist/css/bootstrap.css';
 

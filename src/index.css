@@ -23,6 +23,11 @@ div.rama-tooltip {
   padding: 0 5px 0 2px;
   display: inline;
 }
+#rama-chain-toggle{
+  position: absolute;
+  padding: 0 20px 0 5px;
+  min-width: 20px;
+}
 #rama-form-div {
   padding: 2px;
   display: flex;

@@ -40,7 +40,7 @@ class RamaData extends Component<RamaProps, States> {
     selectEvent;
     constructor(props: any) {
         super(props);
-        this.leftPadding = 50;
+        this.leftPadding = 70;
         this.padding = 30;
         this.createChart = this.createChart.bind(this);
         this.state = {
@@ -169,7 +169,7 @@ class RamaData extends Component<RamaProps, States> {
             return d3.axisTop(xScale);
         }
 
-        this.svgContainer = d3.select('.rama-root').append('div')
+        this.svgContainer = d3.select('div#rama-root').append('div')
             .attr('id', 'rama-svg-container')
             .append('svg')
             .classed('svg-container', true)
