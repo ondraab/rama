@@ -96,6 +96,7 @@ export default class FilterComponent extends React.Component<{}, States> {
         this.setState({
             chainsToShow: selected
         });
+        console.log(this.state.chainsToShow);
     }
 
     public handleDropdownClick(key: any) {
@@ -143,12 +144,20 @@ export default class FilterComponent extends React.Component<{}, States> {
                 contourType={this.state.contourType}
             />
         );
+
     const makeChainToolbar = (
-        <ToggleButtonGroup name={'chain-select'} type={'checkbox'} defaultValue={this.chains}>
-            {this.chains.map(function (d: any, i: number) {
-                return <ToggleButton value={d} key={d}>{d}</ToggleButton>;
-            })}
-        </ToggleButtonGroup>
+        <ButtonGroup vertical={true}>
+            <ToggleButtonGroup
+                name={'chain-select'}
+                type={'checkbox'}
+                defaultChecked={this.chains}
+                onChange={selected => this.chainFilter(selected)}
+            >
+                {this.chains.map(function (d: any, i: number) {
+                    return <ToggleButton value={d} key={d}>{d}</ToggleButton>;
+                })}
+            </ToggleButtonGroup>
+        </ButtonGroup>
     );
 
     const typeOfPlotArr = ['General case', 'Isoleucine and valine', 'Pre-proline', 'Glycine', 'Trans proline', 'Cis proline'];
@@ -173,7 +182,7 @@ export default class FilterComponent extends React.Component<{}, States> {
                     </InputGroup.Button>
                     </InputGroup>
                 </FormGroup>
-                    <div>
+                    <div id={'rama-plottype-div'}>
                     <DropdownButton
                         bsStyle={'primary'}
                         title={typeOfPlotArr[Number(this.state.typeOfPlot) - 1]}
@@ -214,14 +223,10 @@ export default class FilterComponent extends React.Component<{}, States> {
                     {/*/>*/}
                     {/**/}
                 {/*</div>*/}
-                <div id={'rama-root'}>
                     <div id={'rama-chain-toggle-div'}>
-                        <ButtonGroup vertical={true} id={'rama-chain-toggle'}>
                                 {makeChainToolbar}
-                        </ButtonGroup>
                     </div>
                     {ramanPlot}
-                </div>
         </div>
         );
     }
