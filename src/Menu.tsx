@@ -145,7 +145,7 @@ export default class FilterComponent extends React.Component<{}, States> {
         );
     const makeChainToolbar = (
         <ToggleButtonGroup name={'chain-select'} type={'checkbox'} defaultValue={this.chains}>
-            {this.chains.map(function (d: any) {
+            {this.chains.map(function (d: any, i: number) {
                 return <ToggleButton value={d} key={d}>{d}</ToggleButton>;
             })}
         </ToggleButtonGroup>
