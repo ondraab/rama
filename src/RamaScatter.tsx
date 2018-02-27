@@ -250,9 +250,9 @@ class RamaData extends Component<RamaProps, States> {
             .style('text-anchor', 'middle')
             .style('fill', '#000')
             .text('Psi');
-
+        //
         // outliers headline
-        d3.select('.rama-root').append('div')
+        d3.select('#rama-root').append('div')
             .attr('class', 'rama-outliers-div')
             .append('div')
             .attr('class', 'rama-outliers-headline')
@@ -402,7 +402,7 @@ class RamaData extends Component<RamaProps, States> {
             .attr('id', function (d: any) {
                 if (d.rama === 'OUTLIER') {
                     outliersList.push(d);
-                    return d.aa + d.num;
+                    return d.chain + d.aa + d.num;
                 }
                 return;
             })
@@ -764,7 +764,7 @@ class RamaData extends Component<RamaProps, States> {
                 d3.select(this)
                     .style('background-color', '#b4bed6')
                     .style('cursor', 'pointer');
-                d3.select('#' + d.aa + d.num)
+                d3.select('#' + d.chain + d.aa + d.num)
                     .attr('d', function (dat: any) {
                         if (dat.aa === 'GLY') {
                             symbolTypes.triangle.size(175);
@@ -781,7 +781,7 @@ class RamaData extends Component<RamaProps, States> {
                 d3.select(this)
                     .style('background-color', 'transparent')
                     .style('cursor', 'default');
-                d3.select('#' + d.aa + d.num)
+                d3.select('#' + d.chain + d.aa + d.num)
                     .transition()
                     // .duration(50)
                     .attr('d', function (dat: any) {
