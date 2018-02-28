@@ -18,6 +18,7 @@ interface States {
     jsonObject: object[];
     typeOfPlot: string;
     chainsToShow: string[];
+    modelsToShow: number[];
     contourType: number;
     dropdownOpen: boolean;
 }
@@ -25,6 +26,7 @@ interface States {
 export default class FilterComponent extends React.Component<{}, States> {
     parsedPDB;
     chains;
+    models;
     input;
 
     constructor(props: any) {
@@ -39,6 +41,7 @@ export default class FilterComponent extends React.Component<{}, States> {
             chainsToShow: ['A'],
             contourType: 1,
             dropdownOpen: false,
+            modelsToShow: [1],
         };
         this.chains = [];
         this.input = '';
@@ -47,6 +50,7 @@ export default class FilterComponent extends React.Component<{}, States> {
         let pdb = new ParsePDB(this.state.inputValue);
         this.parsedPDB = pdb.downloadAndParse();
         this.chains = pdb.chainsArray;
+        this.models = pdb.modelArray;
     }
 
     public updateInputValue(evt: any) {
@@ -80,10 +84,12 @@ export default class FilterComponent extends React.Component<{}, States> {
         let pdb = new ParsePDB(this.input);
         this.parsedPDB = pdb.downloadAndParse();
         this.chains = pdb.chainsArray;
+        this.models = pdb.modelArray;
         this.setState({
             inputValue: this.input,
             chainsToShow: this.chains,
-            jsonObject: this.parsedPDB
+            jsonObject: this.parsedPDB,
+            modelsToShow: this.models,
         },            function () {
             // this.chains = [];
             // let pdb = new ParsePDB(this.state.inputValue);
@@ -96,7 +102,12 @@ export default class FilterComponent extends React.Component<{}, States> {
         this.setState({
             chainsToShow: selected
         });
-        console.log(this.state.chainsToShow);
+    }
+
+    public entityFilter(selected: any) {
+        this.setState({
+            modelsToShow: selected
+        });
     }
 
     public handleDropdownClick(key: any) {
@@ -142,23 +153,40 @@ export default class FilterComponent extends React.Component<{}, States> {
                 typeOfPlot={this.state.typeOfPlot}
                 chainsToShow={this.state.chainsToShow}
                 contourType={this.state.contourType}
+                modelsToShow={this.state.modelsToShow}
             />
         );
 
-    const makeChainToolbar = (
-        <ButtonGroup vertical={true}>
+    let chainToggle: any = (
+        <ButtonGroup vertical={true} id={'rama-chain-filter'}>
             <ToggleButtonGroup
                 name={'chain-select'}
                 type={'checkbox'}
-                defaultChecked={this.chains}
+                defaultValue={this.chains}
                 onChange={selected => this.chainFilter(selected)}
+                value={this.state.chainsToShow}
             >
-                {this.chains.map(function (d: any, i: number) {
-                    return <ToggleButton value={d} key={d}>{d}</ToggleButton>;
+                {this.chains.sort().map(function (d: any) {
+                    return <ToggleButton value={d} key={d} checked={true} id={'rama-chain-toggle-button'}>{d}</ToggleButton>;
                 })}
             </ToggleButtonGroup>
         </ButtonGroup>
     );
+
+    const entityToggle = (
+            <ToggleButtonGroup
+                name={'entity-select'}
+                type={'checkbox'}
+                defaultValue={this.models}
+                onChange={selected => this.entityFilter(selected)}
+                value={this.state.modelsToShow}
+                id={'rama-entity-filter'}
+            >
+                {this.models.map(function (d: any) {
+                    return <ToggleButton value={d} key={d} checked={true} id={'rama-entity-toggle-button'}>{d}</ToggleButton>;
+                })}
+            </ToggleButtonGroup>
+        );
 
     const typeOfPlotArr = ['General case', 'Isoleucine and valine', 'Pre-proline', 'Glycine', 'Trans proline', 'Cis proline'];
 
@@ -224,7 +252,8 @@ export default class FilterComponent extends React.Component<{}, States> {
                     {/**/}
                 {/*</div>*/}
                     <div id={'rama-chain-toggle-div'}>
-                                {makeChainToolbar}
+                        {chainToggle}
+                        {entityToggle}
                     </div>
                     {ramanPlot}
         </div>

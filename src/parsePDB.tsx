@@ -24,11 +24,17 @@ class Res {
 export class ParsePDB {
     private pdbID: string;
     private _chainsArray: string[];
+    private _modelArray: number[];
 
     constructor(pdb: string) {
         this.pdbID = pdb.toLowerCase();
         this._chainsArray = [];
+        this._modelArray = [];
     }
+    //
+    // public equals(obj: Model): boolean {
+    //     if (thi)
+    // };
 
     public downloadAndParse(): object[] {
         // function down() {
@@ -75,9 +81,14 @@ export class ParsePDB {
             for (let mol of molecules.molecules) {
                 // console.log(mol);
                 for (let chain of mol.chains) {
-                    this._chainsArray.push(chain.chain_id);
+                    // if (this.modelArray[this.modelArray.length - 1])
                     for (let mod of chain.models) {
-                        // this._chainsArray.push(chain.chain_id);
+                        if (this.chainsArray.indexOf(chain.chain_id) === -1) {
+                            this.chainsArray.push(chain.chain_id);
+                        }
+                        if (this.modelArray.indexOf(mod.model_id) === -1) {
+                            this._modelArray.push(mod.model_id);
+                        }
                         for (let resid of mod.residues) {
                             list.push(new Res(resid.residue_name,
                                               resid.phi,
@@ -86,7 +97,8 @@ export class ParsePDB {
                                               chain.chain_id,
                                               resid.residue_number,
                                               resid.cis_peptide,
-                                              mod.model_id));
+                                              mod.model_id
+                            ));
                             // switch (resid.rama) {
                             //     case 'Favored':
                             //         fav.push(new Res(resid.residue_name,
@@ -120,6 +132,7 @@ export class ParsePDB {
                 }
             }
             // console.log(list);
+            console.log(this.chainsArray);
             return list;
         }
     }
@@ -127,6 +140,9 @@ export class ParsePDB {
         return this._chainsArray;
     }
 
+    get modelArray(): number[] {
+        return this._modelArray;
+    }
 }
 // }
         // let response = await fetch('http://www.ebi.ac.uk/pdbe/api/validation/rama_sidechain_listing/entry/'

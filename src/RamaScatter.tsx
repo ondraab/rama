@@ -13,6 +13,7 @@ interface RamaProps {
     typeOfPlot?: string;
     chainsToShow?: string[];
     contourType: number;
+    modelsToShow: number[];
 }
 
 interface States {
@@ -22,6 +23,7 @@ interface States {
     jsonObject: any[];
     initial: boolean;
     contourType: number;
+    modelsToShow: number[];
 }
 
 class RamaData extends Component<RamaProps, States> {
@@ -50,6 +52,7 @@ class RamaData extends Component<RamaProps, States> {
             jsonObject: [],
             initial: true,
             contourType: 1,
+            modelsToShow: [1],
         };
     }
 
@@ -59,17 +62,22 @@ class RamaData extends Component<RamaProps, States> {
 
     componentWillUpdate(nextProps: any, nextState: any) {
 
-        if (nextProps.jsonObject !== this.props.jsonObject) {
-            this.updateChart(nextProps.jsonObject, nextProps.chainsToShow, nextProps.typeOfPlot);
+        // if (nextProps.jsonObject !== this.props.jsonObject) {
+        //     this.updateChart(nextProps.jsonObject, nextProps.chainsToShow, nextProps.typeOfPlot);
+        //     return;
+        // }
+        if (nextProps.jsonObject !== this.props.jsonObject || nextProps.chainsToShow !== this.state.chainsToShow ||
+            nextProps.modelsToShow !== this.state.modelsToShow) {
+            // this.basicContours(nextProps.typeOfPlot, nextProps.contourType);
+            this.updateChart(nextProps.jsonObject, nextProps.chainsToShow, nextProps.typeOfPlot, nextProps.modelsToShow);
             return;
         }
-        if (nextProps.chainsToShow !== this.state.chainsToShow) {
-            this.basicContours(nextProps.typeOfPlot, nextProps.contourType);
-            this.updateChart(nextProps.jsonObject, nextProps.chainsToShow, nextProps.typeOfPlot);
-            return;
-        }
+        // if (nextProps.modelsToShow !== this.state.modelsToShow) {
+        //     this.updateChart(nextProps.jsonObject, nextProps.chainsToShow, nextProps.typeOfPlot);
+        //     return;
+        // }
         if (nextProps.typeOfPlot !== this.state.contours) {
-            this.updateChart(nextProps.jsonObject, nextProps.chainsToShow, nextProps.typeOfPlot);
+            this.updateChart(nextProps.jsonObject, nextProps.chainsToShow, nextProps.typeOfPlot, nextProps.modelsToShow);
             this.basicContours(nextProps.typeOfPlot, nextProps.contourType);
         }
         if (nextProps.contourType !== this.state.contourType) {
@@ -88,6 +96,9 @@ class RamaData extends Component<RamaProps, States> {
         if (nextProps.contourType !== this.state.contourType) {
             return true;
         }
+        if (nextProps.modelsToShow.length !== this.state.modelsToShow.length) {
+            return true;
+        }
         return nextProps.chainsToShow.length !== this.state.chainsToShow.length;
     }
 
@@ -98,6 +109,7 @@ class RamaData extends Component<RamaProps, States> {
                 pdb: nextProps.pdbID,
                 jsonObject: nextProps.jsonObject,
                 chainsToShow: nextProps.chainsToShow,
+                modelsToShow: nextProps.modelsToShow
             });
             return;
         }
@@ -114,6 +126,11 @@ class RamaData extends Component<RamaProps, States> {
         if (nextProps.contourType  !== this.state.contourType) {
             this.setState({
                 contourType: nextProps.contourType,
+            });
+        }
+        if (nextProps.entityId !== this.state.modelsToShow) {
+            this.setState({
+                modelsToShow: nextProps.modelsToShow,
             });
         }
         return;
@@ -262,7 +279,7 @@ class RamaData extends Component<RamaProps, States> {
         d3.select('.rama-outliers-div').append('div')
             .attr('class', 'outliers-container');
         d3.selectAll('g.rama-grid g.tick text').remove();
-        this.updateChart(this.props.jsonObject, this.props.chainsToShow, this.props.typeOfPlot);
+        this.updateChart(this.props.jsonObject, this.props.chainsToShow, this.props.typeOfPlot, this.props.modelsToShow);
         this.basicContours(this.props.typeOfPlot, this.props.contourType);
     }
 
@@ -281,7 +298,7 @@ class RamaData extends Component<RamaProps, States> {
     //     }
     // }
 
-    updateChart(jsonObject: any[], chainsToShow: any[], contours: string) {
+    updateChart(jsonObject: any[], chainsToShow: any[], contours: string, entityToShow: number[]) {
 
         this.svgContainer.selectAll('g.dataGroup').remove();
         let { width, height } = this.props;
@@ -378,18 +395,23 @@ class RamaData extends Component<RamaProps, States> {
         d3.select('.outliers-container').append('table')
         .attr('class', 'rama-outliers-table').append('thead').append('tr').attr('id', 'tab-headline');
         d3.select('#tab-headline').append('th').attr('class', 'rama-table-headline').text('Chain')
-            .style('width', '30%').style('min-width', '50px');
+            .style('width', '30%').style('min-width', '50px').style('text-align', 'right');
         d3.select('#tab-headline').append('th').attr('class', 'rama-table-headline').text('ID')
-            .style('width', '30%').style('min-width', '50px');
-        d3.select('#tab-headline').append('th').attr('class', 'rama-table-headline').text('AA');
-
+            .style('width', '30%').style('min-width', '50px').style('text-align', 'right');
+        d3.select('#tab-headline').append('th').attr('class', 'rama-table-headline').text('AA')
+            .style('width', '30%').style('min-width', '50px').style('text-align', 'right');
+        d3.select('#tab-headline').append('th').attr('class', 'rama-table-headline').text('Phi')
+            .style('width', '30%').style('min-width', '50px').style('text-align', 'right');
+        d3.select('#tab-headline').append('th').attr('class', 'rama-table-headline').text('Psi')
+            .style('width', '30%').style('min-width', '50px').style('text-align', 'right');
+        //
         this.outliersTable = d3.select('.outliers-container').append('div')
             .attr('class', 'outliers').append('table')
             .attr('class', 'table table-hover table-responsive');
 
         this.svgContainer.selectAll('.shapes')
             .data(jsonObject.filter(function (d: any, i: number) {
-                if (initial || chainsToShow.indexOf(d.chain) !== -1) {
+                if (initial || (chainsToShow.indexOf(d.chain) !== -1 && entityToShow.indexOf(d.modelId) !== -1)) {
                     if (d.phi !== null || d.psi !== null) {
                         return switchPlotType(d, i);
                     }
@@ -402,10 +424,11 @@ class RamaData extends Component<RamaProps, States> {
             .attr('id', function (d: any) {
                 if (d.rama === 'OUTLIER') {
                     outliersList.push(d);
-                    return d.chain + d.aa + d.num;
+                    return d.chain + d.modelId + '-' + d.aa + d.num;
                 }
                 return;
             })
+            //
             .attr('d', function (d: any) {
                 if (d.aa === 'GLY') {
                     return symbolTypes.triangle();
@@ -764,7 +787,7 @@ class RamaData extends Component<RamaProps, States> {
                 d3.select(this)
                     .style('background-color', '#b4bed6')
                     .style('cursor', 'pointer');
-                d3.select('#' + d.chain + d.aa + d.num)
+                d3.select('#' + d.chain + d.modelId + '-' + d.aa + d.num)
                     .attr('d', function (dat: any) {
                         if (dat.aa === 'GLY') {
                             symbolTypes.triangle.size(175);
@@ -781,7 +804,7 @@ class RamaData extends Component<RamaProps, States> {
                 d3.select(this)
                     .style('background-color', 'transparent')
                     .style('cursor', 'default');
-                d3.select('#' + d.chain + d.aa + d.num)
+                d3.select('#' +  d.chain + d.modelId + '-' + d.aa + d.num)
                     .transition()
                     // .duration(50)
                     .attr('d', function (dat: any) {
@@ -799,18 +822,19 @@ class RamaData extends Component<RamaProps, States> {
                     .style('stroke-width', '0.5');
             })
             .selectAll('td')
-            .data(function (d: any) {return [d.chain, d.num, d.aa]; })
+            .data(function (d: any) {return [d.chain, d.num, d.aa, d.phi, d.psi]; })
             .enter()
             .append('td')
             .attr('id', 'rama-td')
             .style('width', '30%')
             .style('min-width', '50px')
+            .style('text-align', 'right')
             .text(function(d: any) { return d; });
 
         rows.exit().remove();
         //
         let cells = rows.selectAll('td')
-            .data(function (d: any) {return [d.chain, d.num, d.aa]; })
+            .data(function (d: any) {return [d.chain, d.num, d.aa, d.phi, d.psi]; })
             .text(function (d: any) {return d; });
         //
         cells.enter()

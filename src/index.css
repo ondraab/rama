@@ -6,6 +6,15 @@ body.rama-body {
   padding: 0;
   font-family: sans-serif;
 }
+#rama-entity-filter {
+  position: absolute;
+  padding-left: 5px;
+  width: 650px;
+  display: inline-block;
+}
+#rama-entity-toggle-button {
+  width: 35px;
+}
 div.rama-tooltip {
   position: absolute;
   text-align: center;
@@ -13,7 +22,7 @@ div.rama-tooltip {
   height: 50px;
   padding: 2px;
   font: 12px sans-serif;
-  background: rgba(189, 189, 189, 0.82);
+  background: rgb(200, 200, 200);
   border: 0;
   border-radius: 8px;
   pointer-events: none;
@@ -49,13 +58,7 @@ div.outliers-container {
   overflow-y: auto;
   margin-top: 0;
 }
-.rama-outliers-div {
- width: 50%;
-  padding: 5px 1% 0 1%;
-    position: absolute;
-    left: 700px;
-    top: 50px;
-}
+
 #rama-plottype-div {
     min-width: 180px;
 }
@@ -87,6 +90,8 @@ div.outliers-container {
   width: 100%;
   max-width: inherit;
   height: 100%;
+  position: absolute;
+  top: 80px;
 }
 canvas#rama-canvas {
   padding: 30px 30px 30px 50px;
@@ -117,6 +122,12 @@ width: 100%;
 button.dropdown-toggle {
   width: 100%;
 }
+.rama-outliers-div {
+  width: 50%;
+  padding: 5px 1% 0 1%;
+  position: absolute;
+  top: 800px;
+}
 
 @media only screen and (min-width: 768px) {
   /* For desktop: */
@@ -125,6 +136,13 @@ button.dropdown-toggle {
     flex-direction: row;
     justify-content: flex-start;
     max-height: 500px;
+  }
+  .rama-outliers-div {
+    width: 50%;
+    padding: 5px 1% 0 1%;
+    position: absolute;
+    left: 700px;
+    top: 50px;
   }
   .svg-container {
     display: inline-block;
