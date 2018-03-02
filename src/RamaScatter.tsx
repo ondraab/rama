@@ -253,20 +253,22 @@ class RamaData extends Component<RamaProps, States> {
                 .tickSize(height));
 
         // axis labels
-
+        // phi label
         this.svgContainer.append('text')
             .attr('x', width / 2 )
             .attr('y', height + 35)
             .style('text-anchor', 'middle')
             .style('fill', '#000')
-            .text('Phi');
+            .text('\u03A6');
 
+        // psi label
         this.svgContainer.append('text')
-            .attr('x', -35 )
-            .attr('y', height / 2)
+            .attr('x',  0 - (height / 2))
+            .attr('y',- 35)
             .style('text-anchor', 'middle')
             .style('fill', '#000')
-            .text('Psi');
+            .attr('transform', 'rotate(-90)')
+            .text('\u03A8');
         //
         // outliers headline
         d3.select('#rama-root').append('div')

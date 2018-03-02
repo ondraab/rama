@@ -158,7 +158,7 @@ export default class FilterComponent extends React.Component<{}, States> {
         );
 
     let chainToggle: any = (
-        <ButtonGroup vertical={true} id={'rama-chain-filter'}>
+        <ButtonGroup vertical={true} id={'rama-chain-filter'} bsStyle={'primary'}>
             <ToggleButtonGroup
                 name={'chain-select'}
                 type={'checkbox'}
