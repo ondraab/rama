@@ -144,14 +144,14 @@ export default class FilterComponent extends React.Component<{}, States> {
         const ramanPlot = (
                 <RamaData
                     pdbID={this.state.inputValue}
-                    width={window.innerWidth}
-                    height={window.innerWidth}
+                    width={473}
+                    height={473}
                     typeOfPlot={this.state.typeOfPlot}
                     chainsToShow={this.state.chainsToShow}
                     contourType={this.state.contourType}
                     modelsToShow={this.state.modelsToShow}
-                    rsrz={this.rsrz}
-                    outliersType={this.outliersType}
+                    // rsrz={this.rsrz}
+                    // outliersType={this.outliersType}
                     drawingType={this.state.drawingType}
                 />
             );

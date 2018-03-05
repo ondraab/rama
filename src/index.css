@@ -9,7 +9,7 @@ body.rama-body {
 #rama-entity-filter {
   position: absolute;
   padding-left: 5px;
-  width: 650px;
+  /*width: 650px;*/
   display: inline-block;
 }
 #rama-entity-toggle-button {
@@ -87,7 +87,7 @@ div.outliers-container {
   padding: 0 2px 0 2px;
 }
 #rama-svg-container {
-  width: 100%;
+  /*width: 100%;*/
   max-width: inherit;
   height: 100%;
   position: absolute;
@@ -95,16 +95,17 @@ div.outliers-container {
 }
 canvas#rama-canvas {
   padding: 30px 30px 30px 50px;
-  width: 100%;
+  /*width: 100%;*/
 }
 .svg-container {
   /*display: inline-block;*/
   position: absolute;
-  width: 100%;
-  padding-bottom: 100%; /* aspect ratio */
+  /*width: 100%;*/
+  /*padding-bottom: 100%; !* aspect ratio *!*/
   vertical-align: top;
   overflow: visible;
-  padding: 30px 30px 30px 50px;
+  /*padding: 30px 30px 30px 50px;*/
+  margin: 30px 30px 30px 50px;
 }
 /*#rama-canvas-container{*/
   /*width: 100%;*/
@@ -151,18 +152,17 @@ button.dropdown-toggle {
   .svg-container {
     display: inline-block;
     position: absolute;
-    /*width: 85%;*/
-    padding: 30px 30px 30px 50px; /* aspect ratio */
+    margin: 30px 30px 30px 50px;
     vertical-align: top;
     overflow: visible;
-    max-height: 650px;
+    /*max-height: 650px;*/
     z-index: 1;
-    max-width: 650px;
+    /*max-width: 650px;*/
   }
   #rama-svg-container {
-    width: 100%;
-    max-width: 650px;
-    min-width: 650px;
+    /*width: 100%;*/
+    /*max-width: 650px;*/
+    /*min-width: 650px;*/
     margin-left: 40px;
   }
   .svg-content-responsive {

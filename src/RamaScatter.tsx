@@ -13,8 +13,8 @@ interface RamaProps {
     chainsToShow?: string[];
     contourType: number;
     modelsToShow: number[];
-    rsrz: {};
-    outliersType: {};
+    // rsrz: {};
+    // outliersType: {};
     drawingType: string;
 }
 
@@ -25,8 +25,8 @@ interface States {
     initial: boolean;
     contourType: number;
     modelsToShow: number[];
-    rsrz: {};
-    outliersType: {};
+    // rsrz: {};
+    // outliersType: {};
     drawingType: string;
 }
 
@@ -42,17 +42,21 @@ class RamaData extends Component<RamaProps, States> {
     dataGroup;
     outliersTable;
     canvasContainer;
-    leftPadding;
-    padding;
+    // leftPadding;
+    // padding;
     tooltip;
+    outliersType;
+    rsrz;
     constructor(props: any) {
         super(props);
-        this.leftPadding = 50;
-        this.padding = 30;
+        // this.leftPadding = 50;
+        // this.padding = 30;
         this.createChart = this.createChart.bind(this);
         let pdb = new ParsePDB(this.props.pdbID);
         pdb.downloadAndParse();
         this.jsonObject = pdb.residueArray;
+        this.outliersType = pdb.outlDict;
+        this.rsrz = pdb.rsrz;
         this.state = {
             pdb: this.props.pdbID,
             contours: this.props.typeOfPlot,
@@ -60,8 +64,8 @@ class RamaData extends Component<RamaProps, States> {
             initial: true,
             contourType: 1,
             modelsToShow: [1],
-            rsrz: this.props.rsrz,
-            outliersType: this.props.outliersType,
+            // rsrz: this.props.rsrz,
+            // outliersType: this.props.outliersType,
             drawingType: '1',
         };
     }
@@ -123,12 +127,14 @@ class RamaData extends Component<RamaProps, States> {
             pdb.downloadAndParse();
             this.jsonObject = [];
             this.jsonObject = pdb.residueArray;
+            this.outliersType = pdb.outlDict;
+            this.rsrz = pdb.rsrz;
             this.setState({
                 pdb: nextProps.pdbID,
                 chainsToShow: nextProps.chainsToShow,
                 modelsToShow: nextProps.modelsToShow,
-                rsrz: nextProps.rsrz,
-                outliersType: nextProps.outliersType
+                // rsrz: nextProps.rsrz,
+                // outliersType: nextProps.outliersType
             });
             return;
         }
@@ -229,6 +235,7 @@ class RamaData extends Component<RamaProps, States> {
         this.svgContainer = d3.select('div#rama-root').append('div')
             .attr('id', 'rama-svg-container')
             .append('svg')
+            .attr('max-width', width)
             .classed('svg-container', true)
             .attr('id', 'rama-svg')
             // .attr('width', width)
@@ -347,15 +354,14 @@ class RamaData extends Component<RamaProps, States> {
         this.svgContainer.selectAll('g.dataGroup').remove();
         let { width, height } = this.props;
         const tooltip = this.tooltip;
-        let { outliersType, rsrz } = this.state;
-        let jsonObject = this.jsonObject;
+        const { outliersType, rsrz, jsonObject } = this;
 
         if (width > 768) {
             width = 580;
         }
-        if (height > 768) {
-            height = 580;
-        }
+        // if (height > 768) {
+        //     height = 580;
+        // }
         let objSize = 40;
         if (window.screen.availWidth < 1920) {
             objSize = 30;
@@ -392,7 +398,7 @@ class RamaData extends Component<RamaProps, States> {
                             case 1:
                                 return '#ff0';
                             case 2:
-                                return '#ff8000';
+                                return '#f80';
                             default:
                                 return '#f00';
                         }
@@ -401,7 +407,7 @@ class RamaData extends Component<RamaProps, States> {
                     if (typeof rsrz[d.num] === 'undefined') {
                         break;
                     } else {
-                        return '#00ffb7';
+                        return '#ff5900';
                     }
                 default:
                     break;
