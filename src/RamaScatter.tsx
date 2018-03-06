@@ -69,7 +69,7 @@ class RamaData extends Component<RamaProps, States> {
             drawingType: '1',
         };
     }
-
+    //
     componentDidMount() {
         this.createChart();
     }
@@ -348,14 +348,47 @@ class RamaData extends Component<RamaProps, States> {
     //         this.basicContours(this.props.typeOfPlot, this.props.contourType);
     //     }
     // }
+    stroke(d: any, drawingType: string, outliersType: any, rsrz: any) {
+        switch (drawingType) {
+            case '1':
+                if (d.rama === 'OUTLIER') {
+                    return '#ca36ac';
+                }
+                return 'black';
+            case '2':
+                if (typeof outliersType[d.num] === 'undefined') {
+                    return '#0f0';
+                } else {
+                    switch (outliersType[d.num].outliersType.length) {
+                        case 0:
+                            return '#0f0';
+                        case 1:
+                            return '#ff0';
+                        case 2:
+                            return '#f80';
+                        default:
+                            return '#f00';
+                    }
+                }
+            case '3':
+                if (typeof rsrz[d.num] === 'undefined') {
+                    break;
+                } else {
+                    return '#f00';
+                }
+            default:
+                break;
+        }
+    }
 
     updateChart(chainsToShow: any[], contours: string, entityToShow: number[], drawingType: string) {
 
         this.svgContainer.selectAll('g.dataGroup').remove();
-        let { width, height } = this.props;
+        let { width } = this.props;
         const tooltip = this.tooltip;
-        const { outliersType, rsrz, jsonObject } = this;
+        const { jsonObject, stroke, outliersType, rsrz } = this;
 
+        console.log(jsonObject.length);
         if (width > 768) {
             width = 580;
         }
@@ -371,8 +404,7 @@ class RamaData extends Component<RamaProps, States> {
         }
 
         let { initial } = this.state;
-        let outliersList = [],
-            svg = this.svgContainer;
+        let outliersList = [];
 
         // scales
         const xScale = d3.scaleLinear()
@@ -386,40 +418,42 @@ class RamaData extends Component<RamaProps, States> {
             // .range([0, (0.985 * height)]);
             //
         // function stroke
-        function stroke(d: any) {
-            switch (drawingType) {
-                case '1':
-                    if (typeof outliersType[d.num] === 'undefined') {
-                        break;
-                    } else {
-                        switch (outliersType[d.num].outliersType.length) {
-                            case 0:
-                                return '#0f0';
-                            case 1:
-                                return '#ff0';
-                            case 2:
-                                return '#f80';
-                            default:
-                                return '#f00';
-                        }
-                    }
-                case '2':
-                    if (typeof rsrz[d.num] === 'undefined') {
-                        break;
-                    } else {
-                        return '#ff5900';
-                    }
-                default:
-                    break;
-            }
-            if (d.rama === 'OUTLIER') {
-                return '#ca36ac';
-            }
-            // if (d.aa === 'GLY') {
-            //     return '#0aca40';
-            // }
-            return 'black';
-        }
+        // function stroke(d: any) {
+        //     switch (drawingType) {
+        //         case '1':
+        //             if (d.rama === 'OUTLIER') {
+        //                 return '#ca36ac';
+        //             }
+        //             return 'black';
+        //         case '2':
+        //             if (typeof outliersType[d.num] === 'undefined') {
+        //                 return '#0f0';
+        //             } else {
+        //                 switch (outliersType[d.num].outliersType.length) {
+        //                     case 0:
+        //                         return '#0f0';
+        //                     case 1:
+        //                         return '#ff0';
+        //                     case 2:
+        //                         return '#f80';
+        //                     default:
+        //                         return '#f00';
+        //                 }
+        //             }
+        //         case '3':
+        //             if (typeof rsrz[d.num] === 'undefined') {
+        //                 break;
+        //             } else {
+        //                 return '#f00';
+        //             }
+        //         default:
+        //             break;
+        //     }
+        //     // if (d.aa === 'GLY') {
+        //     //     return '#0aca40';
+        //     // }
+        //     return 'black';
+        // }
 
         // symbolTypes
         let symbolTypes = {
@@ -494,13 +528,21 @@ class RamaData extends Component<RamaProps, States> {
             .attr('class', 'dataGroup')
             .append('path')
             .attr('id', function (d: any) {
-                if (d.rama === 'OUTLIER') {
-                    outliersList.push(d);
-                    return d.chain + d.modelId + '-' + d.aa + d.num;
+                if (drawingType !== '3') {
+                    if (d.rama === 'OUTLIER') {
+                        outliersList.push(d);
+                        return d.aa + '-' + d.chain + '-' + d.modelId + '-' + d.num;
+                    }
+                    return;
                 }
-                return;
+                if (d.rama === 'OUTLIER' && typeof rsrz[d.num] !== 'undefined') {
+                        outliersList.push(d);
+                        return d.aa + '-' + d.chain + '-' + d.modelId + '-' + d.num;
+                    } else {
+                        return;
+                    }
             })
-            //
+
             .attr('d', function (d: any) {
                 if (d.aa === 'GLY') {
                     return symbolTypes.triangle();
@@ -513,7 +555,7 @@ class RamaData extends Component<RamaProps, States> {
             .merge(this.svgContainer)
             // .style('fill', 'transparent')
             .style('fill', function (d: any) {
-                return stroke(d);
+                return stroke(d, drawingType, outliersType, rsrz);
             })
             // .style('stroke-width', '0.5')
             .on('mouseover', function (d: any) {
@@ -544,7 +586,7 @@ class RamaData extends Component<RamaProps, States> {
                         return symbolTypes.circle();
                     })
                     .style('fill', function (dat: any) {
-                        return stroke(dat);
+                        return stroke(dat, drawingType, outliersType, rsrz);
                     });
 
             })
@@ -562,7 +604,7 @@ class RamaData extends Component<RamaProps, States> {
                         })
                         // .style('fill', 'transparent')
                         .style('fill', function (d: any) {
-                            return stroke(d);
+                            return stroke(d, drawingType, outliersType, rsrz);
                         });
                         // .style('stroke-width', '0.5');
                     tooltip.transition()
@@ -576,7 +618,7 @@ class RamaData extends Component<RamaProps, States> {
         this.setState({
             initial: false
         });
-        this.addTable(outliersList);
+        this.addTable(outliersList, drawingType);
     }
 
     basicContours(contours: string, contourType: number) {
@@ -825,25 +867,26 @@ class RamaData extends Component<RamaProps, States> {
         }
     }
 
-    addTable(sortedTable: any[]) {
+    addTable(sortedTable: any[], drawingType: string) {
         let objSize = 40;
+        const { stroke, outliersType, rsrz } = this;
         if (window.screen.availWidth < 1920) {
             objSize = 30;
         }
         if (window.screen.width < 350) {
             objSize = 5;
         }
-
+        //
         // function stroke
-        function stroke(d: any) {
-            if (d.rama === 'OUTLIER') {
-                return '#ca36ac';
-            }
-            // if (d.aa === 'GLY') {
-            //     return '#0aca40';
-            // }
-            return 'black';
-        }
+        // function stroke(d: any) {
+        //     if (d.rama === 'OUTLIER') {
+        //         return '#ca36ac';
+        //     }
+        //     // if (d.aa === 'GLY') {
+        //     //     return '#0aca40';
+        //     // }
+        //     return 'black';
+        // }
 
         let symbolTypes = {
             'triangle': d3.symbol().type(d3.symbolTriangle).size(30),
@@ -859,7 +902,7 @@ class RamaData extends Component<RamaProps, States> {
                 d3.select(this)
                     .style('background-color', '#b4bed6')
                     .style('cursor', 'pointer');
-                d3.select('#' + d.chain + d.modelId + '-' + d.aa + d.num)
+                d3.select('#' + d.aa + '-' + d.chain + '-' + d.modelId + '-' + d.num)
                     .attr('d', function (dat: any) {
                         if (dat.aa === 'GLY') {
                             symbolTypes.triangle.size(175);
@@ -869,14 +912,15 @@ class RamaData extends Component<RamaProps, States> {
                         return symbolTypes.circle();
                     })
                     .style('fill', function (dat: any) {
-                        return stroke(dat);
+                        return stroke(dat, drawingType, outliersType, rsrz);
                     });
             })
+            //
             .on('mouseout', function (d: any) {
                 d3.select(this)
                     .style('background-color', 'transparent')
                     .style('cursor', 'default');
-                d3.select('#' +  d.chain + d.modelId + '-' + d.aa + d.num)
+                d3.select('#' +  d.aa + '-' + d.chain + '-' + d.modelId + '-' + d.num)
                     .transition()
                     // .duration(50)
                     .attr('d', function (dat: any) {
@@ -887,9 +931,8 @@ class RamaData extends Component<RamaProps, States> {
                         symbolTypes.circle.size(objSize);
                         return symbolTypes.circle();
                     })
-                    .style('fill', 'transparent')
-                    .style('stroke', function (d: any) {
-                        return stroke(d);
+                    .style('fill', function (d: any) {
+                        return stroke(d, drawingType, outliersType, rsrz);
                     })
                     .style('stroke-width', '0.5');
             })

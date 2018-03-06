@@ -150,8 +150,6 @@ export default class FilterComponent extends React.Component<{}, States> {
                     chainsToShow={this.state.chainsToShow}
                     contourType={this.state.contourType}
                     modelsToShow={this.state.modelsToShow}
-                    // rsrz={this.rsrz}
-                    // outliersType={this.outliersType}
                     drawingType={this.state.drawingType}
                 />
             );
@@ -188,7 +186,7 @@ export default class FilterComponent extends React.Component<{}, States> {
             );
 
         const typeOfPlotArr = ['General case', 'Isoleucine and valine', 'Pre-proline', 'Glycine', 'Trans proline', 'Cis proline'];
-        const drawingType = ['Quality', 'RSRZ'];
+        const drawingType = ['Default', 'Quality', 'RSRZ'];
 
         return (
             <div>
@@ -218,9 +216,9 @@ export default class FilterComponent extends React.Component<{}, States> {
                                 onSelect={this.handleDrawTypeDropdownClick}
                                 pullRight={true}
                             >
-
-                                <MenuItem eventKey={'1'} active={'1' === this.state.drawingType}>Quality</MenuItem>
-                                <MenuItem eventKey={'2'} active={'2' === this.state.drawingType}>RSRZ</MenuItem>
+                                <MenuItem eventKey={'1'} active={'1' === this.state.drawingType}>Default</MenuItem>
+                                <MenuItem eventKey={'2'} active={'2' === this.state.drawingType}>Quality</MenuItem>
+                                <MenuItem eventKey={'3'} active={'3' === this.state.drawingType}>RSRZ</MenuItem>
                             </DropdownButton>
                         </div>
                         <div id={'rama-plottype-div'}>
