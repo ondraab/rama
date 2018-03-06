@@ -5,6 +5,7 @@ import './index.css';
 import Menu from './Menu';
 import 'bootstrap/dist/css/bootstrap.css';
 import RamaData from './RamaScatter';
+import { CompMenu } from './CompMenu';
 
 // class Index extends React.Component {
 //     render() {
@@ -29,23 +30,26 @@ import RamaData from './RamaScatter';
 // ReactDOM.render(<Index/>, document.getElementById('menu') as HTMLElement);
 // registerServiceWorker();
 ReactDOM.render(
-    <Menu />, document.getElementById('header') as HTMLElement
+    <div id={'rama-component'} />, document.getElementById('header') as HTMLElement
 );
 
-// ReactDOM.render(
-//     <RamaData
-//         width={473}
-//         height={473}
-//         pdbID={'1tqn'}
-//         chainsToShow={['A']}
-//         modelsToShow={[1]}
-//         residueColorStyle={1}
-//         contourColoringStyle={1}
-//         ramaContourPlotType={1}
-//     />,
-//     document.getElementById('rama-component') as HTMLElement
-// );
-// registerServiceWorker();
+ReactDOM.render(
+    <RamaData
+        width={473}
+        height={473}
+        pdbID={'1tqn'}
+        chainsToShow={['A']}
+        modelsToShow={[1]}
+        residueColorStyle={1}
+        contourColoringStyle={1}
+        ramaContourPlotType={1}
+    />,
+    document.getElementById('rama-component') as HTMLElement
+);
+registerServiceWorker();
+ReactDOM.render(
+    <CompMenu/>, document.getElementById('rama-settings') as HTMLElement
+);
 
 // ReactDOM.render(
 //   <RamaData pdbID={'4d10'} width={500} height={500}/>,

@@ -232,6 +232,8 @@ class RamaData extends Component<RamaProps, States> {
 
         this.svgContainer = d3.select('div#rama-root').append('div')
             .attr('id', 'rama-svg-container')
+            .attr('height', height)
+            .attr('border', '1px solid black')
             .append('svg')
             .attr('max-width', width)
             .classed('svg-container', true)
@@ -244,6 +246,7 @@ class RamaData extends Component<RamaProps, States> {
             // .style('padding', '30px 30px 30px 50px')
             .style('overflow', 'visible')
             .style('fill', 'transparent');
+
         // d3.select('svg.svg-container').append('clipPath')
         //     .attr('id', 'clipRect')
         //     .append('rect')
@@ -315,18 +318,20 @@ class RamaData extends Component<RamaProps, States> {
             .attr('transform', 'rotate(-90)')
             .text('\u03A8');
         //
-        // outliers headline
-        d3.select('#rama-root').append('div')
-            .attr('class', 'rama-outliers-div')
-            .append('div')
-            .attr('class', 'rama-outliers-headline')
-            .append('h4')
-            .text('OUTLIERS');
-
-        d3.select('.rama-outliers-div').append('div')
-            .attr('class', 'outliers-container');
+        // // outliers headline
+        // d3.select('#rama-root').append('div')
+        //     .attr('class', 'rama-outliers-div')
+        //     .append('div')
+        //     .attr('class', 'rama-outliers-headline')
+        //     .append('h4')
+        //     .text('OUTLIERS');
+        //
+        // d3.select('.rama-outliers-div').append('div')
+        //     .attr('class', 'outliers-container');
         d3.selectAll('g.rama-grid g.tick text').remove();
         // console.log(this.props.rsrz);
+        d3.select('#rama-svg-container').append('div').attr('id', 'rama-settings');
+
         this.updateChart(this.props.chainsToShow, this.props.ramaContourPlotType, this.props.modelsToShow,
                          this.props.residueColorStyle);
         this.basicContours(this.props.ramaContourPlotType, this.props.contourColoringStyle);
@@ -616,7 +621,7 @@ class RamaData extends Component<RamaProps, States> {
         this.setState({
             initial: false
         });
-        this.addTable(outliersList, drawingType);
+        // this.addTable(outliersList, drawingType);
     }
 
     basicContours(ramaContourPlotType: number, contourType: number) {

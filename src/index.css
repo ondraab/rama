@@ -89,13 +89,33 @@ div.outliers-container {
 #rama-svg-container {
   /*width: 100%;*/
   max-width: inherit;
-  height: 100%;
+  /*height: 100%;*/
   position: absolute;
   top: 80px;
+  border: 1px solid #7c827e;
+}
+#rama-settings {
+  border-top: 1px solid #7c827e;
+  margin-top: 10px;
+  background-color: #DCECD7;
+}
+select#rama-coloring {
+  margin: 10px;
+  display: inline-block;
 }
 canvas#rama-canvas {
   padding: 30px 30px 30px 50px;
   /*width: 100%;*/
+}
+#rama-contour-style {
+  display: inline-block;
+  margin-left: 10px;
+}
+.rama-contour-style {
+  margin-right: 5px;
+}
+#rama-contour-radio {
+  margin: 5px;
 }
 .svg-container {
   /*display: inline-block;*/
