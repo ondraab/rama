@@ -16,12 +16,12 @@ interface States {
     buttonClicked: boolean;
     buttonState: string;
     jsonObject: object[];
-    typeOfPlot: string;
+    typeOfPlot: number;
     chainsToShow: string[];
     modelsToShow: number[];
     contourType: number;
     // dropdownOpen: boolean;
-    drawingType: string;
+    coloring: number;
 }
 
 export default class FilterComponent extends React.Component<{}, States> {
@@ -40,11 +40,11 @@ export default class FilterComponent extends React.Component<{}, States> {
             buttonClicked: false,
             buttonState: 'disabled',
             jsonObject: [],
-            typeOfPlot: '1',
+            typeOfPlot: 1,
             chainsToShow: ['A'],
             contourType: 1,
             modelsToShow: [1],
-            drawingType: '1',
+            coloring: 1,
         };
         this.chains = [];
         this.input = '';
@@ -130,7 +130,7 @@ export default class FilterComponent extends React.Component<{}, States> {
 
     public handleDrawTypeDropdownClick(key: any) {
         this.setState({
-            drawingType: key,
+            coloring: key,
         });
     }
 
@@ -146,11 +146,11 @@ export default class FilterComponent extends React.Component<{}, States> {
                     pdbID={this.state.inputValue}
                     width={473}
                     height={473}
-                    typeOfPlot={this.state.typeOfPlot}
+                    ramaContourPlotType={this.state.typeOfPlot}
                     chainsToShow={this.state.chainsToShow}
-                    contourType={this.state.contourType}
+                    contourColoringStyle={this.state.contourType}
                     modelsToShow={this.state.modelsToShow}
-                    drawingType={this.state.drawingType}
+                    residueColorStyle={this.state.coloring}
                 />
             );
 
@@ -211,30 +211,30 @@ export default class FilterComponent extends React.Component<{}, States> {
                         <div id={'rama-drawing-style-div'}>
                             <DropdownButton
                                 bsStyle={'primary'}
-                                title={drawingType[Number(this.state.drawingType) - 1]}
+                                title={drawingType[this.state.coloring - 1]}
                                 id={'dropdown-basic-$1 rama-drawType-dropdown'}
                                 onSelect={this.handleDrawTypeDropdownClick}
                                 pullRight={true}
                             >
-                                <MenuItem eventKey={'1'} active={'1' === this.state.drawingType}>Default</MenuItem>
-                                <MenuItem eventKey={'2'} active={'2' === this.state.drawingType}>Quality</MenuItem>
-                                <MenuItem eventKey={'3'} active={'3' === this.state.drawingType}>RSRZ</MenuItem>
+                                <MenuItem eventKey={1} active={1 === this.state.coloring}>Default</MenuItem>
+                                <MenuItem eventKey={2} active={2 === this.state.coloring}>Quality</MenuItem>
+                                <MenuItem eventKey={3} active={3 === this.state.coloring}>RSRZ</MenuItem>
                             </DropdownButton>
                         </div>
                         <div id={'rama-plottype-div'}>
                             <DropdownButton
                                 bsStyle={'primary'}
-                                title={typeOfPlotArr[Number(this.state.typeOfPlot) - 1]}
+                                title={typeOfPlotArr[this.state.typeOfPlot - 1]}
                                 id={'dropdown-basic-$1 rama-type-dropdown'}
                                 onSelect={this.handlePlotTypeDropdownClick}
                                 pullRight={true}
                             >
-                                <MenuItem eventKey={'1'} active={'1' === this.state.typeOfPlot}>General case</MenuItem>
-                                <MenuItem eventKey={'2'} active={'2' === this.state.typeOfPlot}>Isoleucine and valine</MenuItem>
-                                <MenuItem eventKey={'3'} active={'3' === this.state.typeOfPlot}>Pre-proline</MenuItem>
-                                <MenuItem eventKey={'4'} active={'4' === this.state.typeOfPlot}>Glycine</MenuItem>
-                                <MenuItem eventKey={'5'} active={'5' === this.state.typeOfPlot}>Trans proline</MenuItem>
-                                <MenuItem eventKey={'6'} active={'6' === this.state.typeOfPlot}>Cis proline</MenuItem>
+                                <MenuItem eventKey={1} active={1 === this.state.typeOfPlot}>General case</MenuItem>
+                                <MenuItem eventKey={2} active={2 === this.state.typeOfPlot}>Isoleucine and valine</MenuItem>
+                                <MenuItem eventKey={3} active={3 === this.state.typeOfPlot}>Pre-proline</MenuItem>
+                                <MenuItem eventKey={4} active={4 === this.state.typeOfPlot}>Glycine</MenuItem>
+                                <MenuItem eventKey={5} active={5 === this.state.typeOfPlot}>Trans proline</MenuItem>
+                                <MenuItem eventKey={6} active={6 === this.state.typeOfPlot}>Cis proline</MenuItem>
                             </DropdownButton>
                         </div>
                         <div id={'rama-radio-buttons-container'}>
