@@ -555,6 +555,13 @@ class RamaData extends Component<RamaProps, States> {
             .style('fill', function (d: any) {
                 return stroke(d, drawingType, outliersType, rsrz);
             })
+            .style('opacity', function (d: any) {
+                let fileTmp = stroke(d, drawingType, outliersType, rsrz)
+                if (fileTmp === '#0f0' || fileTmp === 'black') {
+                    return 0.3;
+                }
+                return 1;
+            })
             // .style('stroke-width', '0.5')
             .on('mouseover', function (d: any) {
                 tooltip.transition()
