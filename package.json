@@ -40,9 +40,11 @@
     "react-super-select": "^1.0.8",
     "reactstrap": "^5.0.0-alpha.4",
     "request": "^2.83.0",
+    "source-map-explorer": "^1.5.0",
     "tslint": "^5.8.0"
   },
   "scripts": {
+    "analyze": "source-map-explorer build/static/js/main.*",
     "start": "react-scripts-ts start",
     "build": "react-scripts-ts build",
     "test": "react-scripts-ts test --env=jsdom",

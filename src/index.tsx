@@ -6,6 +6,7 @@ import Menu from './Menu';
 import 'bootstrap/dist/css/bootstrap.css';
 import RamaData from './RamaScatter';
 import { CompMenu } from './CompMenu';
+import * as d3 from 'd3';
 
 // class Index extends React.Component {
 //     render() {
@@ -32,25 +33,44 @@ import { CompMenu } from './CompMenu';
 ReactDOM.render(
     <div id={'rama-component'} />, document.getElementById('header') as HTMLElement
 );
+let residueColorStyle = 1;
+let contourColoringStyle = 1;
+let ramaContourPlotType = 1;
 
-ReactDOM.render(
-    <RamaData
-        width={473}
-        height={473}
-        pdbID={'1tqn'}
-        chainsToShow={['A']}
-        modelsToShow={[1]}
-        residueColorStyle={1}
-        contourColoringStyle={1}
-        ramaContourPlotType={1}
-    />,
-    document.getElementById('rama-component') as HTMLElement
-);
+function renderRamaComp(residueColorStyle: number, contourColoringStyle: number, ramaContourPlotType: number) {
+    ReactDOM.render(
+        <RamaData
+            width={473}
+            height={473}
+            pdbID={'1tqn'}
+            chainsToShow={['A']}
+            modelsToShow={[1]}
+            residueColorStyle={residueColorStyle}
+            contourColoringStyle={contourColoringStyle}
+            ramaContourPlotType={ramaContourPlotType}
+        />,
+        document.getElementById('rama-component') as HTMLElement
+    );
+}
+renderRamaComp(residueColorStyle, contourColoringStyle, ramaContourPlotType);
 registerServiceWorker();
 ReactDOM.render(
     <CompMenu/>, document.getElementById('rama-settings') as HTMLElement
 );
-
+let rdb: any = document.getElementById('contour-color-default');
+rdb.checked = 'true';
+d3.select('#rama-coloring').on('change', function () {
+    residueColorStyle = Number(d3.select(this).property('value'));
+    renderRamaComp(residueColorStyle, contourColoringStyle, ramaContourPlotType);
+});
+d3.select('#rama-plot-type').on('change', function () {
+    ramaContourPlotType = Number(d3.select(this).property('value'));
+    renderRamaComp(residueColorStyle, contourColoringStyle, ramaContourPlotType);
+});
+d3.selectAll('input[name=contour-style]').on('change', function () {
+    contourColoringStyle = Number(d3.select(this).property('value'));
+    renderRamaComp(residueColorStyle, contourColoringStyle, ramaContourPlotType);
+});
 // ReactDOM.render(
 //   <RamaData pdbID={'4d10'} width={500} height={500}/>,
 //   document.getElementById('root') as HTMLElement

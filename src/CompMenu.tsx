@@ -87,43 +87,55 @@ export class CompMenu extends React.Component<{}, States> {
             <div>
                 <select id={'rama-coloring'}>
                     <option value={1}>
-                        <label>Default</label>
+                        Default
                     </option>
                     <option value={2}>
-                        <label>Quality</label>
+                        Quality
                     </option>
                     <option value={3}>
-                        <label>RSRZ</label>
+                        RSRZ
                     </option>
                 </select>
                 <select id={'rama-plot-type'}>
                     <option value={1}>
-                        <label>General case</label>
+                        General case
                     </option>
                     <option value={2}>
-                        <label>Isoleucine and valine</label>
+                        Isoleucine and valine
                     </option>
                     <option value={3}>
-                        <label>Pre-proline</label>
+                        Pre-proline
                     </option>
                     <option value={4}>
-                        <label>Glycine</label>
+                        Glycine
                     </option>
                     <option value={5}>
-                        <label>Trans proline</label>
+                        Trans proline
                     </option>
                     <option value={6}>
-                        <label>Cis proline</label>
+                        Cis proline
                     </option>
                 </select>
                 <form id={'rama-contour-style'}>
                     <label className={'rama-contour-style'}>
                         Contour
-                        <input type={'radio'} name={'contour-style'} id={'rama-contour-radio'} value={1}/>
+                        <input
+                            type={'radio'}
+                            name={'contour-style'}
+                            className={'rama-contour-radio'}
+                            id={'contour-color-default'}
+                            value={1}
+                        />
                     </label>
                     <label className={'rama-contour-style'}>
                         Heat Map
-                        <input type={'radio'} name={'contour-style'} id={'rama-contour-radio'} value={2}/>
+                        <input
+                            type={'radio'}
+                            name={'contour-style'}
+                            className={'rama-contour-radio'}
+                            value={2}
+                            id={'contour-color'}
+                        />
                     </label>
                 </form>
             </div>

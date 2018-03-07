@@ -91,7 +91,7 @@ div.outliers-container {
   max-width: inherit;
   /*height: 100%;*/
   position: absolute;
-  top: 80px;
+  margin-top: 20px;
   border: 1px solid #7c827e;
 }
 #rama-settings {
@@ -111,11 +111,11 @@ canvas#rama-canvas {
   display: inline-block;
   margin-left: 10px;
 }
-.rama-contour-style {
-  margin-right: 5px;
-}
-#rama-contour-radio {
+input#contour-color-default {
   margin: 5px;
+}
+input#contour-color {
+    margin: 5px;
 }
 .svg-container {
   /*display: inline-block;*/
@@ -183,7 +183,7 @@ button.dropdown-toggle {
     /*width: 100%;*/
     /*max-width: 650px;*/
     /*min-width: 650px;*/
-    margin-left: 40px;
+    margin-left: 20px;
   }
   .svg-content-responsive {
     display: inline-block;

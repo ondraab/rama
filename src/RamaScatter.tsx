@@ -78,11 +78,12 @@ class RamaData extends Component<RamaProps, States> {
         //     this.updateChart(nextProps.jsonObject, nextProps.chainsToShow, nextProps.ramaContourPlotType);
         //     return;
         // }
+
         if (nextProps.pdbID !== this.state.pdb || nextProps.chainsToShow !== this.state.chainsToShow ||
             nextProps.modelsToShow !== this.state.modelsToShow) {
             this.updateChart(nextProps.chainsToShow, nextProps.ramaContourPlotType, nextProps.modelsToShow,
                              nextProps.residueColorStyle);
-            return;
+            // console.log(nextProps.contourColoringStyle, this.state.contourColoringStyle);
         }
         if (nextProps.ramaContourPlotType !== this.state.ramaContourPlotType) {
             this.updateChart(nextProps.chainsToShow, nextProps.ramaContourPlotType, nextProps.modelsToShow,
@@ -94,6 +95,7 @@ class RamaData extends Component<RamaProps, States> {
                              nextProps.residueColorStyle);
         }
         if (nextProps.contourColoringStyle !== this.state.contourColoringStyle) {
+            // console.log(nextProps.contourColoringStyle, this.state.contourColoringStyle);
             this.basicContours(nextProps.ramaContourPlotType, nextProps.contourColoringStyle);
         }
 
@@ -245,7 +247,7 @@ class RamaData extends Component<RamaProps, States> {
             .classed('svg-content-responsive', true)
             // .style('padding', '30px 30px 30px 50px')
             .style('overflow', 'visible')
-            .style('fill', 'transparent');
+            // .style('fill', 'transparent');
 
         // d3.select('svg.svg-container').append('clipPath')
         //     .attr('id', 'clipRect')
@@ -390,7 +392,7 @@ class RamaData extends Component<RamaProps, States> {
         let { width } = this.props;
         const tooltip = this.tooltip;
         const { jsonObject, stroke, outliersType, rsrz } = this;
-
+        // console.log(ramaContourPlotType, drawingType);
         // console.log(jsonObject.length);
         if (width > 768) {
             width = 580;
@@ -629,8 +631,8 @@ class RamaData extends Component<RamaProps, States> {
         d3.selectAll('.contour-line').remove();
         let canvas = this.canvasContainer;
         // let svg = this.svgContainer;
-
         let { width, height } = this.props;
+        // console.log(ramaContourPlotType);
 
         if (width > 768) {
             width = 580;
