@@ -246,7 +246,7 @@ class RamaData extends Component<RamaProps, States> {
             .attr('viewBox', '0 0 ' + width + ' ' + height)
             .classed('svg-content-responsive', true)
             // .style('padding', '30px 30px 30px 50px')
-            .style('overflow', 'visible')
+            .style('overflow', 'visible');
             // .style('fill', 'transparent');
 
         // d3.select('svg.svg-container').append('clipPath')
@@ -377,7 +377,7 @@ class RamaData extends Component<RamaProps, States> {
                 }
             case 3:
                 if (typeof rsrz[d.num] === 'undefined') {
-                    break;
+                    return 'black';
                 } else {
                     return '#f00';
                 }
@@ -562,10 +562,18 @@ class RamaData extends Component<RamaProps, States> {
             .style('fill', function (d: any) {
                 return stroke(d, drawingType, outliersType, rsrz);
             })
+            .style('opacity', function (d: any) {
+                let fillTmp = stroke(d, drawingType, outliersType, rsrz);
+                // console.log(fillTmp);
+                if (fillTmp === '#0f0' || fillTmp === 'black') {
+                    return 0.3;
+                }
+                return 1;
+            })
             // .style('stroke-width', '0.5')
             .on('mouseover', function (d: any) {
                 tooltip.transition()
-                    .duration(50)
+                    // .duration(50)
                     .style('opacity', .95);
                 tooltip.html(
                     d.chain
@@ -613,7 +621,7 @@ class RamaData extends Component<RamaProps, States> {
                         });
                         // .style('stroke-width', '0.5');
                     tooltip.transition()
-                        .duration(50)
+                        // .duration(50)
                         .style('opacity', 0);
                 }
             );
