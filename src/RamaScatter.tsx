@@ -13,8 +13,6 @@ interface RamaProps {
     chainsToShow: string[];
     contourColoringStyle: number;
     modelsToShow: number[];
-    // rsrz: {};
-    // outliersType: {};
     residueColorStyle: number;
 }
 
@@ -25,8 +23,6 @@ interface States {
     initial: boolean;
     contourColoringStyle: number;
     modelsToShow: number[];
-    // rsrz: {};
-    // outliersType: {};
     residueColorStyle: number;
 }
 
@@ -45,6 +41,9 @@ class RamaData extends Component<RamaProps, States> {
     tooltip;
     outliersType;
     rsrz;
+    clashes;
+    ramachandranOutliers;
+    sidechainOutliers;
     constructor(props: any) {
         super(props);
         // this.leftPadding = 50;
@@ -55,6 +54,9 @@ class RamaData extends Component<RamaProps, States> {
         this.jsonObject = pdb.residueArray;
         this.outliersType = pdb.outlDict;
         this.rsrz = pdb.rsrz;
+        this.clashes = 0;
+        this.ramachandranOutliers = 0;
+        this.sidechainOutliers = 0;
         this.state = {
             pdb: this.props.pdbID,
             ramaContourPlotType: this.props.ramaContourPlotType,
@@ -62,8 +64,6 @@ class RamaData extends Component<RamaProps, States> {
             initial: true,
             contourColoringStyle: 1,
             modelsToShow: [1],
-            // rsrz: this.props.rsrz,
-            // outliersType: this.props.outliersType,
             residueColorStyle: 1,
         };
     }
@@ -332,28 +332,16 @@ class RamaData extends Component<RamaProps, States> {
         //     .attr('class', 'outliers-container');
         d3.selectAll('g.rama-grid g.tick text').remove();
         // console.log(this.props.rsrz);
-        d3.select('#rama-svg-container').append('div').attr('id', 'rama-settings');
+        d3.select('#rama-svg-container').append('div').attr('id', 'rama-sum').attr('class', 'rama-set-cl');
+        d3.select('#rama-svg-container').append('div').attr('id', 'rama-settings').attr('class', 'rama-set-cl');
 
         this.updateChart(this.props.chainsToShow, this.props.ramaContourPlotType, this.props.modelsToShow,
                          this.props.residueColorStyle);
         this.basicContours(this.props.ramaContourPlotType, this.props.contourColoringStyle);
     }
 
-    // resize() {
-    //     let svg = this.svgContainer;
-    //     let width = svg.clientWidth;
-    //     let height = svg.clientHeight;
-    //
-    //     svg
-    //         .attr('width', width)
-    //         .attr('height', height);
-    //
-    //     if (!this.state.initial) {
-    //         this.updateChart(this.props.jsonObject, this.props.chainsToShow, this.props.ramaContourPlotType);
-    //         this.basicContours(this.props.ramaContourPlotType, this.props.contourColoringStyle);
-    //     }
-    // }
-    stroke(d: any, drawingType: number, outliersType: any, rsrz: any) {
+    stroke(d: any, drawingType: number, outliersType: any, rsrz: any, clashes: number = 0, ramachandranOutliers: number = 0, sidechainOutliers: number = 0) {
+        //
         switch (drawingType) {
             case 1:
                 if (d.rama === 'OUTLIER') {
@@ -364,6 +352,16 @@ class RamaData extends Component<RamaProps, States> {
                 if (typeof outliersType[d.num] === 'undefined') {
                     return '#0f0';
                 } else {
+                    if (outliersType[d.num].outliersType.includes('clashes')) {
+                        clashes++;
+                        console.log(this.clashes);
+                    }
+                    if (outliersType[d.num].outliersType.includes('ramachandran_outliers')) {
+                        ramachandranOutliers++;
+                    }
+                    if (outliersType[d.num].outliersType.includes('sidechain_outliers')) {
+                        sidechainOutliers++;
+                    }
                     switch (outliersType[d.num].outliersType.length) {
                         case 0:
                             return '#0f0';
@@ -391,7 +389,10 @@ class RamaData extends Component<RamaProps, States> {
         this.svgContainer.selectAll('g.dataGroup').remove();
         let { width } = this.props;
         const tooltip = this.tooltip;
-        const { jsonObject, stroke, outliersType, rsrz } = this;
+        const { jsonObject, stroke, outliersType, rsrz, clashes, ramachandranOutliers, sidechainOutliers } = this;
+        this.sidechainOutliers = 0;
+        this.ramachandranOutliers = 0;
+        this.clashes = 0;
         // console.log(ramaContourPlotType, drawingType);
         // console.log(jsonObject.length);
         if (width > 768) {
@@ -503,6 +504,8 @@ class RamaData extends Component<RamaProps, States> {
         d3.selectAll('.outliers').remove();
         d3.selectAll('table').remove();
         //
+        let favored = 0;
+        let allowed = 0;
         d3.select('.outliers-container').append('table')
         .attr('class', 'rama-outliers-table').append('thead').append('tr').attr('id', 'tab-headline');
         d3.select('#tab-headline').append('th').attr('class', 'rama-table-headline').text('Chain')
@@ -538,6 +541,12 @@ class RamaData extends Component<RamaProps, States> {
                         outliersList.push(d);
                         return d.aa + '-' + d.chain + '-' + d.modelId + '-' + d.num;
                     }
+                    if (d.rama === 'Favored') {
+                        favored++;
+                    }
+                    if (d.rama === 'Allowed') {
+                        allowed++;
+                    }
                     return;
                 }
                 if (d.rama === 'OUTLIER' && typeof rsrz[d.num] !== 'undefined') {
@@ -560,7 +569,7 @@ class RamaData extends Component<RamaProps, States> {
             .merge(this.svgContainer)
             // .style('fill', 'transparent')
             .style('fill', function (d: any) {
-                return stroke(d, drawingType, outliersType, rsrz);
+                return stroke(d, drawingType, outliersType, rsrz, clashes, ramachandranOutliers, sidechainOutliers);
             })
             .style('opacity', function (d: any) {
                 let fillTmp = stroke(d, drawingType, outliersType, rsrz);
@@ -631,7 +640,35 @@ class RamaData extends Component<RamaProps, States> {
         this.setState({
             initial: false
         });
+
+        switch (drawingType) {
+            case 1:
+                console.log(favored);
+                d3.select('#rama-sum').html('Preffered regions: ' + String(favored)
+                    + '(' + String((favored / jsonObject.length * 100).toFixed(0))
+                    + '%)<br>' + 'Allowed regions ' + String(allowed)
+                    + '(' + String((allowed / jsonObject.length * 100).toFixed(0))
+                    + '%)<br>' + 'OUTLIERS ' + String(outliersList.length)
+                    + '(' + String((outliersList.length / jsonObject.length * 100).toFixed(0)) + '%)');
+                break;
+            case 2:
+                d3.select('#rama-sum').html('Ramachandran outliers: ' + String(this.ramachandranOutliers)
+                    + ' (' + String((this.ramachandranOutliers / jsonObject.length * 100).toFixed(0)) +
+                    '%)<br>' + 'Sidechain outliers ' + String(this.sidechainOutliers)
+                    + ' (' + String((this.sidechainOutliers / jsonObject.length * 100).toFixed(0)) + '%)<br>'
+                    + 'Clashes ' + String(this.clashes)
+                    + ' (' + String(this.clashes / jsonObject.length * 100) + '%)');
+                break;
+            case 3:
+                d3.select('#rama-sum').html('RSRZ: ' + String(rsrz.length)
+                    + '(' + String(rsrz.length / jsonObject.length * 100) + '%)');
+                break;
+            default:
+                return;
+        }
+
         // this.addTable(outliersList, drawingType);
+
     }
 
     basicContours(ramaContourPlotType: number, contourType: number) {

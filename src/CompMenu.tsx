@@ -84,7 +84,6 @@ export class CompMenu extends React.Component<{}, States> {
     // )
         return (
             <div>
-            <div>
                 <select id={'rama-coloring'}>
                     <option value={1}>
                         Default
@@ -138,7 +137,6 @@ export class CompMenu extends React.Component<{}, States> {
                         />
                     </label>
                 </form>
-            </div>
             </div>
         );
     }
