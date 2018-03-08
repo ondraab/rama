@@ -44,6 +44,7 @@ class RamaData extends Component<RamaProps, States> {
     clashes;
     ramachandranOutliers;
     sidechainOutliers;
+    rsrzCount;
     constructor(props: any) {
         super(props);
         // this.leftPadding = 50;
@@ -54,9 +55,14 @@ class RamaData extends Component<RamaProps, States> {
         this.jsonObject = pdb.residueArray;
         this.outliersType = pdb.outlDict;
         this.rsrz = pdb.rsrz;
-        this.clashes = 0;
+        // this.clashes = pdb.clashes;
+        // this.ramachandranOutliers = pdb.ramachandranOutliers;
+        // this.sidechainOutliers = pdb.sidechainOutliers;
+        // this.rsrzCount = pdb.rsrzCount;
         this.ramachandranOutliers = 0;
         this.sidechainOutliers = 0;
+        this.rsrzCount = 0;
+        this.clashes = 0;
         this.state = {
             pdb: this.props.pdbID,
             ramaContourPlotType: this.props.ramaContourPlotType,
@@ -66,6 +72,7 @@ class RamaData extends Component<RamaProps, States> {
             modelsToShow: [1],
             residueColorStyle: 1,
         };
+        this.stroke = this.stroke.bind(this);
     }
     //
     componentDidMount() {
@@ -340,43 +347,46 @@ class RamaData extends Component<RamaProps, States> {
         this.basicContours(this.props.ramaContourPlotType, this.props.contourColoringStyle);
     }
 
-    stroke(d: any, drawingType: number, outliersType: any, rsrz: any, clashes: number = 0, ramachandranOutliers: number = 0, sidechainOutliers: number = 0) {
-        //
+    stroke(d: any, drawingType: number, outliersType: any, rsrz: any, compute: boolean = false) {
         switch (drawingType) {
             case 1:
                 if (d.rama === 'OUTLIER') {
-                    return '#ca36ac';
+                    return '#f00';
                 }
                 return 'black';
             case 2:
                 if (typeof outliersType[d.num] === 'undefined') {
-                    return '#0f0';
+                    return '#008000';
                 } else {
-                    if (outliersType[d.num].outliersType.includes('clashes')) {
-                        clashes++;
-                        console.log(this.clashes);
-                    }
-                    if (outliersType[d.num].outliersType.includes('ramachandran_outliers')) {
-                        ramachandranOutliers++;
-                    }
-                    if (outliersType[d.num].outliersType.includes('sidechain_outliers')) {
-                        sidechainOutliers++;
+                    if (compute === true) {
+                        if (outliersType[d.num].outliersType.includes('clashes')) {
+                            this.clashes++;
+                        }
+                        if (outliersType[d.num].outliersType.includes('ramachandran_outliers')) {
+                            this.ramachandranOutliers++;
+                        }
+                        if (outliersType[d.num].outliersType.includes('sidechain_outliers')) {
+                            this.sidechainOutliers++;
+                        }
                     }
                     switch (outliersType[d.num].outliersType.length) {
                         case 0:
-                            return '#0f0';
+                            return '#008000';
                         case 1:
                             return '#ff0';
                         case 2:
                             return '#f80';
                         default:
-                            return '#f00';
+                            return '#850013';
                     }
                 }
             case 3:
                 if (typeof rsrz[d.num] === 'undefined') {
                     return 'black';
                 } else {
+                    if (compute === true) {
+                        this.rsrzCount++;
+                    }
                     return '#f00';
                 }
             default:
@@ -390,9 +400,7 @@ class RamaData extends Component<RamaProps, States> {
         let { width } = this.props;
         const tooltip = this.tooltip;
         const { jsonObject, stroke, outliersType, rsrz, clashes, ramachandranOutliers, sidechainOutliers } = this;
-        this.sidechainOutliers = 0;
-        this.ramachandranOutliers = 0;
-        this.clashes = 0;
+
         // console.log(ramaContourPlotType, drawingType);
         // console.log(jsonObject.length);
         if (width > 768) {
@@ -569,16 +577,20 @@ class RamaData extends Component<RamaProps, States> {
             .merge(this.svgContainer)
             // .style('fill', 'transparent')
             .style('fill', function (d: any) {
-                return stroke(d, drawingType, outliersType, rsrz, clashes, ramachandranOutliers, sidechainOutliers);
+                return stroke(d, drawingType, outliersType, rsrz, true);
             })
             .style('opacity', function (d: any) {
                 let fillTmp = stroke(d, drawingType, outliersType, rsrz);
                 // console.log(fillTmp);
-                if (fillTmp === '#0f0' || fillTmp === 'black') {
-                    return 0.3;
+                if (fillTmp === '#008000' || fillTmp === 'black') {
+                    return 0.15;
+                }
+                if (fillTmp === '#ff0') {
+                    return 0.8;
                 }
                 return 1;
             })
+            //
             // .style('stroke-width', '0.5')
             .on('mouseover', function (d: any) {
                 tooltip.transition()
@@ -643,32 +655,41 @@ class RamaData extends Component<RamaProps, States> {
 
         switch (drawingType) {
             case 1:
-                console.log(favored);
-                d3.select('#rama-sum').html('Preffered regions: ' + String(favored)
-                    + '(' + String((favored / jsonObject.length * 100).toFixed(0))
-                    + '%)<br>' + 'Allowed regions ' + String(allowed)
-                    + '(' + String((allowed / jsonObject.length * 100).toFixed(0))
-                    + '%)<br>' + 'OUTLIERS ' + String(outliersList.length)
-                    + '(' + String((outliersList.length / jsonObject.length * 100).toFixed(0)) + '%)');
+                d3.select('#rama-sum').append('table').attr('id', 'rama-sum-table')
+                    .append('th').text('Preffered regions: ' + String(favored)
+                    + ' (' + String((favored / jsonObject.length * 100).toFixed(0))
+                    + '%)').enter();
+                d3.select('#rama-sum-table').append('th').text('Allowed regions: ' + String(allowed)
+                    + ' (' + String((allowed / jsonObject.length * 100).toFixed(0))
+                    + '%)').enter();
+                d3.select('#rama-sum-table').append('th').text('OUTLIERS: ' + String(outliersList.length)
+                    + ' (' + String((outliersList.length / jsonObject.length * 100).toFixed(0)) + '%)').enter();
+
                 break;
             case 2:
-                d3.select('#rama-sum').html('Ramachandran outliers: ' + String(this.ramachandranOutliers)
+                d3.select('#rama-sum').append('table').attr('id', 'rama-sum-table')
+                    .append('th').text('Ramachandran outliers: ' + String(this.ramachandranOutliers)
                     + ' (' + String((this.ramachandranOutliers / jsonObject.length * 100).toFixed(0)) +
-                    '%)<br>' + 'Sidechain outliers ' + String(this.sidechainOutliers)
-                    + ' (' + String((this.sidechainOutliers / jsonObject.length * 100).toFixed(0)) + '%)<br>'
-                    + 'Clashes ' + String(this.clashes)
-                    + ' (' + String(this.clashes / jsonObject.length * 100) + '%)');
+                    '%)').enter();
+                d3.select('#rama-sum-table').append('th').text('Sidechain outliers: ' + String(this.sidechainOutliers)
+                    + ' (' + String((this.sidechainOutliers / jsonObject.length * 100).toFixed(0)) + '%)').enter();
+                d3.select('#rama-sum-table').append('th').text('Clashes: ' + String(this.clashes)
+                    + ' (' + String((this.clashes / jsonObject.length * 100).toFixed(0)) + '%)').enter();
                 break;
             case 3:
-                d3.select('#rama-sum').html('RSRZ: ' + String(rsrz.length)
-                    + '(' + String(rsrz.length / jsonObject.length * 100) + '%)');
+                d3.select('#rama-sum').append('table').attr('id', 'rama-sum-table')
+                    .append('th').text('RSRZ: ' + String(this.rsrzCount)
+                    + ' (' + String((this.rsrzCount / jsonObject.length * 100).toFixed(0)) + '%) ').enter();
+
                 break;
             default:
                 return;
         }
-
+        this.sidechainOutliers = 0;
+        this.rsrzCount = 0;
+        this.clashes = 0;
+        this.ramachandranOutliers = 0;
         // this.addTable(outliersList, drawingType);
-
     }
 
     basicContours(ramaContourPlotType: number, contourType: number) {
@@ -700,37 +721,37 @@ class RamaData extends Component<RamaProps, States> {
         //     .range([0, (height)]);
         //     // .range([0, (0.985 * height)]);
 
-        let url = 'https://raw.githubusercontent.com/ondraab/rama/master/public/data/';
+        // let url = 'https://raw.githubusercontent.com/ondraab/rama/master/public/data/';
         let img = new Image;
         let svgImg = new Image;
         switch (ramaContourPlotType) {
             case 1:
-                url += 'rama8000-general-noGPIVpreP.csv';
+                // url += 'rama8000-general-noGPIVpreP.csv';
                 img.src = generalContour;
                 svgImg.src = lineGeneralContour;
                 break;
             case 2:
-                url += 'rama8000-ileval-nopreP.csv';
+                // url += 'rama8000-ileval-nopreP.csv';
                 img.src = ileVal;
                 svgImg.src = lineIleVal;
                 break;
             case 3:
-                url += 'rama8000-prepro-noGP.csv';
+                // url += 'rama8000-prepro-noGP.csv';
                 img.src = prePro;
                 svgImg.src = linePrePro;
                 break;
             case 4:
-                url += 'rama8000-gly-sym.csv';
+                // url += 'rama8000-gly-sym.csv';
                 img.src = gly;
                 svgImg.src = lineGly;
                 break;
             case 5:
-                url += 'rama8000-transpro.csv';
+                // url += 'rama8000-transpro.csv';
                 img.src = transPro;
                 svgImg.src = lineTransPro;
                 break;
             case 6:
-                url += 'rama8000-cispro.csv';
+                // url += 'rama8000-cispro.csv';
                 img.src = cisPro;
                 svgImg.src = lineCisPro;
                 break;
@@ -742,12 +763,14 @@ class RamaData extends Component<RamaProps, States> {
         context.clearRect(0, 0, width + 80, height + 60);
 
         if (contourType === 2) {
+            context.globalAlpha = 0.6;
             img.onload = function () {
                     context.drawImage(img, 0, 0,
                                       width, height * img.height / img.width
                     );
                 };
         } else {
+            context.globalAlpha = 1;
             svgImg.onload = function () {
                 context.drawImage(svgImg, 0, 0,
                                   width, height * svgImg.height / svgImg.width

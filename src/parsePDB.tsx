@@ -26,6 +26,7 @@ class Res {
 }
 
 export class ParsePDB {
+
     private pdbID: string;
     private _chainsArray: string[];
     private _modelArray: number[];
@@ -184,6 +185,7 @@ export class ParsePDB {
     get outlDict(): { [p: number]: Dictionary } {
         return this._outlDict;
     }
+
 }
 // }
         // let response = await fetch('http://www.ebi.ac.uk/pdbe/api/validation/rama_sidechain_listing/entry/'

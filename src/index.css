@@ -96,8 +96,14 @@ div.outliers-container {
 }
 .rama-set-cl {
   border-top: 1px solid #7c827e;
-  margin-top: 10px;
   background-color: #DCECD7;
+}
+#rama-sum-table {
+  width: 100%;
+}
+#rama-sum {
+  margin-top: 10px;
+  padding: 2px 0 2px 10px;
 }
 select#rama-coloring {
   margin: 10px;
