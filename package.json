@@ -16,14 +16,20 @@
     "@types/react-bootstrap": "^0.31.8",
     "@types/react-dom": "^16.0.3",
     "@types/react-transition-group": "^2.0.6",
+    "@types/webcomponents.js": "^0.6.32",
     "bootstrap": "^3.3.7",
+    "browserify": "^16.1.1",
     "conrec": "^1.0.0",
     "d3": "^4.12.0",
     "d3-contour": "^1.1.2",
     "d3-scale": "1.0.7",
     "d3-symbol-extra": "^0.1.0",
+    "del": "^3.0.0",
+    "document-register-element": "^1.7.2",
+    "errorify": "^0.3.1",
     "es6-promise": "^4.1.1",
     "fast-csv": "^2.4.1",
+    "gulp-typings": "^2.0.4",
     "isomorphic-fetch": "^2.2.1",
     "jquery": "^3.2.1",
     "papaparse": "^4.3.6",
@@ -38,21 +44,29 @@
     "react-select": "^1.1.0",
     "react-simple-dropdown": "^3.2.0",
     "react-super-select": "^1.0.8",
+    "react-web-component": "^1.0.14",
+    "reactive-elements": "^0.7.0",
     "reactstrap": "^5.0.0-alpha.4",
     "request": "^2.83.0",
+    "run-sequence": "^2.2.1",
     "source-map-explorer": "^1.5.0",
-    "tslint": "^5.8.0"
+    "tsify": "^3.0.4",
+    "tslint": "^5.8.0",
+    "vinyl-source-stream": "^2.0.0",
+    "watchify": "^3.11.0",
+    "webcomponents.js": "^0.7.24"
   },
   "scripts": {
     "analyze": "source-map-explorer build/static/js/main.*",
     "start": "react-scripts-ts start",
-    "build": "react-scripts-ts build",
+    "build": "browserify -r src/RamaScatter.tsx -o build/RamaScatter.js",
     "test": "react-scripts-ts test --env=jsdom",
     "eject": "react-scripts-ts eject"
   },
   "devDependencies": {
     "@types/jquery": "^3.2.16",
     "@types/react-bootstrap-typeahead": "^2.0.0",
-    "@types/react-select": "^1.0.60"
+    "@types/react-select": "^1.0.60",
+    "gulp": "^3.9.1"
   }
 }

@@ -80,7 +80,7 @@ export class ParsePDB {
         // xmlHttp.send();
         let xmlHttp = new XMLHttpRequest();
         xmlHttp.open('GET',
-                     'https://wwwdev.ebi.ac.uk/pdbe/api/validation/rama_sidechain_listing/entry/' + this.pdbID, false);
+                     'http://www.ebi.ac.uk/pdbe/api/validation/rama_sidechain_listing/entry/' + this.pdbID, false);
         xmlHttp.send();
         if (xmlHttp.status !== 200) {
             return;

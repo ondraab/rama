@@ -16,12 +16,22 @@
     "outDir": "build",
     "skipLibCheck": true,
     "allowJs": true,
-    "allowSyntheticDefaultImports": true
-  },
-  "exclude": ["node_modules"],
+    "allowSyntheticDefaultImports": true,
+    "moduleResolution": "node",
+    "sourceMap": true
+},
+  "exclude": [
+    "node_modules",
+    "javascript"
+  ],
   "compileOnSave": true,
   "buildOnSave": false,
   "atom": {
     "rewriteTsconfig": false
-  }
-}
+  },
+  "files": [
+    "src/RamaScatter.tsx",
+    "src/parsePDB.tsx",
+    "src/LineContours.ts",
+    "src/HeatMapContours.ts"
+  ]}

@@ -4,6 +4,7 @@ import * as d3 from 'd3';
 import { generalContour, cisPro, gly, ileVal, prePro, transPro } from './HeatMapContours';
 import { lineGeneralContour, lineCisPro, lineGly, lineIleVal, linePrePro, lineTransPro } from './LineContours';
 import ParsePDB from './parsePDB';
+import * as webComponents from 'webcomponents.js';
 
 interface RamaProps {
     pdbID: string;
@@ -655,31 +656,68 @@ class RamaData extends Component<RamaProps, States> {
 
         switch (drawingType) {
             case 1:
-                d3.select('#rama-sum').append('table').attr('id', 'rama-sum-table')
-                    .append('th').text('Preffered regions: ' + String(favored)
+                d3.selectAll('#rama-sum-div').remove();
+                d3.select('#rama-sum').append('div').attr('id', 'rama-sum-div')
+                    .append('div').attr('class', 'rama-sum-cell').attr('id', 'rama-sum-widest')
+                    .text('Preferred regions: ' + String(favored)
                     + ' (' + String((favored / jsonObject.length * 100).toFixed(0))
                     + '%)').enter();
-                d3.select('#rama-sum-table').append('th').text('Allowed regions: ' + String(allowed)
+                d3.select('#rama-sum-div').append('div').attr('class', 'rama-sum-cell')
+                    .attr('id', 'rama-sum-middle')
+                    .text('Allowed regions: ' + String(allowed)
                     + ' (' + String((allowed / jsonObject.length * 100).toFixed(0))
                     + '%)').enter();
-                d3.select('#rama-sum-table').append('th').text('OUTLIERS: ' + String(outliersList.length)
+                d3.select('#rama-sum-div').append('div').attr('class', 'rama-sum-cell')
+                    .attr('id', 'rama-sum-thinnest')
+                    .text('Outliers: ' + String(outliersList.length)
                     + ' (' + String((outliersList.length / jsonObject.length * 100).toFixed(0)) + '%)').enter();
 
+                // d3.select('#rama-sum').append('table').attr('id', 'rama-sum-table')
+                //     .append('td').text('Preferred regions: ' + String(favored)
+                //     + ' (' + String((favored / jsonObject.length * 100).toFixed(0))
+                //     + '%)').enter();
+                // d3.select('#rama-sum-table').append('td').text('Allowed regions: ' + String(allowed)
+                //     + ' (' + String((allowed / jsonObject.length * 100).toFixed(0))
+                //     + '%)').enter();
+                // d3.select('#rama-sum-table').append('td').text('Outliers: ' + String(outliersList.length)
+                //     + ' (' + String((outliersList.length / jsonObject.length * 100).toFixed(0)) + '%)').enter();
+                //
                 break;
             case 2:
-                d3.select('#rama-sum').append('table').attr('id', 'rama-sum-table')
-                    .append('th').text('Ramachandran outliers: ' + String(this.ramachandranOutliers)
-                    + ' (' + String((this.ramachandranOutliers / jsonObject.length * 100).toFixed(0)) +
-                    '%)').enter();
-                d3.select('#rama-sum-table').append('th').text('Sidechain outliers: ' + String(this.sidechainOutliers)
-                    + ' (' + String((this.sidechainOutliers / jsonObject.length * 100).toFixed(0)) + '%)').enter();
-                d3.select('#rama-sum-table').append('th').text('Clashes: ' + String(this.clashes)
-                    + ' (' + String((this.clashes / jsonObject.length * 100).toFixed(0)) + '%)').enter();
+                d3.selectAll('#rama-sum-div').remove();
+                d3.select('#rama-sum').append('div').attr('id', 'rama-sum-div')
+                    .append('div').attr('class', 'rama-sum-cell').attr('id', 'rama-sum-widest')
+                    .text('Ramachandran outliers: ' + String(this.ramachandranOutliers)
+                        + ' (' + String((this.ramachandranOutliers / jsonObject.length * 100).toFixed(0)) +
+                        '%)').enter();
+                d3.select('#rama-sum-div').append('div').attr('class', 'rama-sum-cell')
+                    .attr('id', 'rama-sum-middle')
+                    .text('Sidechain outliers: ' + String(this.sidechainOutliers)
+                        + ' (' + String((this.sidechainOutliers / jsonObject.length * 100).toFixed(0)) + '%)').enter();
+                d3.select('#rama-sum-div').append('div').attr('class', 'rama-sum-cell')
+                    .attr('id', 'rama-sum-thinnest')
+                    .text('Clashes: ' + String(this.clashes)
+                        + ' (' + String((this.clashes / jsonObject.length * 100).toFixed(0)) + '%)').enter();
+
+                // d3.select('#rama-sum').append('table').attr('id', 'rama-sum-table')
+                //     .append('td').text('Ramachandran outliers: ' + String(this.ramachandranOutliers)
+                //     + ' (' + String((this.ramachandranOutliers / jsonObject.length * 100).toFixed(0)) +
+                //     '%)').enter();
+                // d3.select('#rama-sum-table').append('td').text('Sidechain outliers: ' + String(this.sidechainOutliers)
+                //     + ' (' + String((this.sidechainOutliers / jsonObject.length * 100).toFixed(0)) + '%)').enter();
+                // d3.select('#rama-sum-table').append('td').text('Clashes: ' + String(this.clashes)
+                //     + ' (' + String((this.clashes / jsonObject.length * 100).toFixed(0)) + '%)').enter();
                 break;
             case 3:
-                d3.select('#rama-sum').append('table').attr('id', 'rama-sum-table')
-                    .append('th').text('RSRZ: ' + String(this.rsrzCount)
-                    + ' (' + String((this.rsrzCount / jsonObject.length * 100).toFixed(0)) + '%) ').enter();
+                d3.selectAll('#rama-sum-div').remove();
+                d3.select('#rama-sum').append('div').attr('id', 'rama-sum-div')
+                    .append('div').attr('class', 'rama-sum-cell').attr('id', 'rama-sum-widest')
+                    .text('RSRZ: ' + String(this.rsrzCount)
+                        + ' (' + String((this.rsrzCount / jsonObject.length * 100).toFixed(0)) + '%) ').enter();
+
+                // d3.select('#rama-sum').append('table').attr('id', 'rama-sum-table')
+                //     .append('td').text('RSRZ: ' + String(this.rsrzCount)
+                //     + ' (' + String((this.rsrzCount / jsonObject.length * 100).toFixed(0)) + '%) ').enter();
 
                 break;
             default:
