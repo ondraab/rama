@@ -18,8 +18,8 @@ body.rama-body {
 div.rama-tooltip {
   position: absolute;
   text-align: center;
-  width: 80px;
-  height: 50px;
+  /*width: 80px;*/
+  /*height: 50px;*/
   padding: 2px;
   font: 12px sans-serif;
   background: rgb(200, 200, 200);

@@ -11,5 +11,8 @@
     <orderEntry type="library" name="d3-selection-multi.v1" level="application" />
     <orderEntry type="library" name="jquery-2.2.4" level="application" />
     <orderEntry type="library" name="react-dom" level="application" />
+    <orderEntry type="library" name="webcomponents-hi" level="application" />
+    <orderEntry type="library" name="react" level="application" />
+    <orderEntry type="library" name="babel" level="application" />
   </component>
 </module>

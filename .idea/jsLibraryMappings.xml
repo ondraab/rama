@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="JavaScriptLibraryMappings">
-    <file url="PROJECT" libraries="{d3-selection-multi.v1, jquery-2.2.4, react-dom}" />
+    <file url="PROJECT" libraries="{babel, d3-selection-multi.v1, jquery-2.2.4, react, react-dom, webcomponents-hi}" />
   </component>
 </project>

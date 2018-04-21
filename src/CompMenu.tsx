@@ -11,7 +11,6 @@ interface States {
     chainsToShow: string[];
     modelsToShow: number[];
     contourType: number;
-    // dropdownOpen: boolean;
     coloring: number;
 }
 
@@ -30,7 +29,7 @@ export class CompMenu extends React.Component<{}, States> {
         //         residueColorStyle={this.state.coloring}
         //     />
         // );
-
+    //
     //     const settings = (
     //         d3.select('#rama-svg-container').append('div')
     //         .attr('width', '100%')
