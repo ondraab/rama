@@ -123,6 +123,7 @@ export class CompMenu extends React.Component<{}, States> {
                             className={'rama-contour-radio'}
                             id={'contour-color-default'}
                             value={1}
+                            defaultChecked={true}
                         />
                     </label>
                     <label className={'rama-contour-style'}>
@@ -138,5 +139,6 @@ export class CompMenu extends React.Component<{}, States> {
                 </form>
             </div>
         );
+
     }
 }

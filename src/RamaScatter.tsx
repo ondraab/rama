@@ -1,9 +1,11 @@
 import * as React from 'react';
-import { Component } from 'react';
+// import { Component } from 'react';
 import * as d3 from 'd3';
 import { generalContour, cisPro, gly, ileVal, prePro, transPro } from './HeatMapContours';
 import { lineGeneralContour, lineCisPro, lineGly, lineIleVal, linePrePro, lineTransPro } from './LineContours';
 import ParsePDB from './parsePDB';
+import { CompMenu } from './CompMenu';
+import * as ReactDOM from 'react-dom';
 
 interface RamaProps {
     pdbID: string;
@@ -26,7 +28,7 @@ interface States {
     residueColorStyle: number;
 }
 
-export class RamaData extends Component<RamaProps, States> {
+class RamaData extends React.Component<RamaProps, States> {
     svgContainer;
     jsonObject;
     xMap;
@@ -45,24 +47,23 @@ export class RamaData extends Component<RamaProps, States> {
     ramachandranOutliers;
     sidechainOutliers;
     rsrzCount;
+    firstRun;
     constructor(props: any) {
         super(props);
-        // this.leftPadding = 50;
-        // this.padding = 30;
         this.createChart = this.createChart.bind(this);
         let pdb = new ParsePDB(this.props.pdbID);
         pdb.downloadAndParse();
+
         this.jsonObject = pdb.residueArray;
         this.outliersType = pdb.outlDict;
         this.rsrz = pdb.rsrz;
-        // this.clashes = pdb.clashes;
-        // this.ramachandranOutliers = pdb.ramachandranOutliers;
-        // this.sidechainOutliers = pdb.sidechainOutliers;
-        // this.rsrzCount = pdb.rsrzCount;
+
         this.ramachandranOutliers = 0;
         this.sidechainOutliers = 0;
         this.rsrzCount = 0;
         this.clashes = 0;
+        this.firstRun = true;
+
         this.state = {
             pdb: this.props.pdbID,
             ramaContourPlotType: this.props.ramaContourPlotType,
@@ -95,6 +96,8 @@ export class RamaData extends Component<RamaProps, States> {
         if (nextProps.ramaContourPlotType !== this.state.ramaContourPlotType) {
             // this.updateChart(nextProps.chainsToShow, nextProps.ramaContourPlotType, nextProps.modelsToShow,
             //                  nextProps.residueColorStyle);
+            this.updateChart(nextProps.chainsToShow, nextProps.ramaContourPlotType, nextProps.modelsToShow,
+                             nextProps.residueColorStyle);
             this.basicContours(nextProps.ramaContourPlotType, nextProps.contourColoringStyle);
         } else if (nextProps.residueColorStyle !== this.state.residueColorStyle) {
             this.updateChart(nextProps.chainsToShow, nextProps.ramaContourPlotType, nextProps.modelsToShow,
@@ -340,6 +343,10 @@ export class RamaData extends Component<RamaProps, States> {
         d3.select('#rama-svg-container').append('div').attr('id', 'rama-sum').attr('class', 'rama-set-cl');
         d3.select('#rama-svg-container').append('div').attr('id', 'rama-settings').attr('class', 'rama-set-cl');
 
+        ReactDOM.render(
+                <CompMenu/>, document.getElementById('rama-settings') as HTMLElement
+            );
+
         this.updateChart(this.props.chainsToShow, this.props.ramaContourPlotType, this.props.modelsToShow,
                          this.props.residueColorStyle);
         this.basicContours(this.props.ramaContourPlotType, this.props.contourColoringStyle);
@@ -397,10 +404,7 @@ export class RamaData extends Component<RamaProps, States> {
         this.svgContainer.selectAll('g.dataGroup').remove();
         let { width } = this.props;
         const tooltip = this.tooltip;
-        const { jsonObject, fillColorFunction, outliersType, rsrz, clashes, ramachandranOutliers, sidechainOutliers } = this;
-
-        // console.log(ramaContourPlotType, drawingType);
-        // console.log(jsonObject.length);
+        const { jsonObject, fillColorFunction, outliersType, rsrz, firstRun } = this;
         if (width > 768) {
             width = 580;
         }
@@ -591,7 +595,8 @@ export class RamaData extends Component<RamaProps, States> {
 
         this.svgContainer.selectAll('.shapes')
             .data(jsonObject.filter(function (d: any, i: number) {
-                if (initial || (chainsToShow.indexOf(d.chain) !== -1 && entityToShow.indexOf(d.modelId) !== -1)) {
+
+                if (chainsToShow.indexOf(d.chain) !== -1 && entityToShow.indexOf(d.modelId) !== -1) {
                     if (d.phi !== null || d.psi !== null) {
                         return switchPlotType(d, i);
                     }
@@ -755,9 +760,10 @@ export class RamaData extends Component<RamaProps, States> {
         outliersList.sort(function (a: any, b: any) {
             return a.num - b.num;
         });
-        this.setState({
-            initial: false
-        });
+        // this.setState({
+        //     initial: false
+        // });
+        this.firstRun = false;
 
         switch (drawingType) {
             case 1:
@@ -1154,8 +1160,9 @@ export class RamaData extends Component<RamaProps, States> {
 
     render () {
         return (
-            'div'
+            <div/>
         );
     }
 
 }
+export default RamaData;

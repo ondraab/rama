@@ -1,12 +1,21 @@
 
-##&lt;react-polymer-timer&gt;
+##&lt;ramachandran-component&gt;
 
-This is a poc for wrapping react timer component inside polymer (micro) which exposes web component. Example taken form the Facebook React example https://facebook.github.io/react/
+This component is for interactive visualisation of ramachandram plots.
 
-### Quick Install
+### Try it
+
+Working example is in `build` folder.
+
+Put this to your html file:
 
 ```
-bower install
+<link href="static/css/rama-component.css" rel="stylesheet">
+<script type="text/javascript" src="static/js/rama-component.js">
+<div id="rama-root">
 ```
 
-Then serve using `npm serve` or any tools of liking, go to the demo page.
+Use:
+```
+<ramachandran-component pdbid="'3d12'" chainstoshow="['A', 'D', 'B']" modelstoshow="[1, 2]"></ramachandran-component>
+```

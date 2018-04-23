@@ -2,19 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1, shrink-to-fit=no">
-    <meta name="theme-color" content="#000000">
-    <link rel="manifest" href="manifest.json">
-    <link rel="shortcut icon" href="favicon.ico">
-    <link href="../javascript/bundle.js">
-    <link rel="import" href="../bower_components/polymer/polymer.html">
-    <script src="/bower_components/platform/platform.js"></script>
     <title>Ramachandran component</title>
   </head>
-  <body class="rama-body">
-  <div id="header"></div>
-
+  <body class="rama-body" ng-app="app">
   <div id="rama-root">
+  <ramachandran-component pdbid="'3d12'" chainstoshow="['A', 'D', 'B']" modelstoshow="[1, 2]"></ramachandran-component>
   </div>
   </body>
 </html>

@@ -31,7 +31,5 @@
   },
   "files": [
     "src/RamaScatter.tsx",
-    "src/parsePDB.tsx",
-    "src/LineContours.ts",
-    "src/HeatMapContours.ts"
+    "src/parsePDB.tsx"
   ]}
