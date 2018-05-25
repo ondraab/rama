@@ -1,5 +1,5 @@
 
-##&lt;ramachandran-component&gt;
+### &lt;ramachandran-component&gt;
 
 This component is for interactive visualisation of ramachandram plots.
 
@@ -12,7 +12,7 @@ Put this to your html file:
 ```
 <link href="static/css/rama-component.css" rel="stylesheet">
 <script type="text/javascript" src="static/js/rama-component.js">
-<div id="rama-root">
+<div id="rama-root"/>
 ```
 
 Use:
