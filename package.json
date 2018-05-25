@@ -1,5 +1,5 @@
 {
-  "name": "rama",
+  "name": "ramachandran-component",
   "version": "0.1.0",
   "private": false,
   "dependencies": {
@@ -49,7 +49,7 @@
     "react-d3-components": "^0.7.1",
     "react-dom": "^16.3.2",
     "react-redux": "latest",
-    "react-scripts-ts": "2.8.0",
+    "react-scripts-ts": "^2.8.0",
     "react-select": "^1.1.0",
     "react-simple-dropdown": "^3.2.0",
     "react-super-select": "^1.0.8",
@@ -64,7 +64,7 @@
     "source-map-explorer": "^1.5.0",
     "stencil": "0.0.5",
     "tsify": "^3.0.4",
-    "tslint": "^5.8.0",
+    "tslint": "^5.9.1",
     "vinyl-source-stream": "^2.0.0",
     "watchify": "^3.11.0",
     "webcomponents.js": "^0.7.24"
@@ -81,6 +81,20 @@
     "@types/react-bootstrap-typeahead": "^2.0.0",
     "@types/react-select": "^1.0.60",
     "babel-cli": "^6.26.0",
-    "gulp": "^3.9.1"
-  }
+    "chai": "^4.1.2",
+    "gulp": "^3.9.1",
+    "mocha": "^5.1.1"
+  },
+  "description": "This component is for interactive visualisation of ramachandram plots.",
+  "main": "gulpfile.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ondraab/rama.git"
+  },
+  "author": "Ondřej Balcárek <ondra.balcarek@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ondraab/rama/issues"
+  },
+  "homepage": "https://github.com/ondraab/rama#readme"
 }
