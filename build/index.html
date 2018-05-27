@@ -1,1 +1,17 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no"><meta name="theme-color" content="#000000"><link rel="manifest" href="manifest.json"><link rel="shortcut icon" href="favicon.ico"><title>Ramachandran component</title><link href="static/css/main.1d33d55d.css" rel="stylesheet"></head><body class="rama-body"><div id="header"></div><div class="rama-root"></div><script type="text/javascript" src="static/js/main.1faa10ed.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Ramachandran component</title>
+    <link href="static/css/rama-component.css" rel="stylesheet"></head>
+<script type="text/javascript" src="static/js/rama-component.js"></script>
+<body>
+<div id="rama-root"></div>
+<script>const element = document.getElementById('rama-root');
+    const pdb = '1tqn';
+    const chainsToShow = ['A'];
+    const modelsToShow = [1];
+    renderRamaComp(element, pdb, chainsToShow, modelsToShow);
+</script>
+</body>
+</html>

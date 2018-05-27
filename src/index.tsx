@@ -1,41 +1,27 @@
+// import * as angular from 'angular';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import registerServiceWorker from './registerServiceWorker';
 import './index.css';
-import RamaData  from './RamaScatter';
-import Menu from './Menu';
 import 'bootstrap/dist/css/bootstrap.css';
+import {default as RamaComopnent} from './RamaComponent';
+// import { react2angular } from 'react2angular';
+// angular
+//     .module('app', [])
+//     .component('ramachandranComponent', react2angular(RamaComponent, ['pdbid', 'chainstoshow', 'modelstoshow']));
 
-// class Index extends React.Component {
-//     render() {
-//         let options = [
-//             { label: 'CSS', value: 'css' },
-//             { label: 'HTML', value: 'html' },
-//             { label: 'JavaScript', value: 'js' },
-//             { label: 'Ruby on Rails', value: 'ror' },
-//         ];
-//
-//         let selectFieldName = 'mySelect';
-//         let selectPlaceHolder = 'Choose some options...';
-//         let onChange = function (obj: any) {
-//             console.log('EVENT', obj.event);
-//             console.log('ITEM', obj.item);
-//             console.log('VALUE', obj.value);
-//         };
-//         return ();
-//     }
-// }
-//
-// ReactDOM.render(<Index/>, document.getElementById('menu') as HTMLElement);
-// registerServiceWorker();
-ReactDOM.render(
-    <Menu/>,
-    document.getElementById('header') as HTMLElement
-);
-registerServiceWorker();
+declare global {
+    interface Window { renderRamaComp: any; }
+}
 
-// ReactDOM.render(
-//   <RamaData pdbID={'4d10'} width={500} height={500}/>,
-//   document.getElementById('root') as HTMLElement
-// );
-// registerServiceWorker();
+window.renderRamaComp = window.renderRamaComp || {};
+
+window.renderRamaComp = function(element: HTMLElement, pdbId: string, chainsToShow: string[], modelsToShow: number[]) {
+    ReactDOM.render(
+        <RamaComopnent
+            pdbid={pdbId}
+            chainstoshow={chainsToShow}
+            modelstoshow={modelsToShow}
+            element={element}
+        />,
+        element);
+};
