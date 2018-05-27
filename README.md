@@ -17,5 +17,10 @@ Put this to your html file:
 
 Use:
 ```
-<ramachandran-component pdbid="'3d12'" chainstoshow="['A', 'D', 'B']" modelstoshow="[1, 2]"></ramachandran-component>
+<script>const element = document.getElementById('rama-root');
+    const pdb = '1tqn';
+    const chainsToShow = ['A'];
+    const modelsToShow = [1];
+    renderRamaComp(element, pdb, chainsToShow, modelsToShow);
+</script>
 ```
