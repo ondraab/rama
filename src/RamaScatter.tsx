@@ -1,11 +1,10 @@
-import * as React from 'react';
-// import { Component } from 'react';
 import * as d3 from 'd3';
-import { generalContour, cisPro, gly, ileVal, prePro, transPro } from './HeatMapContours';
-import { lineGeneralContour, lineCisPro, lineGly, lineIleVal, linePrePro, lineTransPro } from './LineContours';
-import ParsePDB from './parsePDB';
-import { CompMenu } from './CompMenu';
+import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { CompMenu } from './CompMenu';
+import { cisPro, generalContour, gly, ileVal, prePro, transPro } from './HeatMapContours';
+import { lineCisPro, lineGeneralContour, lineGly, lineIleVal, linePrePro, lineTransPro } from './LineContours';
+import ParsePDB from './parsePDB';
 
 interface RamaProps {
     pdbID: string;
@@ -16,6 +15,7 @@ interface RamaProps {
     contourColoringStyle: number;
     modelsToShow: number[];
     residueColorStyle: number;
+    element: HTMLElement;
 }
 
 interface States {
@@ -26,32 +26,33 @@ interface States {
     contourColoringStyle: number;
     modelsToShow: number[];
     residueColorStyle: number;
+    element: HTMLElement;
 }
 
 class RamaData extends React.Component<RamaProps, States> {
-    svgContainer;
-    jsonObject;
-    xMap;
-    yMap;
-    xTopAxis;
-    xBottomAxis;
-    yLeftAxis;
-    yRightAxis;
-    dataGroup;
-    outliersTable;
-    canvasContainer;
-    tooltip;
-    outliersType;
-    rsrz;
-    clashes;
-    ramachandranOutliers;
-    sidechainOutliers;
-    rsrzCount;
-    firstRun;
+    public svgContainer;
+    public jsonObject;
+    public xMap;
+    public yMap;
+    public xTopAxis;
+    public xBottomAxis;
+    public yLeftAxis;
+    public yRightAxis;
+    public dataGroup;
+    public outliersTable;
+    public canvasContainer;
+    public tooltip;
+    public outliersType;
+    public rsrz;
+    public clashes;
+    public ramachandranOutliers;
+    public sidechainOutliers;
+    public rsrzCount;
+    public firstRun;
     constructor(props: any) {
         super(props);
         this.createChart = this.createChart.bind(this);
-        let pdb = new ParsePDB(this.props.pdbID);
+        const pdb = new ParsePDB(this.props.pdbID);
         pdb.downloadAndParse();
 
         this.jsonObject = pdb.residueArray;
@@ -65,22 +66,23 @@ class RamaData extends React.Component<RamaProps, States> {
         this.firstRun = true;
 
         this.state = {
+            chainsToShow: ['A'],
+            contourColoringStyle: 1,
+            element: this.props.element,
+            initial: true,
+            modelsToShow: [1],
             pdb: this.props.pdbID,
             ramaContourPlotType: this.props.ramaContourPlotType,
-            chainsToShow: ['A'],
-            initial: true,
-            contourColoringStyle: 1,
-            modelsToShow: [1],
             residueColorStyle: 1,
         };
         this.fillColorFunction = this.fillColorFunction.bind(this);
     }
     //
-    componentDidMount() {
+    public componentDidMount() {
         this.createChart();
     }
 
-    componentWillUpdate(nextProps: any, nextState: any) {
+    public componentWillUpdate(nextProps: any, nextState: any) {
 
         // if (nextProps.jsonObject !== this.props.jsonObject) {
         //     this.updateChart(nextProps.jsonObject, nextProps.chainsToShow, nextProps.ramaContourPlotType);
@@ -109,7 +111,7 @@ class RamaData extends React.Component<RamaProps, States> {
 
     }
 
-    shouldComponentUpdate(nextProps: any, nextState: any) {
+    public shouldComponentUpdate(nextProps: any, nextState: any) {
         if (nextState.pdb.length === 4 && nextProps.pdbID !== this.state.pdb)  {
             return true;
         }
@@ -128,19 +130,19 @@ class RamaData extends React.Component<RamaProps, States> {
         return nextProps.chainsToShow.length !== this.state.chainsToShow.length;
     }
 
-    componentWillReceiveProps(nextProps: any) {
+    public componentWillReceiveProps(nextProps: any) {
         //
         if (nextProps.pdbID !== this.state.pdb) {
-            let pdb = new ParsePDB(nextProps.pdbID);
+            const pdb = new ParsePDB(nextProps.pdbID);
             pdb.downloadAndParse();
             this.jsonObject = [];
             this.jsonObject = pdb.residueArray;
             this.outliersType = pdb.outlDict;
             this.rsrz = pdb.rsrz;
             this.setState({
-                pdb: nextProps.pdbID,
                 chainsToShow: nextProps.chainsToShow,
                 modelsToShow: nextProps.modelsToShow,
+                pdb: nextProps.pdbID,
                 // rsrz: nextProps.rsrz,
                 // outliersType: nextProps.outliersType
             });
@@ -184,8 +186,11 @@ class RamaData extends React.Component<RamaProps, States> {
         return;
     }
 
-    createChart() {
-        let {width, height} = this.props;
+    public createChart() {
+        let {width, height, element} = this.props;
+        const node = document.createElement('div');
+        node.setAttribute('id', 'ramachandran-root-element');
+        element.appendChild(node);
 
         if (width > 768) {
             width = 580;
@@ -205,11 +210,11 @@ class RamaData extends React.Component<RamaProps, States> {
 
         this.xTopAxis = d3.axisTop(xScale);
 
-        const xValue = function (d: object) {
+        const xValue = function(d: object) {
             return d['phi'];
         };
 
-        this.xMap = function (d: any) {return xScale(xValue(d)); };
+        this.xMap = function(d: any) {return xScale(xValue(d)); };
 
         // tooltip
         this.tooltip = d3.select('body').append('div')
@@ -225,10 +230,10 @@ class RamaData extends React.Component<RamaProps, States> {
         this.yLeftAxis = d3.axisLeft(yScale);
 
         this.yRightAxis = d3.axisRight(yScale);
-        const yValue = function (d: object) {
+        const yValue = function(d: object) {
             return d['psi'];
         };
-        this.yMap = function (d: any) {
+        this.yMap = function(d: any) {
             return yScale(yValue(d));
         };
 
@@ -240,7 +245,7 @@ class RamaData extends React.Component<RamaProps, States> {
             return d3.axisTop(xScale);
         }
 
-        this.svgContainer = d3.select('div#rama-root').append('div')
+        this.svgContainer = d3.select('div#ramachandran-root-element').append('div')
             .attr('id', 'rama-svg-container')
             .attr('height', height)
             .attr('border', '1px solid black')
@@ -293,7 +298,7 @@ class RamaData extends React.Component<RamaProps, States> {
             .attr('id', 'y-axis');
 
         this.svgContainer.append('g')
-            .attr('transform', function () {
+            .attr('transform', function() {
                 return 'translate(' + (width) + ', 0)';
             })
             .call(this.yRightAxis)
@@ -313,7 +318,7 @@ class RamaData extends React.Component<RamaProps, States> {
         // axis labels
         // phi label
         this.svgContainer.append('text')
-            .attr('x', width / 2 )
+            .attr('x', width / 2)
             .attr('y', height + 35)
             .style('text-anchor', 'middle')
             .style('fill', '#000')
@@ -352,7 +357,7 @@ class RamaData extends React.Component<RamaProps, States> {
         this.basicContours(this.props.ramaContourPlotType, this.props.contourColoringStyle);
     }
 
-    fillColorFunction(d: any, drawingType: number, outliersType: any, rsrz: any, compute: boolean = false) {
+    public fillColorFunction(d: any, drawingType: number, outliersType: any, rsrz: any, compute: boolean = false) {
         switch (drawingType) {
             case 1:
                 if (d.rama === 'OUTLIER') {
@@ -399,12 +404,12 @@ class RamaData extends React.Component<RamaProps, States> {
         }
     }
 
-    updateChart(chainsToShow: any[], ramaContourPlotType: number, entityToShow: number[], drawingType: number) {
+    public updateChart(chainsToShow: any[], ramaContourPlotType: number, entityToShow: number[], drawingType: number) {
 
         this.svgContainer.selectAll('g.dataGroup').remove();
         let { width } = this.props;
         const tooltip = this.tooltip;
-        const { jsonObject, fillColorFunction, outliersType, rsrz, firstRun } = this;
+        const { jsonObject, fillColorFunction, outliersType, rsrz } = this;
         if (width > 768) {
             width = 580;
         }
@@ -419,8 +424,8 @@ class RamaData extends React.Component<RamaProps, States> {
             objSize = 5;
         }
 
-        let { initial } = this.state;
-        let outliersList = [];
+        const { initial } = this.state;
+        const outliersList = [];
 
         // scales
         const xScale = d3.scaleLinear()
@@ -433,9 +438,10 @@ class RamaData extends React.Component<RamaProps, States> {
             .range([0, (width)]);
 
         // symbolTypes
-        let symbolTypes = {
-            'triangle': d3.symbol().type(d3.symbolTriangle).size(objSize),
-            'circle': d3.symbol().type(d3.symbolCircle).size(objSize)
+        const symbolTypes = {
+            circle: d3.symbol().type(d3.symbolCircle).size(objSize),
+            triangle: d3.symbol().type(d3.symbolTriangle).size(objSize)
+
         };
         function switchPlotType(d: any, i: number) {
             switch (ramaContourPlotType) {
@@ -472,7 +478,8 @@ class RamaData extends React.Component<RamaProps, States> {
         }
 
         function tooltipText(d: any) {
-            return  '<b>' + d.chain + ' ' + d.num + ' ' + d.aa + '</b><br/>' + '\u03A6: ' + d.phi + '<br/>\u03A8: ' + d.psi;
+            // language=HTML
+            return  `<b>${d.chain} ${d.num} ${d.aa}</b><br/>\u03A6: ${d.phi}<br/>\u03A8: ${d.psi}`;
         }
 
         function compare(a: any, b: any) {
@@ -510,7 +517,7 @@ class RamaData extends React.Component<RamaProps, States> {
         }
 
         // sort because of svg z-index
-        jsonObject.sort(function (a: any, b: any) {
+        jsonObject.sort(function(a: any, b: any) {
             switch (drawingType) {
                 case 1:
                     if (a.rama === 'OUTLIER') {
@@ -594,7 +601,7 @@ class RamaData extends React.Component<RamaProps, States> {
             .attr('class', 'table table-hover table-responsive');
 
         this.svgContainer.selectAll('.shapes')
-            .data(jsonObject.filter(function (d: any, i: number) {
+            .data(jsonObject.filter(function(d: any, i: number) {
 
                 if (chainsToShow.indexOf(d.chain) !== -1 && entityToShow.indexOf(d.modelId) !== -1) {
                     if (d.phi !== null || d.psi !== null) {
@@ -606,7 +613,7 @@ class RamaData extends React.Component<RamaProps, States> {
             .append('g')
             .attr('class', 'dataGroup')
             .append('path')
-            .attr('id', function (d: any) {
+            .attr('id', function(d: any) {
                 if (drawingType !== 3) {
                     if (d.rama === 'OUTLIER') {
                         outliersList.push(d);
@@ -628,7 +635,7 @@ class RamaData extends React.Component<RamaProps, States> {
                     }
             })
 
-            .attr('d', function (d: any) {
+            .attr('d', function(d: any) {
                 if (d.aa === 'GLY') {
                     return symbolTypes.triangle();
                 }
@@ -639,11 +646,11 @@ class RamaData extends React.Component<RamaProps, States> {
             })
             .merge(this.svgContainer)
             // .style('fill', 'transparent')
-            .style('fill', function (d: any) {
+            .style('fill', function(d: any) {
                 return fillColorFunction(d, drawingType, outliersType, rsrz, true);
             })
-            .style('opacity', function (d: any) {
-                let fillTmp = fillColorFunction(d, drawingType, outliersType, rsrz);
+            .style('opacity', function(d: any) {
+                const fillTmp = fillColorFunction(d, drawingType, outliersType, rsrz);
                 // console.log(fillTmp);
                 if (fillTmp === '#008000' || fillTmp === 'black') {
                     return 0.15;
@@ -654,7 +661,7 @@ class RamaData extends React.Component<RamaProps, States> {
                 return 1;
             })
 
-            .on('mouseover', function (d: any) {
+            .on('mouseover', function(d: any) {
                 let height = 58;
                 let width = 90;
                 switch (drawingType) {
@@ -722,7 +729,7 @@ class RamaData extends React.Component<RamaProps, States> {
 
                 d3.select(this)
                     //
-                    .attr('d', function (dat: any) {
+                    .attr('d', function(dat: any) {
                         if (dat.aa === 'GLY') {
                             symbolTypes.triangle.size(175);
                             return symbolTypes.triangle();
@@ -730,16 +737,16 @@ class RamaData extends React.Component<RamaProps, States> {
                         symbolTypes.circle.size(175);
                         return symbolTypes.circle();
                     })
-                    .style('fill', function (dat: any) {
+                    .style('fill', function(dat: any) {
                         return fillColorFunction(dat, drawingType, outliersType, rsrz);
                     });
 
             })
-            .on('mouseout', function () {
+            .on('mouseout', function() {
                     d3.select(this)
                         .transition()
                         // .duration(50)
-                        .attr('d', function (dat: any) {
+                        .attr('d', function(dat: any) {
                             if (dat.aa === 'GLY') {
                                 symbolTypes.triangle.size(objSize);
                                 return symbolTypes.triangle();
@@ -748,7 +755,7 @@ class RamaData extends React.Component<RamaProps, States> {
                             return symbolTypes.circle();
                         })
                         // .style('fill', 'transparent')
-                        .style('fill', function (d: any) {
+                        .style('fill', function(d: any) {
                             return fillColorFunction(d, drawingType, outliersType, rsrz);
                         });
                         // .style('fillColorFunction-width', '0.5');
@@ -757,7 +764,7 @@ class RamaData extends React.Component<RamaProps, States> {
                         .style('opacity', 0);
                 }
             );
-        outliersList.sort(function (a: any, b: any) {
+        outliersList.sort(function(a: any, b: any) {
             return a.num - b.num;
         });
         // this.setState({
@@ -818,10 +825,10 @@ class RamaData extends React.Component<RamaProps, States> {
         // this.addTable(outliersList, drawingType);
     }
 
-    basicContours(ramaContourPlotType: number, contourType: number) {
+    public basicContours(ramaContourPlotType: number, contourType: number) {
         d3.select('#rama-canvas-container').empty();
         d3.selectAll('.contour-line').remove();
-        let canvas = this.canvasContainer;
+        const canvas = this.canvasContainer;
         // let svg = this.svgContainer;
         let { width, height } = this.props;
         // console.log(ramaContourPlotType);
@@ -848,8 +855,8 @@ class RamaData extends React.Component<RamaProps, States> {
         //     // .range([0, (0.985 * height)]);
 
         // let url = 'https://raw.githubusercontent.com/ondraab/rama/master/public/data/';
-        let img = new Image;
-        let svgImg = new Image;
+        const img = new Image();
+        const svgImg = new Image();
         switch (ramaContourPlotType) {
             case 1:
                 // url += 'rama8000-general-noGPIVpreP.csv';
@@ -885,19 +892,19 @@ class RamaData extends React.Component<RamaProps, States> {
                 return;
         }
 
-        let context = canvas.node().getContext('2d');
+        const context = canvas.node().getContext('2d');
         context.clearRect(0, 0, width + 80, height + 60);
 
         if (contourType === 2) {
             context.globalAlpha = 0.6;
-            img.onload = function () {
+            img.onload = function() {
                     context.drawImage(img, 0, 0,
                                       width, height * img.height / img.width
                     );
                 };
         } else {
             context.globalAlpha = 1;
-            svgImg.onload = function () {
+            svgImg.onload = function() {
                 context.drawImage(svgImg, 0, 0,
                                   width, height * svgImg.height / svgImg.width
                 );
@@ -1066,7 +1073,7 @@ class RamaData extends React.Component<RamaProps, States> {
         }
     }
 
-    addTable(sortedTable: any[], drawingType: number) {
+    public addTable(sortedTable: any[], drawingType: number) {
         let objSize = 40;
         const { fillColorFunction, outliersType, rsrz } = this;
         if (window.screen.availWidth < 1920) {
@@ -1087,22 +1094,23 @@ class RamaData extends React.Component<RamaProps, States> {
         //     return 'black';
         // }
 
-        let symbolTypes = {
-            'triangle': d3.symbol().type(d3.symbolTriangle).size(30),
-            'circle': d3.symbol().type(d3.symbolCircle).size(30)
+        const symbolTypes = {
+            circle: d3.symbol().type(d3.symbolCircle).size(30),
+            triangle: d3.symbol().type(d3.symbolTriangle).size(30)
+
         };
 
-        let rows = this.outliersTable.selectAll('tbody tr')
-            .data(sortedTable, function (d: any) {return d.num; });
+        const rows = this.outliersTable.selectAll('tbody tr')
+            .data(sortedTable, function(d: any) {return d.num; });
 
         rows.enter()
             .append('tr')
-            .on('mouseover', function (d: any) {
+            .on('mouseover', function(d: any) {
                 d3.select(this)
                     .style('background-color', '#b4bed6')
                     .style('cursor', 'pointer');
                 d3.select('#' + d.aa + '-' + d.chain + '-' + d.modelId + '-' + d.num)
-                    .attr('d', function (dat: any) {
+                    .attr('d', function(dat: any) {
                         if (dat.aa === 'GLY') {
                             symbolTypes.triangle.size(175);
                             return symbolTypes.triangle();
@@ -1110,19 +1118,19 @@ class RamaData extends React.Component<RamaProps, States> {
                         symbolTypes.circle.size(175);
                         return symbolTypes.circle();
                     })
-                    .style('fill', function (dat: any) {
+                    .style('fill', function(dat: any) {
                         return fillColorFunction(dat, drawingType, outliersType, rsrz);
                     });
             })
             //
-            .on('mouseout', function (d: any) {
+            .on('mouseout', function(d: any) {
                 d3.select(this)
                     .style('background-color', 'transparent')
                     .style('cursor', 'default');
                 d3.select('#' +  d.aa + '-' + d.chain + '-' + d.modelId + '-' + d.num)
                     .transition()
                     // .duration(50)
-                    .attr('d', function (dat: any) {
+                    .attr('d', function(dat: any) {
                         if (dat.aa === 'GLY') {
                             symbolTypes.triangle.size(objSize);
                             return symbolTypes.triangle();
@@ -1130,13 +1138,13 @@ class RamaData extends React.Component<RamaProps, States> {
                         symbolTypes.circle.size(objSize);
                         return symbolTypes.circle();
                     })
-                    .style('fill', function (d: any) {
+                    .style('fill', function(d: any) {
                         return fillColorFunction(d, drawingType, outliersType, rsrz);
                     })
                     .style('fillColorFunction-width', '0.5');
             })
             .selectAll('td')
-            .data(function (d: any) {return [d.chain, d.num, d.aa, d.phi, d.psi]; })
+            .data(function(d: any) {return [d.chain, d.num, d.aa, d.phi, d.psi]; })
             .enter()
             .append('td')
             .attr('id', 'rama-td')
@@ -1147,9 +1155,9 @@ class RamaData extends React.Component<RamaProps, States> {
 
         rows.exit().remove();
         //
-        let cells = rows.selectAll('td')
-            .data(function (d: any) {return [d.chain, d.num, d.aa, d.phi, d.psi]; })
-            .text(function (d: any) {return d; });
+        const cells = rows.selectAll('td')
+            .data(function(d: any) {return [d.chain, d.num, d.aa, d.phi, d.psi]; })
+            .text(function(d: any) {return d; });
         //
         cells.enter()
             .append('td')
@@ -1158,7 +1166,7 @@ class RamaData extends React.Component<RamaProps, States> {
         cells.exit().remove();
     }
 
-    render () {
+    public render() {
         return (
             <div/>
         );

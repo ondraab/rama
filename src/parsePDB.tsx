@@ -26,7 +26,6 @@ class Res {
 }
 
 export class ParsePDB {
-
     private pdbID: string;
     private _chainsArray: string[];
     private _modelArray: number[];
@@ -78,26 +77,26 @@ export class ParsePDB {
         // };
         // xmlHttp.open('GET', url, true);
         // xmlHttp.send();
-        let xmlHttp = new XMLHttpRequest();
+        const xmlHttp = new XMLHttpRequest();
         xmlHttp.open('GET',
                      'http://www.ebi.ac.uk/pdbe/api/validation/rama_sidechain_listing/entry/' + this.pdbID, false);
         xmlHttp.send();
         if (xmlHttp.status !== 200) {
             return;
         } else {
-            let molecules = JSON.parse(xmlHttp.responseText)[this.pdbID];
-            for (let mol of molecules.molecules) {
+            const molecules = JSON.parse(xmlHttp.responseText)[this.pdbID];
+            for (const mol of molecules.molecules) {
                 // console.log(mol);
-                for (let chain of mol.chains) {
+                for (const chain of mol.chains) {
                     // if (this.modelArray[this.modelArray.length - 1])
-                    for (let mod of chain.models) {
+                    for (const mod of chain.models) {
                         if (this.chainsArray.indexOf(chain.chain_id) === -1) {
                             this.chainsArray.push(chain.chain_id);
                         }
                         if (this.modelArray.indexOf(mod.model_id) === -1) {
                             this._modelArray.push(mod.model_id);
                         }
-                        for (let resid of mod.residues) {
+                        for (const resid of mod.residues) {
                             this._residueArray.push(new Res(resid.residue_name,
                                                             resid.phi,
                                                             resid.psi,
@@ -140,17 +139,18 @@ export class ParsePDB {
                 }
             }
             xmlHttp.open('GET',
-                         'https://www.ebi.ac.uk/pdbe/api/validation/residuewise_outlier_summary/entry/' + this.pdbID, false);
+                         'https://www.ebi.ac.uk/pdbe/api/validation/residuewise_outlier_summary/entry/' + this.pdbID,
+                         false);
             xmlHttp.send();
             // if (xmlHttp.status !== 200) {
             //     return [];
             // }
             // else {
-            let mols = JSON.parse(xmlHttp.responseText)[this.pdbID];
-            for (let mol of mols.molecules) {
-                for (let chain of mol.chains) {
-                    for (let mod of chain.models) {
-                        for (let res of mod.residues) {
+            const mols = JSON.parse(xmlHttp.responseText)[this.pdbID];
+            for (const mol of mols.molecules) {
+                for (const chain of mol.chains) {
+                    for (const mod of chain.models) {
+                        for (const res of mod.residues) {
                             if (res.outlier_types[0] === 'RSRZ') {
                                 this._rsrz[res.residue_number] = {outliersType: res.outlier_types};
                             } else {
@@ -175,7 +175,7 @@ export class ParsePDB {
         return this._modelArray;
     }
 
-    get residueArray(): Object[] {
+    get residueArray(): object[] {
         return this._residueArray;
     }
     get rsrz(): { [p: number]: Dictionary } {

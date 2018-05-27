@@ -1,40 +1,51 @@
+import * as d3 from 'd3';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import './index.css';
 import RamaData from './RamaScatter';
-import * as d3 from 'd3';
 
 interface Props {
     pdbid: string;
     chainstoshow: string[];
     modelstoshow: number[];
+    element: HTMLElement;
 }
 
 interface States {
     pdbID: string;
     ramaContourPlotType: number;
+    element: HTMLElement;
     chainsToShow: any[];
     contourColoringStyle: number;
     modelsToShow: number[];
     residueColorStyle: number;
 }
 
+declare global {
+    interface Window { renderRamaComp: any; }
+}
+
 class RamaComopnent extends React.Component<Props, States> {
     constructor(props: any) {
         super(props);
         this.state = {
-            pdbID: this.props.pdbid,
-            ramaContourPlotType: 1,
             chainsToShow: this.props.chainstoshow,
             contourColoringStyle: 1,
+            element: this.props.element,
             modelsToShow: this.props.modelstoshow,
+            pdbID: this.props.pdbid,
+            ramaContourPlotType: 1,
             residueColorStyle: 1
         };
     }
 
-    componentDidMount() {
-        let { pdbID, chainsToShow, modelsToShow, residueColorStyle, contourColoringStyle, ramaContourPlotType } = this.state;
-        function renderRamaComp(residueColorStyle: number, contourColoringStyle: number, ramaContourPlotType: number) {
+    public componentDidMount() {
+        let { residueColorStyle, contourColoringStyle, ramaContourPlotType } = this.state;
+        const { pdbID, chainsToShow, modelsToShow, element} = this.state;
+        function renderRamaComp(element: HTMLElement,
+                                residueColorStyle: number,
+                                contourColoringStyle: number,
+                                ramaContourPlotType: number) {
             ReactDOM.render(
                 <RamaData
                     width={473}
@@ -45,30 +56,31 @@ class RamaComopnent extends React.Component<Props, States> {
                     residueColorStyle={residueColorStyle}
                     contourColoringStyle={contourColoringStyle}
                     ramaContourPlotType={ramaContourPlotType}
+                    element={element}
                 />,
-                document.getElementById('rama-root') as HTMLElement
+                element
             );
 
         }
-        renderRamaComp(residueColorStyle, contourColoringStyle, ramaContourPlotType);
+        renderRamaComp(element, residueColorStyle, contourColoringStyle, ramaContourPlotType);
 
         setTimeout(function() {
-            d3.select('#rama-coloring').on('change', function () {
+            d3.select('#rama-coloring').on('change', function() {
                 residueColorStyle = Number(d3.select(this).property('value'));
-                renderRamaComp(residueColorStyle, contourColoringStyle, ramaContourPlotType);
+                renderRamaComp(element, residueColorStyle, contourColoringStyle, ramaContourPlotType);
             });
-            d3.select('#rama-plot-type').on('change', function () {
+            d3.select('#rama-plot-type').on('change', function() {
                 ramaContourPlotType = Number(d3.select(this).property('value'));
-                renderRamaComp(residueColorStyle, contourColoringStyle, ramaContourPlotType);
+                renderRamaComp(element, residueColorStyle, contourColoringStyle, ramaContourPlotType);
             });
-            d3.selectAll('input[name=contour-style]').on('change', function () {
+            d3.selectAll('input[name=contour-style]').on('change', function() {
                 contourColoringStyle = Number(d3.select(this).property('value'));
-                renderRamaComp(residueColorStyle, contourColoringStyle, ramaContourPlotType);
+                renderRamaComp(element, residueColorStyle, contourColoringStyle, ramaContourPlotType);
             });
 
         },         50);
     }
-    render() {
+    public render() {
         return (
         <div/>
     );
@@ -76,6 +88,7 @@ class RamaComopnent extends React.Component<Props, States> {
 }
 
 export default RamaComopnent;
+
 //
 // import * as React from 'react';
 //

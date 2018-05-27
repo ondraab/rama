@@ -4,9 +4,16 @@
     <meta charset="utf-8">
     <title>Ramachandran component</title>
   </head>
-  <body class="rama-body" ng-app="app">
+  <body>
   <div id="rama-root">
-  <ramachandran-component pdbid="'3d12'" chainstoshow="['A', 'D', 'B']" modelstoshow="[1, 2]"></ramachandran-component>
+
   </div>
+  <script>
+    const element = document.getElementById('rama-root');
+    const pdb = '1tqn';
+    const chainsToShow = ['A'];
+    const modelsToShow = [1];
+    renderRamaComp(element, pdb, chainsToShow, modelsToShow);
+  </script>
   </body>
 </html>

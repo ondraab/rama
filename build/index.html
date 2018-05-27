@@ -3,14 +3,15 @@
 <head>
     <meta charset="utf-8">
     <title>Ramachandran component</title>
-    <link href="static/css/rama-component.css" rel="stylesheet">
-</head>
-<body class="rama-body" ng-app="app">
-<script type="text/javascript" src="static/js/rama-component.js">
+    <link href="static/css/rama-component.css" rel="stylesheet"></head>
+<script type="text/javascript" src="static/js/rama-component.js"></script>
+<body>
+<div id="rama-root"></div>
+<script>const element = document.getElementById('rama-root');
+    const pdb = '1tqn';
+    const chainsToShow = ['A'];
+    const modelsToShow = [1];
+    renderRamaComp(element, pdb, chainsToShow, modelsToShow);
 </script>
-<div id="rama-root">
-    <ramachandran-component pdbid="'3d12'" chainstoshow="['A', 'D', 'B']" modelstoshow="[1, 2]"></ramachandran-component>
-</div>
-
 </body>
 </html>
